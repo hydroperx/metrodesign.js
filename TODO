@@ -86,6 +86,18 @@ Way contextual; skinning and behavior relies on surrounding container. It is bas
 
 - [ ] Done
 
+# MenuTrigger
+
+Used for triggering a `PopoverMenu` from the direct button child.
+
+- [ ] Done
+
+# AppBar
+
+- [ ] Done
+- [ ] May display a hamburguer button in portrait screen orientation.
+- [ ] May place items out of the hamburguer button regardless of screen orientation (for example, action icons)
+
 # Live tiles
 
 - [ ] Done
@@ -96,6 +108,7 @@ Way contextual; skinning and behavior relies on surrounding container. It is bas
 # Icons
 
 - [ ] Trash
+- [ ] Menu (hamburguer icon)
 
 # Themes
 
