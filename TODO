@@ -113,9 +113,10 @@ Used for triggering a `PopoverMenu` from the direct button child.
 
 - [ ] Trash
 - [ ] Menu (hamburguer icon)
-- [ ] Provide a React.js component for each integrated icon (some already have, but not all of them)
+- [ ] Provide a React.js component for each integrated icon (some already have, but not all of them) with an `Icon` suffix.
 
 # Themes
 
 
 - [ ] Provide more theme variants.
+
