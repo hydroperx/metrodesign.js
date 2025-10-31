@@ -16,30 +16,47 @@
   },
   "exports": {
     "./components": {
+      "typedoc": "./src/components/index.ts",
       "types": "./dist/components/index.d.ts",
       "default": "./dist/components/index.js"
     },
+    "./components/BaseGroup": {
+      "typedoc": "./src/components/BaseGroup.tsx",
+      "types": "./dist/components/BaseGroup.d.ts",
+      "default": "./dist/components/BaseGroup.js"
+    },
     "./components/Icon": {
+      "typedoc": "./src/components/Icon.tsx",
       "types": "./dist/components/Icon.d.ts",
       "default": "./dist/components/Icon.js"
     },
     "./components/ProgressRing": {
+      "typedoc": "./src/components/ProgressRing.tsx",
       "types": "./dist/components/ProgressRing.d.ts",
       "default": "./dist/components/ProgressRing.js"
     },
     "./enum": {
+      "typedoc": "./src/enum.ts",
       "types": "./dist/enum.d.ts",
       "default": "./dist/enum.js"
     },
+    "./fonts": {
+      "typedoc": "./src/fonts/index.ts",
+      "types": "./dist/fonts/index.d.ts",
+      "default": "./dist/fonts/index.js"
+    },
     "./layout": {
+      "typedoc": "./src/layout/index.ts",
       "types": "./dist/layout/index.d.ts",
       "default": "./dist/layout/index.js"
     },
     "./theme": {
+      "typedoc": "./src/theme/index.ts",
       "types": "./dist/theme/index.d.ts",
       "default": "./dist/theme/index.js"
     },
     "./utils": {
+      "typedoc": "./src/utils/index.ts",
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
     }
@@ -56,6 +73,8 @@
   "author": "Hydroper <HydroperFox@gmail.com>",
   "dependencies": {
     "@floating-ui/dom": "^1.7.1",
+    "@fontsource/courier-prime": "^5.2.8",
+    "@fontsource/noto-sans": "^5.2.10",
     "@hydroperx/color": "^1.0.0",
     "@hydroperx/draggable": "^1",
     "@hydroperx/event": "^1.0.0",
@@ -79,8 +98,8 @@
     "@types/react": "^19.0.0",
     "copy-and-watch": "^0.1.8",
     "npm-run-all": "^4.1.5",
-    "typescript": "~5.6.2",
     "typedoc": "^0.28.7",
+    "typescript": "~5.6.2",
     "vite": "^6.1.0"
   },
   "publishConfig": {

@@ -2,11 +2,15 @@
 
 - [ ] Done
 
+# Fonts
+
+- [x] `@hydroperx/metrodesign/fonts`
+
 # BaseGroup
 
 Baseline group.
 
-- [ ] Done
+- [x] Done
 
 # Group
 
@@ -29,6 +33,8 @@ Baseline group.
 # Button
 
 - [ ] Done
+- [ ] Variants
+  - [ ] `"transparent"`
 - [ ] Use an `outline` boolean instead of a variant.
 - [ ] `link`
 - [ ] `target`

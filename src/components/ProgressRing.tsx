@@ -1,8 +1,12 @@
-// Third-party
+// third-party
 import { Color, ColorObserver } from "@hydroperx/color";
 import React from "react";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
+
+// local
+import { REMObserver } from "../utils/REMObserver";
+import * as REMConvert from "../utils/REMConvert";
 
 /**
  * Progress ring (orbit).
@@ -64,7 +68,7 @@ export function ProgressRing(params: {
   let m = 30; // milliseconds
 
   // Size
-  const size = REMConvert.points.rem(params.size ?? 27);
+  const size = REMConvert.pixels.rem(params.size ?? 27);
 
   return (
     <Div

@@ -64,8 +64,8 @@ import extend from "extend";
 import assert from "assert";
 
 // Local imports
-import * as REMConvert from "../utils/RREMConvert";
-import { REMObserver } from "../utils/RREMObserver";
+import * as REMConvert from "../utils/REMConvert";
+import { REMObserver } from "../utils/REMObserver";
 
 /**
  * Icon parameters.
@@ -202,7 +202,7 @@ export function Icon(params: IconParams) {
 
   // Compute size
   const computed_size =
-    params.size !== undefined ? REMConvert.points.remPlusUnit(params.size) : "100%";
+    params.size !== undefined ? REMConvert.pixels.remPlusUnit(params.size) : "100%";
 
   // Adjust color
   useEffect(() => {
