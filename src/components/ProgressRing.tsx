@@ -26,7 +26,7 @@ export function ProgressRing(params: {
 
   // States
   const [color, set_color] = React.useState<string>("#fff");
-  const [em, set_em] = React.useState<number>(0);
+  const [rem, set_rem] = React.useState<number>(0);
 
   // Set style
   const newStyle: React.CSSProperties = {};
@@ -48,11 +48,11 @@ export function ProgressRing(params: {
 
   // Adjust size
   React.useEffect(() => {
-    const em_observer = new EMObserver(ref.current!, em => {
-      set_em(em);
+    const rem_observer = new REMObserver(ref.current!, rem => {
+      set_rem(rem);
     });
     return () => {
-      em_observer.cleanup();
+      rem_observer.cleanup();
     };
   }, []);
 
@@ -64,7 +64,7 @@ export function ProgressRing(params: {
   let m = 30; // milliseconds
 
   // Size
-  const size = EMConvert.points.em(params.size ?? 27);
+  const size = REMConvert.points.rem(params.size ?? 27);
 
   return (
     <Div
@@ -77,7 +77,7 @@ export function ProgressRing(params: {
       $color={color}
       $r={r}
       $m={m}
-      $em={em}
+      $rem={rem}
     >
       <div className="progress-ring__wrap">
         <div className="progress-ring__circle"></div>
@@ -145,19 +145,19 @@ const Div = styled.div<{
   $color: string;
   $r: number;
   $m: number;
-  $em: number;
+  $rem: number;
 }>`
   && {
     position: relative;
-    padding-top: ${($) => ($.$size * $.$em) / 5}px;
-    width: ${($) => $.$size * $.$em}px;
-    height: ${($) => $.$size * $.$em}px;
+    padding-top: ${($) => ($.$size * $.$rem) / 5}px;
+    width: ${($) => $.$size * $.$rem}px;
+    height: ${($) => $.$size * $.$rem}px;
   }
 
   && .progress-ring__wrap {
     position: absolute;
-    width: ${($) => $.$size * $.$em - 2}px;
-    height: ${($) => $.$size * $.$em - 2}px;
+    width: ${($) => $.$size * $.$rem - 2}px;
+    height: ${($) => $.$size * $.$rem - 2}px;
   }
 
   && .progress-ring__circle {
@@ -165,8 +165,8 @@ const Div = styled.div<{
     animation-iteration-count: infinite;
     animation-name: ${orbit};
     animation-duration: ${($) => $.$time}ms;
-    width: ${($) => $.$size * $.$em - 2}px;
-    height: ${($) => $.$size * $.$em - 2}px;
+    width: ${($) => $.$size * $.$rem - 2}px;
+    height: ${($) => $.$size * $.$rem - 2}px;
 
     opacity: 0;
   }
@@ -174,9 +174,9 @@ const Div = styled.div<{
   && .progress-ring__circle:after {
     content: "";
     position: absolute;
-    width: ${($) => ($.$size * $.$em) / 8}px;
-    height: ${($) => ($.$size * $.$em) / 8}px;
-    border-radius: ${($) => ($.$size * $.$em) / 8}px;
+    width: ${($) => ($.$size * $.$rem) / 8}px;
+    height: ${($) => ($.$size * $.$rem) / 8}px;
+    border-radius: ${($) => ($.$size * $.$rem) / 8}px;
     box-shadow: 0px 0px 5% ${($) => $.$color};
     background: ${($) => $.$color};
   }

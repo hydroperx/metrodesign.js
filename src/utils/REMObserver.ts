@@ -1,11 +1,11 @@
 /**
- * Observes the pixels measure of the cascading `em` unit.
+ * Observes the pixels measure of the cascading `rem` unit.
  */
-export class EMObserver {
+export class REMObserver {
   /**
    * Cascading style class.
    */
-  public static CLASS: string = "EMObserver-element";
+  public static CLASS: string = "REMObserver-element";
 
   private element: HTMLDivElement | null = null;
   private resize_observer: ResizeObserver | null = null;
@@ -19,12 +19,12 @@ export class EMObserver {
     }
 
     this.element = document.createElement("div");
-    this.element.classList.add(EMObserver.CLASS);
+    this.element.classList.add(REMObserver.CLASS);
     this.element.style.position = "absolute";
     this.element.style.left = "0";
     this.element.style.top = "0";
     this.element.style.pointerEvents = "none";
-    this.element.style.width = "1em";
+    this.element.style.width = "1rem";
     container.append(this.element);
 
     updateFn(this.read());

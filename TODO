@@ -2,11 +2,13 @@
 
 - [ ] Done
 
-# BaseliineContainer
+# BaseGroup
+
+Baseline group.
 
 - [ ] Done
 
-# Container
+# Group
 
 - [ ] Done
 
@@ -28,6 +30,9 @@
 
 - [ ] Done
 - [ ] Use an `outline` boolean instead of a variant.
+- [ ] `link`
+- [ ] `target`
+- [ ] `alt`
 
 # TextInput
 
@@ -82,7 +87,11 @@ Way contextual; skinning and behavior relies on surrounding container. It is bas
 
 - [ ] Done
 
-# Slider
+# HSlider
+
+- [ ] Done
+
+# VSlider
 
 - [ ] Done
 
@@ -116,7 +125,6 @@ Used for triggering a `PopoverMenu` from the direct button child.
 - [ ] Provide a React.js component for each integrated icon (some already have, but not all of them) with an `Icon` suffix.
 
 # Themes
-
 
 - [ ] Provide more theme variants.
 
