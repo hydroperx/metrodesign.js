@@ -13,12 +13,26 @@ import * as REMConvert from "../utils/REMConvert";
  */
 export function ProgressBar(params: {
   variant?: ProgressBarVariant;
+  percent?: number;
 
   style?: React.CSSProperties;
   className?: string;
   id?: string;
 }) {
-  //
+  switch (params.variant ?? "solid") {
+    case "dots": {
+      // ProgressBar_dots_div
+      return fixme();
+    }
+    case "solid": {
+      // ProgressBar_solid_div
+      //   ProgressBar_solid_loaded_div
+      return fixme();
+    }
+    default: {
+      throw new Error();
+    }
+  }
 }
 
 export type ProgressBarVariant =
@@ -26,15 +40,23 @@ export type ProgressBarVariant =
   | "solid";
 
 const ProgressBar_solid_div = styled.div<{
-  //
+  $bg: string;
 }> `
-
+  && {
+    height: 0.5rem;
+    background: ${$ => $.$bg};
+  }
 `;
 
 const ProgressBar_solid_loaded_div = styled.div<{
-  //
+  $bg: string;
+  $width: string;
 }> `
-
+  && {
+    width: ${$ => $.$width};
+    height: 100%;
+    background: ${$ => $.$bg};
+  }
 `;
 
 const ProgressBar_dots_div = styled.div<{
