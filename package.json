@@ -20,11 +20,6 @@
       "types": "./dist/components/index.d.ts",
       "default": "./dist/components/index.js"
     },
-    "./components/BaseGroup": {
-      "typedoc": "./src/components/BaseGroup.tsx",
-      "types": "./dist/components/BaseGroup.d.ts",
-      "default": "./dist/components/BaseGroup.js"
-    },
     "./components/Icon": {
       "typedoc": "./src/components/Icon.tsx",
       "types": "./dist/components/Icon.d.ts",
@@ -34,6 +29,11 @@
       "typedoc": "./src/components/ProgressRing.tsx",
       "types": "./dist/components/ProgressRing.d.ts",
       "default": "./dist/components/ProgressRing.js"
+    },
+    "./components/Root": {
+      "typedoc": "./src/components/Root.tsx",
+      "types": "./dist/components/Root.d.ts",
+      "default": "./dist/components/Root.js"
     },
     "./enum": {
       "typedoc": "./src/enum.ts",

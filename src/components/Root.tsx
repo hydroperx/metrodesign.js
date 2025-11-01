@@ -1,5 +1,5 @@
 // css
-import "./BaseGroup.css";
+import "./Root.css";
 
 // third-party
 import * as React from "react";
@@ -17,7 +17,7 @@ import * as REMConvert from "../utils/REMConvert";
  * Fundamental container used for integrating baseline styles
  * within children.
  */
-export function BaseGroup(params: {
+export function Root(params: {
   full?: boolean,
   /**
    * Indicates whether the container should display a solid background
@@ -88,7 +88,7 @@ export function BaseGroup(params: {
       id={params.id}
       className={
         [
-          "metrodesign-base-group",
+          "metrodesign-root",
           ...[params.full ? ["full"] : []],
           ...[params.solid ? ["solid"] : []],
           ...[params.className ? [params.className] : []]

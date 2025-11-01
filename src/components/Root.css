@@ -1,0 +1,45 @@
+.metrodesign-root,
+.metrodesign-root div,
+.metrodesign-root button,
+.metrodesign-root input,
+.metrodesign-root textarea
+.metrodesign-root select,
+.metrodesign-root img {
+  box-sizing: border-box;
+}
+
+.metrodesign-root,
+.metrodesign-root button,
+.metrodesign-root input,
+.metrodesign-root textarea,
+.metrodesign-root select {
+  font-family: "Noto Sans", "Segoe UI", sans;
+  font-size: inherit;
+}
+
+.metrodesign-root code,
+.metrodesign-root pre {
+  font-family: "Courier Prime", "Courier New", monospace;
+  font-size: 0.8rem;
+}
+
+.metrodesign-root h1,
+.metrodesign-root h2 {
+  font-weight: lighter;
+}
+.metrodesign-root h3,
+.metrodesign-root h4 {
+  font-weight: bold;
+}
+.metrodesign-root h1 {
+  font-size: 2rem;
+}
+.metrodesign-root h2 {
+  font-size: 1.7rem;
+}
+.metrodesign-root h3 {
+  font-size: 1.3rem;
+}
+.metrodesign-root h4 {
+  font-size: 1.1rem;
+}
