@@ -3,6 +3,7 @@ import { Color, ColorObserver } from "@hydroperx/color";
 import React from "react";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
+import gsap from "gsap";
 
 // local
 import { ThemeContext, PrimaryContext } from "../theme/Theme";
@@ -25,7 +26,7 @@ export function ProgressBar(params: {
   percent?: number;
   /**
    * If a `dots` progress bar, indicates the size of each dot.
-   * @default 10
+   * @default 5
    */
   size?: number;
 
@@ -33,22 +34,78 @@ export function ProgressBar(params: {
   className?: string;
   id?: string;
 }) {
+  // variant
+  const variant = React.useRef(params.variant ?? "solid");
+
   // theme
   const theme = React.useContext(ThemeContext);
 
   // primary
   const primary = React.useContext(PrimaryContext);
 
-  switch (params.variant ?? "solid") {
+  // div reference
+  const div_ref = React.useRef<null | HTMLDivElement>(null);
+
+  // rem measurement
+  const rem = React.useRef<number>(16);
+
+  // gsap timeline
+  const gsap_timeline = React.useRef<null | gsap.core.Timeline>(null);
+
+  // initialization
+  React.useEffect(() => {
+    // resize observer
+    const resize_observer = new ResizeObserver(() => {
+      setup_animation();
+    });
+    resize_observer.observe(div_ref.current!);
+
+    // rem observer
+    const rem_observer = new REMObserver(new_rem => {
+      rem.current = new_rem;
+      setup_animation();
+    });
+
+    return () => {
+      resize_observer.disconnect();
+      rem_observer.cleanup();
+    };
+  }, []);
+
+  // reflect variant
+  React.useEffect(() => {
+    variant.current = params.variant ?? "solid";
+    setup_animation();
+  }, [params.variant ?? "solid"]);
+
+  // setup animation
+  function setup_animation(): void {
+    // destroy previous animation
+    if (gsap_timeline.current != null) {
+      gsap_timeline.current.kill();
+      gsap_timeline.current = null;
+    }
+
+    // setup moving dots animation
+    if (variant.current == "dots") {
+      gsap_timeline.current = gsap.timeline();
+      gsap_timeline.current.repeat(Infinity);
+      const dots = Array.from(div_ref.current!.getElementsByClassName("progress-bar__wrap")) as HTMLElement[];
+      fixme();
+    }
+  }
+
+  switch (variant.current) {
     case "dots": {
       // ProgressBar_dots_div
       //   .progress-bar__wrap
       //     .progress-bar__dot
-      const size = REMConvert.pixels.remPlusUnit(params.size ?? 10);
+      const size = REMConvert.pixels.remPlusUnit(params.size ?? 5);
       const color = primary ? theme.colors.primary : theme.colors.foreground;
 
       return (
         <ProgressBar_dots_div
+          ref={div_ref}
           $size={size}
           $color={color}
           className={params.className}
@@ -81,6 +138,7 @@ export function ProgressBar(params: {
       const w = MathUtils.clamp(params.percent ?? 0, 0, 100) + "%";
       return (
         <ProgressBar_solid_div
+          ref={div_ref}
           $bg={unloaded_bg}
           className={params.className}
           style={params.style}
@@ -119,32 +177,10 @@ const ProgressBar_solid_loaded_div = styled.div<{
   }
 `;
 
-// dot animation
-const dot_animation = keyframes `
-  0% {
-    left: 0%;
-    opacity: 0;
-    animation-timing-function: ease-out;
-  }
-  20% {
-    left: 30%;
-    opacity: 1;
-    animation-timing-function: linear;
-  }
-  40% {
-    left: 60%;
-    animation-timing-function: ease-out;
-  }
-  60% {
-    left: 90%;
-    opacity: 0;
-  }
-`;
-
 const ProgressBar_dots_div = styled.div<{
   $size: string;
   $color: string;
-}> `
+}>`
   && {
     position: relative;
     overflow: hidden;
@@ -153,33 +189,15 @@ const ProgressBar_dots_div = styled.div<{
 
   && .progress-bar__wrap {
     position: absolute;
-    animation-iteration-count: infinite;
-    animation-name: ${dot_animation};
-    animation-duration: 4000ms;
-  }
-
-  && .progress-bar__wrap:nth-of-type(2) {
-    animation-delay: 500ms;
-  }
-
-  && .progress-bar__wrap:nth-of-type(3) {
-    animation-delay: 1000ms;
-  }
-
-  && .progress-bar__wrap:nth-of-type(4) {
-    animation-delay: 1500ms;
-  }
-
-  && .progress-bar__wrap:nth-of-type(5) {
-    animation-delay: 2000ms;
+    width: ${$ => $.$size};
+    height: ${$ => $.$size};
   }
 
   && .progress-bar__dot {
-    position: absolute;
-    background: ${$ => $.$color};
-    border-radius: 100%;
-    left: calc(0rem - ${$ => $.$size});
     width: ${$ => $.$size};
     height: ${$ => $.$size};
+    border-radius: 50%;
+    background: ${$ => $.$color};
+    left: calc(0rem - ${$ => $.$size});
   }
 `;

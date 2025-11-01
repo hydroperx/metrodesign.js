@@ -71,7 +71,7 @@ export function ProgressRing(params: {
 
   // adjust size
   React.useEffect(() => {
-    const rem_observer = new REMObserver(ref.current!, rem => {
+    const rem_observer = new REMObserver(rem => {
       set_rem(rem);
     });
     return () => {

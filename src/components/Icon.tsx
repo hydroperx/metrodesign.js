@@ -65,7 +65,6 @@ import assert from "assert";
 
 // Local imports
 import * as REMConvert from "../utils/REMConvert";
-import { REMObserver } from "../utils/REMObserver";
 
 /**
  * Icon parameters.

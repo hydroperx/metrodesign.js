@@ -13,7 +13,7 @@ export class REMObserver {
   /**
    * Constructor.
    */
-  constructor(container: HTMLElement, updateFn: (value: number) => void) {
+  constructor(updateFn: (value: number) => void) {
     if (typeof window !== "object") {
       return;
     }
@@ -25,7 +25,7 @@ export class REMObserver {
     this.element.style.top = "0";
     this.element.style.pointerEvents = "none";
     this.element.style.width = "1rem";
-    container.append(this.element);
+    document.body.append(this.element);
 
     updateFn(this.read());
 
