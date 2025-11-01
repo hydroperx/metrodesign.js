@@ -14,8 +14,8 @@ import * as REMConvert from "../utils/REMConvert";
 export function ProgressRing(params: {
   /**
    * Size; note that it overflows by a bit.
-   * The given normal is `size={27}`.
-   * @default 27
+   * The given normal is `size={29}`.
+   * @default 29
    */
   size?: number;
   style?: React.CSSProperties;
@@ -68,7 +68,7 @@ export function ProgressRing(params: {
   let m = 30; // milliseconds
 
   // Size
-  const size = REMConvert.pixels.rem(params.size ?? 27);
+  const size = REMConvert.pixels.rem(params.size ?? 29);
 
   return (
     <Div
@@ -103,7 +103,7 @@ export function ProgressRing(params: {
 }
 
 // ProgressRing animation
-const orbit = keyframes`
+const orbit = keyframes `
 0% {
   transform: rotate(225deg);
   opacity: 1;
