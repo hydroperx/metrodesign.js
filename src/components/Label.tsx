@@ -1,4 +1,4 @@
- // third-party
+// third-party
 import extend from "extend";
 import { styled } from "styled-components";
 import { useEffect } from "react";
@@ -11,7 +11,7 @@ import { ThemeContext, Theme, PrimaryContext } from "../theme/Theme";
 import { MAXIMUM_Z_INDEX } from "../utils/Constants";
 import * as ColorUtils from "../utils/ColorUtils";
 import * as REMConvert from "../utils/REMConvert";
-import { SimplePlacementType } from "../utils/PlacementUtils";
+import { SimplePlacementType, getTooltipPlacement } from "../utils/PlacementUtils";
 
 export type LabelVariant =
   | "normal"
@@ -20,207 +20,6 @@ export type LabelVariant =
   | "subsubheading"
   | "subsubsubheading"
   | "legend";
-
-const TooltipDiv = styled.div<{
-  $theme: Theme;
-  $tooltip_visible: boolean;
-  $tooltip_x: number;
-  $tooltip_y: number;
-  $rtl: boolean;
-}>`
-  && {
-    background: ${$ => $.$theme.colors.inputBackground};
-    border: 0.15rem solid ${$ => $.$theme.colors.inputBorder};
-    color: ${$ => $.$theme.colors.foreground};
-    display: inline-block;
-    visibility: ${$ => ($.$tooltip_visible ? "visible" : "hidden")};
-    position: fixed;
-    left: ${$ => $.$tooltip_x}px;
-    top: ${$ => $.$tooltip_y}px;
-    padding: 0.4rem;
-    font-size: 0.77rem;
-    z-index: ${MAXIMUM_Z_INDEX};
-    overflow-wrap: anywhere;
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-// normal
-
-const NormalLabel = styled.label<LabelCSSProps>`
-  && {
-    font-size: 0.9rem;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-    ${$ => $.$bold ? "font-weight: bold;" : ""}
-  }
-`;
-
-const NormalSpan = styled.span<LabelCSSProps>`
-  && {
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-    ${$ => $.$bold ? "font-weight: bold;" : ""}
-  }
-`;
-
-// heading 1
-
-const H1Label = styled.label<LabelCSSProps>`
-  && {
-    ${$ => $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
-    font-size: 2rem;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-const H1 = styled.h1<LabelCSSProps>`
-  && {
-    ${$ => $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
-    font-size: 2rem;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-// heading 2
-
-const H2Label = styled.label<LabelCSSProps>`
-  && {
-    ${$ =>
-      $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
-    font-size: 1.7rem;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-const H2 = styled.h2<LabelCSSProps>`
-  && {
-    ${$ =>
-      $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
-    font-size: 1.7rem;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-// heading 3
-
-const H3Label = styled.label<LabelCSSProps>`
-  && {
-    ${$ => $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-const H3 = styled.h3<LabelCSSProps>`
-  && {
-    ${$ =>
-      $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-// heading 4
-
-const H4Label = styled.label<LabelCSSProps>`
-  && {
-    ${$ =>
-      $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-const H4 = styled.h4<LabelCSSProps>`
-  && {
-    ${$ =>
-      $.$primary
-        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
-        : ""}
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin: 0.67rem 0;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-  }
-`;
-
-// legend
-
-const LegendLabel = styled.label<LabelCSSProps>`
-  && {
-    font-size: 0.77rem;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-    ${$ => $.$bold ? "font-weight: bold;" : ""}
-  }
-`;
-
-const LegendSpan = styled.span<LabelCSSProps>`
-  && {
-    font-size: 0.77rem;
-    ${$ => $.$sizing}
-    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
-    ${$ => $.$rtl ? "text-align: right;" : ""}
-    ${$ => $.$bold ? "font-weight: bold;" : ""}
-  }
-`;
-
-type LabelCSSProps = {
-  $primary: boolean;
-  $sizing: string;
-  $theme: Theme;
-  $wrap?: boolean;
-  $rtl: boolean;
-  $bold?: boolean;
-};
 
 /**
  * A label component consisting of text.
@@ -233,8 +32,27 @@ export function Label(params: {
    */
   bold?: boolean;
 
+  /**
+   * Whether to use an error colour.
+   */
+  error?: boolean;
+
+  /**
+   * Whether to use a warning colour.
+   */
+  warning?: boolean;
+
+  /**
+   * Tooltip text.
+   *
+   * To indicate placement side, add one of the following prefixes:
+   * 
+   * - `<?top?>`
+   * - `<?bottom?>`
+   * - `<?left?>`
+   * - `<?right?>`
+   */
   tooltip?: string;
-  tooltipPlacement?: SimplePlacementType;
 
   /**
    * Indicates the form component this label connects to by its ID.
@@ -342,8 +160,8 @@ export function Label(params: {
 
   // sync tooltip side
   useEffect(() => {
-    tooltip_place_ref.current = params.tooltipPlacement ?? "bottom";
-  }, [params.tooltipPlacement ?? "bottom"]);
+    tooltip_place_ref.current = params.tooltip ? getTooltipPlacement(params.tooltip) : "bottom";
+  }, [params.tooltip ?? ""]);
 
   switch (variant) {
     case "normal": {
@@ -358,6 +176,8 @@ export function Label(params: {
               style={newStyle}
               htmlFor={params.for}
               $primary={primary}
+              $error={params.error}
+              $warning={params.warning}
               $sizing={sizing}
               $theme={theme}
               $wrap={params.wrap}
@@ -378,6 +198,8 @@ export function Label(params: {
             className={params.className}
             style={newStyle}
             $primary={primary}
+            $error={params.error}
+            $warning={params.warning}
             $sizing={sizing}
             $theme={theme}
             $wrap={params.wrap}
@@ -401,6 +223,8 @@ export function Label(params: {
               style={newStyle}
               htmlFor={params.for}
               $primary={primary}
+              $error={params.error}
+              $warning={params.warning}
               $sizing={sizing}
               $theme={theme}
               $wrap={params.wrap}
@@ -421,6 +245,8 @@ export function Label(params: {
             className={params.className}
             style={newStyle}
             $primary={primary}
+            $error={params.error}
+            $warning={params.warning}
             $sizing={sizing}
             $theme={theme}
             $wrap={params.wrap}
@@ -444,6 +270,8 @@ export function Label(params: {
               style={newStyle}
               htmlFor={params.for}
               $primary={primary}
+              $error={params.error}
+              $warning={params.warning}
               $sizing={sizing}
               $theme={theme}
               $wrap={params.wrap}
@@ -464,6 +292,8 @@ export function Label(params: {
             className={params.className}
             style={newStyle}
             $primary={primary}
+            $error={params.error}
+            $warning={params.warning}
             $sizing={sizing}
             $theme={theme}
             $wrap={params.wrap}
@@ -487,6 +317,8 @@ export function Label(params: {
               style={newStyle}
               htmlFor={params.for}
               $primary={primary}
+              $error={params.error}
+              $warning={params.warning}
               $sizing={sizing}
               $theme={theme}
               $wrap={params.wrap}
@@ -507,6 +339,8 @@ export function Label(params: {
             className={params.className}
             style={newStyle}
             $primary={primary}
+            $error={params.error}
+            $warning={params.warning}
             $sizing={sizing}
             $theme={theme}
             $wrap={params.wrap}
@@ -530,6 +364,8 @@ export function Label(params: {
               style={newStyle}
               htmlFor={params.for}
               $primary={primary}
+              $error={params.error}
+              $warning={params.warning}
               $sizing={sizing}
               $theme={theme}
               $wrap={params.wrap}
@@ -550,6 +386,8 @@ export function Label(params: {
             className={params.className}
             style={newStyle}
             $primary={primary}
+            $error={params.error}
+            $warning={params.warning}
             $sizing={sizing}
             $theme={theme}
             $wrap={params.wrap}
@@ -573,6 +411,8 @@ export function Label(params: {
               style={newStyle}
               htmlFor={params.for}
               $primary={primary}
+              $error={params.error}
+              $warning={params.warning}
               $sizing={sizing}
               $theme={theme}
               $wrap={params.wrap}
@@ -593,6 +433,8 @@ export function Label(params: {
             className={params.className}
             style={newStyle}
             $primary={primary}
+            $error={params.error}
+            $warning={params.warning}
             $sizing={sizing}
             $theme={theme}
             $wrap={params.wrap}
@@ -606,3 +448,279 @@ export function Label(params: {
     }
   }
 }
+
+const TooltipDiv = styled.div<{
+  $theme: Theme;
+  $tooltip_visible: boolean;
+  $tooltip_x: number;
+  $tooltip_y: number;
+  $rtl: boolean;
+}>`
+  && {
+    background: ${$ => $.$theme.colors.inputBackground};
+    border: 0.15rem solid ${$ => $.$theme.colors.inputBorder};
+    color: ${$ => $.$theme.colors.foreground};
+    display: inline-block;
+    visibility: ${$ => ($.$tooltip_visible ? "visible" : "hidden")};
+    position: fixed;
+    left: ${$ => $.$tooltip_x}px;
+    top: ${$ => $.$tooltip_y}px;
+    padding: 0.4rem;
+    font-size: 0.77rem;
+    z-index: ${MAXIMUM_Z_INDEX};
+    overflow-wrap: anywhere;
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+// normal
+
+const NormalLabel = styled.label<LabelCSSProps>`
+  && {
+    font-size: 0.9rem;
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+    ${$ => $.$bold ? "font-weight: bold;" : ""}
+  }
+`;
+
+const NormalSpan = styled.span<LabelCSSProps>`
+  && {
+    font-size: 0.9rem;
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+    ${$ => $.$bold ? "font-weight: bold;" : ""}
+  }
+`;
+
+// heading 1
+
+const H1Label = styled.label<LabelCSSProps>`
+  && {
+    ${$ => $.$primary
+      ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+      : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
+    font-size: 2rem;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+const H1 = styled.h1<LabelCSSProps>`
+  && {
+    ${$ => $.$primary
+        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+        : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
+    font-size: 2rem;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+// heading 2
+
+const H2Label = styled.label<LabelCSSProps>`
+  && {
+    ${$ =>
+      $.$primary
+        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+        : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
+    font-size: 1.7rem;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+const H2 = styled.h2<LabelCSSProps>`
+  && {
+    ${$ =>
+      $.$primary
+        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+        : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-weight: ${$ => $.$bold ? "bold" : "lighter"};
+    font-size: 1.7rem;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+// heading 3
+
+const H3Label = styled.label<LabelCSSProps>`
+  && {
+    ${$ => $.$primary
+        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+        : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+const H3 = styled.h3<LabelCSSProps>`
+  && {
+    ${$ =>
+      $.$primary
+        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+        : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+// heading 4
+
+const H4Label = styled.label<LabelCSSProps>`
+  && {
+    ${$ =>
+      $.$primary
+        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+        : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+const H4 = styled.h4<LabelCSSProps>`
+  && {
+    ${$ =>
+      $.$primary
+        ? `color: ${ColorUtils.enhance({ background: $.$theme.colors.background, color: $.$theme.colors.primary })};`
+        : ""}
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0.67rem 0;
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+  }
+`;
+
+// legend
+
+const LegendLabel = styled.label<LabelCSSProps>`
+  && {
+    font-size: 0.77rem;
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+    ${$ => $.$bold ? "font-weight: bold;" : ""}
+  }
+`;
+
+const LegendSpan = styled.span<LabelCSSProps>`
+  && {
+    font-size: 0.77rem;
+    ${$ => $.$error
+      ? `color: ${$.$theme.colors.danger};`
+      : ""}
+    ${$ => $.$warning
+      ? `color: ${$.$theme.colors.warning};`
+      : ""}
+    ${$ => $.$sizing}
+    ${$ => $.$wrap ? "overflow-wrap: anywhere;" : ""}
+    ${$ => $.$rtl ? "text-align: right;" : ""}
+    ${$ => $.$bold ? "font-weight: bold;" : ""}
+  }
+`;
+
+type LabelCSSProps = {
+  $primary: boolean;
+  $error?: boolean;
+  $warning?: boolean;
+  $sizing: string;
+  $theme: Theme;
+  $wrap?: boolean;
+  $rtl: boolean;
+  $bold?: boolean;
+};

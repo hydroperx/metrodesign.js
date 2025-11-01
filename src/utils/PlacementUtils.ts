@@ -27,3 +27,20 @@ export function fitViewport(
 
   return [x, y];
 }
+
+/**
+ * Returns the placement type of a tooltip text. Looks for
+ * one of the following prefixes:
+ * 
+ * - `<?top?>`
+ * - `<?bottom?>`
+ * - `<?left?>`
+ * - `<?right?>`
+ */
+export function getTooltipPlacement(text: string): SimplePlacementType {
+  const m = text.match(/^<\?(top|bottom|left|right)\?>/);
+  if (m) {
+    return m[1] as SimplePlacementType;
+  }
+  return "bottom";
+}

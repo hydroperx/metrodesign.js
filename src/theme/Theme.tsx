@@ -75,7 +75,7 @@ export type Theme = {
     secondary: string;
 
     /**
-     * Used in buttons for instance.
+     * Used in buttons and label colors for instance.
      */
     danger: string;
     /**

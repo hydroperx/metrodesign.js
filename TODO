@@ -26,11 +26,17 @@ Baseline group.
 
 - [x] Done
 
+# Tooltip change
+
+- Discard tooltipPlacement and use a prefix for indicating the tooltip's placement. (`<?top?>`, `<?bottom?>`, `<?left?>`, `<?right?>`)
+  - [x] Label
+  - [ ] Button
+
 # Label
 
-- [ ] Done
-- [ ] `error` boolean (for the `Theme`'s danger color)
-- [ ] `warning` boolean (for the `Theme`'s warning color)
+- [x] Done
+- [x] `error` boolean (for the `Theme`'s danger color)
+- [x] `warning` boolean (for the `Theme`'s warning color)
 
 # Button
 
