@@ -12,7 +12,11 @@ import * as ColorUtils from "../utils/ColorUtils";
 import { DownArrowIcon, Icon } from "./Icon";
 import { RTLContext } from "../layout/RTL";
 import { PrimaryContext, Theme, ThemeContext } from "../theme/Theme";
-import { SimplePlacementType, getTooltipPlacement, skipTooltipPlacement } from "../utils/PlacementUtils";
+import {
+  SimplePlacementType,
+  getTooltipPlacement,
+  skipTooltipPlacement
+} from "../utils/PlacementUtils";
 
 /**
  * Button component.
