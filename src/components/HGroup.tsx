@@ -2,6 +2,8 @@
 import assert from "assert";
 import * as React from "react";
 import { styled } from "styled-components";
+import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/dist/ScrollToPlugin";
 
 // local
 import { Theme, ThemeContext } from "../theme/Theme";
@@ -212,6 +214,7 @@ export function HGroup(params: {
   }, [params.wheelHorizontal]);
   const last_wheel_timestamp = React.useRef<number>(-1);
   const last_fast_wheel_timestamp = React.useRef<number>(-1);
+  const gsap_wheel_tween = React.useRef<null | gsap.core.Tween>(null);
   const wheel = (e: WheelEvent): void => {
     const div = e.currentTarget as HTMLDivElement;
     // deltaMode == DOM_DELTA_PIXEL
@@ -232,7 +235,21 @@ export function HGroup(params: {
       const delta = e.deltaY * multiplier;
       let target_scroll = div.scrollLeft + delta;
       target_scroll = Math.min(target_scroll, div.scrollWidth);
-      div.scrollTo({ left: target_scroll, behavior: "smooth" });
+      if (gsap_wheel_tween.current) {
+        gsap_wheel_tween.current!.kill();
+        gsap_wheel_tween.current = null;
+      }
+      gsap.registerPlugin(ScrollToPlugin);
+      gsap_wheel_tween.current = gsap.to(div, {
+        scrollTo: {
+          x: target_scroll,
+        },
+        duration: 0.3,
+        ease: "power1.out",
+      });
+      gsap_wheel_tween.current.then(() => {
+        gsap_wheel_tween.current = null;
+      });
       last_wheel_timestamp.current = Date.now();
     }
   };
