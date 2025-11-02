@@ -176,7 +176,7 @@ export function Group(params: {
       }
       const delta = e.deltaY * wheel_multiplier.current;
       let target_scroll = div.scrollLeft + delta;
-      target_scroll = Math.min(target_scroll, div.scrollWidth);
+      target_scroll = MathUtils.clamp(target_scroll, 0, div.scrollWidth);
       if (gsap_wheel_tween.current) {
         gsap_wheel_tween.current!.kill();
         gsap_wheel_tween.current = null;
