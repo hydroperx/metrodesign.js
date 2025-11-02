@@ -70,7 +70,7 @@ Each item must contain three elements: the icon, the label, and the ending (usua
   <Item>
     <span><Icon native={NativeIcons.INTERNET_EXPLORER}/></span>
     <Label>Internet Explorer</Label>
-    <span><Shortcut>Ctrl+E</Shortcut></span>
+    <span>Ctrl+E</span>
   </Item>
   <Item submenu>
     <span></span>
