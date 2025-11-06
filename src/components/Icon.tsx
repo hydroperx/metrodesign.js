@@ -1,12 +1,24 @@
-// Icon resources
+// embed icons
 import bullet_black from "../icons/bullet-black.svg";
 import bullet_white from "../icons/bullet-white.svg";
 import checked_black from "../icons/checked-black.svg";
 import checked_white from "../icons/checked-white.svg";
-import arrow_white from "../icons/arrow-white.svg";
-import arrow_black from "../icons/arrow-black.svg";
-import fullarrow_black from "../icons/fullarrow-black.svg";
-import fullarrow_white from "../icons/fullarrow-white.svg";
+import arrow_up_white from "../icons/arrow-up-white.svg";
+import arrow_up_black from "../icons/arrow-up-black.svg";
+import arrow_down_white from "../icons/arrow-down-white.svg";
+import arrow_down_black from "../icons/arrow-down-black.svg";
+import arrow_left_white from "../icons/arrow-left-white.svg";
+import arrow_left_black from "../icons/arrow-left-black.svg";
+import arrow_right_white from "../icons/arrow-right-white.svg";
+import arrow_right_black from "../icons/arrow-right-black.svg";
+import fullarrow_up_black from "../icons/fullarrow-up-black.svg";
+import fullarrow_up_white from "../icons/fullarrow-up-white.svg";
+import fullarrow_down_black from "../icons/fullarrow-down-black.svg";
+import fullarrow_down_white from "../icons/fullarrow-down-white.svg";
+import fullarrow_left_black from "../icons/fullarrow-left-black.svg";
+import fullarrow_left_white from "../icons/fullarrow-left-white.svg";
+import fullarrow_right_black from "../icons/fullarrow-right-black.svg";
+import fullarrow_right_white from "../icons/fullarrow-right-white.svg";
 import search_black from "../icons/search-black.svg";
 import search_white from "../icons/search-white.svg";
 import clear_black from "../icons/clear-black.svg";
@@ -56,14 +68,14 @@ import help_circle_white from "../icons/help-circle-white.svg";
 import new_black from "../icons/new-black.svg";
 import new_white from "../icons/new-white.svg";
 
-// Third-party
+// third-party
 import { Color, ColorObserver } from "@hydroperx/color";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
 import assert from "assert";
 
-// Local imports
+// local
 import * as REMConvert from "../utils/REMConvert";
 
 /**
@@ -111,8 +123,14 @@ export const IconRegistry = {
 export const NativeIcons = {
   BULLET: "bullet",
   CHECKED: "checked",
-  ARROW: "arrow",
-  FULLARROW: "fullArrow",
+  ARROW_LEFT: "arrowLeft",
+  ARROW_RIGHT: "arrowRight",
+  ARROW_UP: "arrowUp",
+  ARROW_DOWN: "arrowDown",
+  FULLARROW_LEFT: "fullArrowLeft",
+  FULLARROW_RIGHT: "fullArrowRight",
+  FULLARROW_UP: "fullArrowUp",
+  FULLARROW_DOWN: "fullArrowDown",
   SEARCH: "search",
   CLEAR: "clear",
   GAMES: "games",
@@ -146,8 +164,14 @@ const iconMap = new Map<string, { black: any; white: any }>();
 IconRegistry.registerMap(new Map([
   [NativeIcons.BULLET, { black: bullet_black, white: bullet_white }],
   [NativeIcons.CHECKED, { black: checked_black, white: checked_white }],
-  [NativeIcons.ARROW, { black: arrow_black, white: arrow_white }],
-  [NativeIcons.FULLARROW, { black: fullarrow_black, white: fullarrow_white }],
+  [NativeIcons.ARROW_LEFT, { black: arrow_left_black, white: arrow_left_white }],
+  [NativeIcons.ARROW_RIGHT, { black: arrow_right_black, white: arrow_right_white }],
+  [NativeIcons.ARROW_UP, { black: arrow_up_black, white: arrow_up_white }],
+  [NativeIcons.ARROW_DOWN, { black: arrow_down_black, white: arrow_down_white }],
+  [NativeIcons.FULLARROW_LEFT, { black: fullarrow_left_black, white: fullarrow_left_white }],
+  [NativeIcons.FULLARROW_RIGHT, { black: fullarrow_right_black, white: fullarrow_right_white }],
+  [NativeIcons.FULLARROW_UP, { black: fullarrow_up_black, white: fullarrow_up_white }],
+  [NativeIcons.FULLARROW_DOWN, { black: fullarrow_down_black, white: fullarrow_down_white }],
   [NativeIcons.SEARCH, { black: search_black, white: search_white }],
   [NativeIcons.CLEAR, { black: clear_black, white: clear_white }],
   [NativeIcons.GAMES, { black: games_black, white: games_white }],
@@ -235,133 +259,5 @@ export function Icon(params: IconParams) {
       id={params.id}
       $computed_size={computed_size}
     ></Img>
-  );
-}
-
-export function CheckedIcon(params: IconParams) {
-  return (
-    <Icon
-      type="checked"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export function BulletIcon(params: IconParams) {
-  return (
-    <Icon
-      type="bullet"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export function ClearIcon(params: IconParams) {
-  return (
-    <Icon
-      type="clear"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export function SearchIcon(params: IconParams) {
-  return (
-    <Icon
-      type="search"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export type ArrowIconParams = {
-  direction?: ArrowIconDirection;
-  size?: number;
-  style?: React.CSSProperties;
-  className?: string;
-  id?: string;
-};
-
-export type ArrowIconDirection = "left" | "right" | "up" | "down";
-
-export function ArrowIcon(params: ArrowIconParams) {
-  // Direction
-  const d = params.direction;
-
-  // Stylize
-  const newStyle: React.CSSProperties = {};
-  newStyle.transform = `rotate(${d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}deg)`;
-  if (params.style) {
-    extend(newStyle, params.style);
-  }
-
-  return (
-    <Icon
-      type="arrow"
-      size={params.size}
-      style={newStyle}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export function UpArrowIcon(params: IconParams) {
-  return (
-    <ArrowIcon
-      direction="up"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export function DownArrowIcon(params: IconParams) {
-  return (
-    <ArrowIcon
-      direction="down"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export function LeftArrowIcon(params: IconParams) {
-  return (
-    <ArrowIcon
-      direction="left"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
-  );
-}
-
-export function RightArrowIcon(params: IconParams) {
-  return (
-    <ArrowIcon
-      direction="right"
-      size={params.size}
-      style={params.style}
-      className={params.className}
-      id={params.id}
-    />
   );
 }
