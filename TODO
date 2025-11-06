@@ -62,7 +62,7 @@ Baseline group.
 # PopoverMenu
 
 - [ ] Done
-  - [ ] Skin `&&` and submenus (`.PopoverMenu`)
+  - [ ] Skin `&&`
   - [ ] Skin Items
   - [ ] Skin Indicator (submenu arrow icon; observe color and RTL)
   - [ ] PopoverMenuController (provide optional `controller=` ref)

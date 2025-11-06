@@ -1,3 +1,10 @@
+// third-party
+import React from "react";
+
+// local
+import { Icon, NativeIcons } from "./Icon";
+import { RTLContext } from "../layout/RTL";
+
 /**
  * A context-dependent indicator icon. Currently used
  * inside a `PopoverMenu`'s submenu-representing `Item`,
@@ -15,7 +22,42 @@
  * ```
  */
 export function Indicator() {
+  // div
+  const div = React.useRef<null | HTMLDivElement>(null);
+
+  // indicator type
+  const [indicator_type, set_indicator_type] = React.useState<string>("popoverMenu");
+
+  // ?rtl
+  const rtl = React.useContext(RTLContext);
+
+  // initialization
+  React.useEffect(() => {
+    const div_el = div.current!;
+
+    // detect when the Indicator belongs to a
+    // PopoverMenu
+    function ofPopoverMenu(): void {
+      set_indicator_type("popoverMenu");
+    }
+    div_el.addEventListener("_ofPopoverMenu", ofPopoverMenu);
+
+    // cleanup
+    return () => {
+      div_el.removeEventListener("_ofPopoverMenu", ofPopoverMenu);
+    };
+  }, []);
+
   return (
-    <div className="Indicator"></div>
+    <div
+      className="Indicator"
+      ref={div}>
+
+      {
+        indicator_type == "popoverMenu" ?
+          <Icon type={rtl ? NativeIcons.ARROW_LEFT : NativeIcons.ARROW_RIGHT}/> :
+          undefined
+      }
+    </div>
   );
 }

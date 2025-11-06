@@ -5,7 +5,7 @@ import { Color } from "@hydroperx/color";
 import extend from "extend";
 
 // local
-import { IconRegistry } from "./Icon";
+import { IconMap } from "./Icon";
 import { RTLContext } from "../layout/RTL";
 import { ThemeContext } from "../theme";
 import * as REMConvert from "../utils/REMConvert";
@@ -139,7 +139,7 @@ export function TextInput(params: {
       color: ${theme.colors.foreground};
       padding: ${REMConvert.pixels.remPlusUnit(6.45)} 0.7rem;
       ${icon === null || params.multiline ? "" : `${rtl ? "padding-left" : "padding-right"}: ${REMConvert.pixels.remPlusUnit(iconSize + 3)};`}
-      ${icon === null || params.multiline ? "" : `background-image: url("${IconRegistry.get(icon, dark ? "white" : "black")}");`}
+      ${icon === null || params.multiline ? "" : `background-image: url("${IconMap.get(icon, dark ? "white" : "black")}");`}
       background-position: center ${rtl ? "left" : "right"} 0.5rem;
       background-size: ${REMConvert.pixels.remPlusUnit(iconSize)};
       background-repeat: no-repeat;
@@ -170,7 +170,7 @@ export function TextInput(params: {
       -webkit-appearance: none;
       width: ${REMConvert.pixels.remPlusUnit(15)};
       height: ${REMConvert.pixels.remPlusUnit(15)};
-      background: url("${IconRegistry.get("clear", dark ? "white" : "black")}");
+      background: url("${IconMap.get("clear", dark ? "white" : "black")}");
       background-size: ${REMConvert.pixels.remPlusUnit(15)};
       background-repeat: no-repeat;
     }`;

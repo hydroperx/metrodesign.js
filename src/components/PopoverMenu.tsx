@@ -1,11 +1,9 @@
 // third-party
-import { ColorObserver } from "@hydroperx/color";
 import * as React from "react";
 import { styled } from "styled-components";
 import gsap from "gsap";
 
 // local
-import { IconRegistry, NativeIcons } from "./Icon";
 import { RTLContext } from "../layout/RTL";
 import { Theme, ThemeContext } from "../theme/Theme";
 import * as MathUtils from "../utils/MathUtils";
@@ -24,28 +22,30 @@ export function PopoverMenu(params: {
   // div
   const div = React.useRef<null | HTMLDivElement>(null);
 
-  // foreground
-  const [foreground, set_foreground] = React.useState<string>("white");
-
   // ?rtl
   const rtl = React.useContext(RTLContext);
 
   // ?theme
   const theme = React.useContext(ThemeContext);
 
-  // submenu indicator
-  const indicator = IconRegistry.get(rtl ? NativeIcons.ARROW_LEFT : NativeIcons.ARROW_RIGHT, foreground as any);
-
   // initialization
   React.useEffect(() => {
-    // color observer
-    const color_observer = new ColorObserver(div.current, color => {
-      set_foreground(color.isLight() ? "white" : "black");
+    // detect added Item children so they are skinned
+    // correctly.
+    const children_observer = new MutationObserver(records => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (node instanceof HTMLElement && (node as HTMLElement).classList.contains("item")) {
+            (node as HTMLElement).dispatchEvent(new Event("_ofPopoverMenu"));
+          }
+        }
+      }
     });
+    children_observer.observe(div.current!);
 
     // cleanup
     return () => {
-      color_observer.cleanup();
+      children_observer.disconnect();
     };
   }, []);
 
@@ -56,8 +56,7 @@ export function PopoverMenu(params: {
       }
       id={params.id}
       style={params.style}
-      ref={div}
-      $indicator={indicator}>
+      ref={div}>
 
       {params.children}
     </Div>
@@ -65,7 +64,7 @@ export function PopoverMenu(params: {
 }
 
 const Div = styled.div<{
-  $indicator: string,
+  //
 }> `
 
 `;

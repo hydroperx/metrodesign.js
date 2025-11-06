@@ -93,9 +93,9 @@ export type IconParams = {
 };
 
 /**
- * Icon registry.
+ * Static icon map.
  */
-export const IconRegistry = {
+export const IconMap = {
   register(type: string, sources: { black: any; white: any }): void {
     iconMap.set(type, {
       black: typeof sources.black == "string" ? sources.black : sources.black.src,
@@ -104,7 +104,7 @@ export const IconRegistry = {
   },
   registerMap(map: Map<string, { black: any; white: any }>): void {
     for (const [type, sources] of map) {
-      IconRegistry.register(type, sources);
+      IconMap.register(type, sources);
     }
   },
   unregister(type: string): void {
@@ -161,7 +161,7 @@ export const NativeIcons = {
 const iconMap = new Map<string, { black: any; white: any }>();
 
 // Initial registers
-IconRegistry.registerMap(new Map([
+IconMap.registerMap(new Map([
   [NativeIcons.BULLET, { black: bullet_black, white: bullet_white }],
   [NativeIcons.CHECKED, { black: checked_black, white: checked_white }],
   [NativeIcons.ARROW_LEFT, { black: arrow_left_black, white: arrow_left_white }],
