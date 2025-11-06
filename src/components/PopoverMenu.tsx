@@ -5,6 +5,7 @@ import { styled } from "styled-components";
 import gsap from "gsap";
 
 // local
+import { IconRegistry, NativeIcons } from "./Icon";
 import { RTLContext } from "../layout/RTL";
 import { Theme, ThemeContext } from "../theme/Theme";
 import * as MathUtils from "../utils/MathUtils";
@@ -32,6 +33,9 @@ export function PopoverMenu(params: {
   // ?theme
   const theme = React.useContext(ThemeContext);
 
+  // submenu indicator
+  const indicator = IconRegistry.get(rtl ? NativeIcons.ARROW_LEFT : NativeIcons.ARROW_RIGHT, foreground as any);
+
   // initialization
   React.useEffect(() => {
     // color observer
@@ -53,7 +57,7 @@ export function PopoverMenu(params: {
       id={params.id}
       style={params.style}
       ref={div}
-      $indicatorIcon={fixme()}>
+      $indicator={indicator}>
 
       {params.children}
     </Div>
@@ -61,7 +65,7 @@ export function PopoverMenu(params: {
 }
 
 const Div = styled.div<{
-  $indicatorIcon: string,
+  $indicator: string,
 }> `
 
 `;
