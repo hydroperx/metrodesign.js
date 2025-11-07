@@ -75,14 +75,17 @@ Baseline group.
   - [x] Skin Items
   - [x] Skin Indicator
   - [x] Skin Separator
-  - [ ] PopoverMenuController (provide optional `controller=` ref)
-    - [ ] .open() method
-    - [ ] .close() method (closes the menu and its submenus)
-  - [ ] Hovering a submenu representation's item should open the submenu (without focusing any of its items) and close the previous ones.
+  - [x] PopoverMenuController (provide optional `controller=` ref)
+    - [x] .open() method
+    - [x] .close() method (closes the menu and its submenus)
+  - [ ] Open logic
+  - [ ] Close logic
+  - [ ] Hovering a submenu representation's item should open the submenu (without focusing any of its items) and close the previously open siblings.
   - [ ] Clicking outside the open popover menu should close it and other open submenus.
   - [ ] Clicking a submenu Item should open its PopoverMenu (the submenu)
   - [ ] Escape key (closes the innermost popover menu)
   - [ ] Open submenu representation items should be highlighted as focused.
+    - [ ] Skin them
   - [ ] Arrow navigation
     - [ ] Left/right (close/open submenu)
       - [ ] If closing submenu, focus the submenu representation's item.
@@ -127,6 +130,7 @@ Each item must contain three tags: the icon, the label, and the ending (usually 
 Used for triggering a `PopoverMenu` from the direct button child.
 
 - [ ] Done
+  - [ ] prefer (SimplePlacementType)
 
 # Item
 

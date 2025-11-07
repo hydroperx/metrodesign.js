@@ -10,13 +10,21 @@ import { RTLContext } from "../layout/RTL";
 import { Theme, ThemeContext } from "../theme/Theme";
 import * as ColorUtils from "../utils/ColorUtils";
 import * as MathUtils from "../utils/MathUtils";
+import { SimplePlacementType } from "../utils/PlacementUtils";
 import * as REMConvert from "../utils/REMConvert";
 import { COMMON_DELAY, MAXIMUM_Z_INDEX } from "../utils/Constants";
+import { TypedEventTarget } from "@hydroperx/event";
 
 /**
  * Either a popover menu or a context menu.
  */
 export function PopoverMenu(params: {
+  /**
+   * Passing a controller allows explicitly opening or closing
+   * a popover menu.
+   */
+  controller?: PopoverMenuController,
+
   children?: React.ReactNode,
   className?: string,
   style?: React.CSSProperties,
@@ -30,6 +38,30 @@ export function PopoverMenu(params: {
 
   // ?theme
   const theme = React.useContext(ThemeContext);
+
+  // use the given controller
+  React.useEffect(() => {
+    if (!params.controller) {
+      return;
+    }
+    const controller = params.controller!;
+    // open signal
+    function controller_open(e: CustomEvent<PopoverMenuOpenParams>): void {
+      fixme();
+    }
+    controller.addEventListener("openSignal", controller_open);
+    // close signal
+    function controller_close(e: Event): void {
+      fixme();
+    }
+    controller.addEventListener("closeSignal", controller_close);
+
+    // cleanup
+    return () => {
+      controller.removeEventListener("openSignal", controller_open);
+      controller.removeEventListener("closeSignal", controller_close);
+    };
+  }, [params.controller]);
 
   return (
     <Div
@@ -156,3 +188,51 @@ const Div = styled.div<{
     padding: 0.45rem;
   }
 `;
+
+/**
+ * Allows opening and closing a `PopoverMenu`.
+ */
+export class PopoverMenuController extends (EventTarget as TypedEventTarget<{
+  /** @hidden */
+  openSignal: CustomEvent<PopoverMenuOpenParams>,
+  /** @hidden */
+  closeSignal: Event,
+}>) {
+  /**
+   * Opens the popover menu.
+   */
+  public open(params: PopoverMenuOpenParams): void {
+    this.dispatchEvent(new CustomEvent("openSignal", {
+      detail: params,
+    }));
+  }
+
+  /**
+   * Closes the popover menu, including any nested popover menus.
+   */
+  public close(): void {
+    this.dispatchEvent(new Event("closeSignal"));
+  }
+}
+
+/**
+ * Parameters passed to `PopoverMenuController.open()`.
+ */
+export type PopoverMenuOpenParams = {
+  /**
+   * Preferred placement type.
+   */
+  prefer?: SimplePlacementType,
+  /**
+   * Original causing mouse event, if any.
+   */
+  event?: MouseEvent,
+  /**
+   * Position (x, y), if any.
+   */
+  position?: [number, number],
+  /**
+   * Reference element to where placement of the popover menu occurs.
+   */
+  reference?: HTMLElement,
+};
