@@ -37,7 +37,6 @@ Baseline group.
 - [x] Done
 - [x] `error` boolean (for the `Theme`'s danger color)
 - [x] `warning` boolean (for the `Theme`'s warning color)
-- [ ] Re-decide big/medium font size (guess big should be bigger?)
 
 # Button
 
@@ -117,7 +116,6 @@ Each item must contain three tags: the icon, the label, and the ending (usually 
   - [x] When displaying the selected option as the ComboBox main display itself, strip icons (`.Icon`) off.
   - [ ] Fix little border-ish-jump at the end of the ComboBox open transition.
   - [ ] Convert position/width/height to rem after transition
-  - [ ] Re-decide big/medium font size (guess big should be bigger?)
 - [ ] Future: Virtual list support (e.g. support displaying a loading indicator either at the start or end of the dropdown and add/eliminate options as appropriate maintaining correct V-scroll)
 
 # CheckBox

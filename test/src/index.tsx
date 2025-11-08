@@ -28,7 +28,6 @@ import {
  * The test.
  */
 function App() {
-  // Layout
   return (
     <ThemeProvider theme={ThemePresets.dark}>
       <RTLProvider rtl={false}>
@@ -46,7 +45,7 @@ function App() {
                 <Option value="bar">bar</Option>
                 <Option value="qux">qux</Option>
               </ComboBox>
-              <ComboBox default="foo" big>
+              <ComboBox big>
                 <Option value="foo">foo</Option>
                 <Option value="bar">bar</Option>
                 <Option value="qux">qux</Option>

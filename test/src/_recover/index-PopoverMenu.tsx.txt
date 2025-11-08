@@ -33,7 +33,6 @@ import {
  * The test.
  */
 function App() {
-  // Layout
   return (
     <ThemeProvider theme={ThemePresets.dark}>
       <RTLProvider rtl={false}>

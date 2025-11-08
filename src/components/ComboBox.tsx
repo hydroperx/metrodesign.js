@@ -145,8 +145,14 @@ export function ComboBox(params: {
         for (const option of children) {
           option.removeAttribute("data-selected");
         }
-        const selected_option =
-          (children.find(e => e.getAttribute("data-value") == value_sync.current) ?? null) as null | HTMLButtonElement;
+        let selected_option =
+          (children.find(e => e.getAttribute("data-value") == value_sync.current) ?? null) as null | HTMLElement;
+        if (!selected_option) {
+          selected_option = children.find(e => e.classList.contains("Option")) ?? null;
+          if (selected_option) {
+            value_sync.current = selected_option.getAttribute("data-value") ?? "";
+          }
+        }
         if (selected_option) {
           selected_option.setAttribute("data-selected", "true");
           set_value_html(extract_compact_html(selected_option));
@@ -221,13 +227,23 @@ export function ComboBox(params: {
     // find the selected entry
     let selected_option = (children.find(e => e.getAttribute("data-value") == value_sync.current) ?? null) as null | HTMLElement;
 
-    if (selected_option) {
-      // set the item[data-selected] attribute
-      for (const option of children) {
-        option.removeAttribute("data-selected");
+    if (!selected_option) {
+      if (children.length == 0) {
+        return;
       }
-      selected_option.setAttribute("data-selected", "true");
+      selected_option = children.find(e => e.classList.contains("Option")) ?? null;
+      if (selected_option) {
+        value_sync.current = selected_option.getAttribute("data-value") ?? "";
+      } else {
+        return;
+      }
     }
+
+    // set the item[data-selected] attribute
+    for (const option of children) {
+      option.removeAttribute("data-selected");
+    }
+    selected_option.setAttribute("data-selected", "true");
 
     // update cooldown
     ComboBoxStatic.cooldown = Date.now();
