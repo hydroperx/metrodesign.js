@@ -2,7 +2,7 @@
 import React from "react";
 
 // local
-import * as ComboBoxStatic from "./combobox/ComboBoxStatic";
+import { ComboBoxStatic } from "./combobox/ComboBoxStatic";
 import { BUTTON_NAVIGABLE } from "../utils/Constants";
 
 /**

@@ -8,14 +8,14 @@ import { input } from "@hydroperx/inputaction";
 
 // local
 import * as ComboBoxPlacement from "./combobox/ComboBoxPlacement";
-import * as ComboBoxStatic from "./combobox/ComboBoxStatic";
+import { ComboBoxStatic } from "./combobox/ComboBoxStatic";
 import { ComboBoxEffect } from "./combobox/ComboBoxEffect";
 import { RTLContext } from "../layout/RTL";
 import { Icon, NativeIcons } from "./Icon";
-import { Theme, ThemeContext } from "../theme";
+import { Theme, ThemeContext } from "../theme/Theme";
 import * as ColorUtils from "../utils/ColorUtils";
+import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
+import * as StringUtils from "../utils/StringUtils";
 import { MAXIMUM_Z_INDEX  } from "../utils/Constants";
 import * as REMConvert from "../utils/REMConvert";
-import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
 import { REMObserver } from "../utils/REMObserver";
-import * as StringUtils from "../utils/StringUtils";
