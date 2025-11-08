@@ -356,6 +356,124 @@ export function ComboBox(params: {
     window.addEventListener("wheel", global_handlers.current.wheel as any, { passive: false });
   }
 
+  // handle pointer down on the viewport
+  function global_pointer_down(e: PointerEvent): void {
+    // detect click outside, closing the ComboBox.
+
+    if (!is_open.current) {
+      return;
+    }
+
+    const rect = dropdown.current!.getBoundingClientRect();
+    if (e.clientX >= rect.x && e.clientY >= rect.y && e.clientX < rect.x + rect.width && e.clientY < rect.y + rect.height) {
+      return;
+    }
+
+    close();
+  }
+
+  // handle arrows and escape
+  function input_pressed(e: Event): void {
+    // basics
+    const item_list_div = get_item_list_div();
+
+    // handle escape
+    if (input.justPressed("escape")) {
+      close();
+      return;
+    }
+
+    for (let i = 0; i < item_list_div.children.length; i++) {
+      // child Option
+      const item = item_list_div.children[i] as HTMLElement;
+
+      // if focused
+      if (document.activeElement === item) {
+        // navigate up
+        if (input.justPressed("navigateUp")) {
+          e.preventDefault();
+          focusPrevSibling(item);
+        // navigate down
+        } else if (input.justPressed("navigateDown")) {
+          e.preventDefault();
+          focusNextSibling(item);
+        }
+
+        return;
+      }
+    }
+
+    // if there is no Option focused, handle arrows
+    // just a little bit differently.
+
+    // focus last
+    if (input.justPressed("navigateUp")) {
+      const first = item_list_div.firstElementChild;
+      if (first) {
+        e.preventDefault();
+        focusPrevSibling(first as HTMLElement);
+      }
+    // focus first
+    } else if (input.justPressed("navigateDown")) {
+      const last = item_list_div.lastElementChild;
+      if (last) {
+        e.preventDefault();
+        focusNextSibling(last as HTMLElement);
+      }
+    }
+  }
+
+  // handle typing
+  function key_down(e: KeyboardEvent): void {
+    if (e.key == " ") {
+      e.preventDefault();
+    }
+    if (String.fromCodePoint(e.key.toLowerCase().codePointAt(0) ?? 0) != e.key.toLowerCase()) {
+      key_sequence_last_timestamp.current = 0;
+      return;
+    }
+
+    if (Date.now() < key_sequence_last_timestamp.current + 700) {
+      // continue key sequence
+      key_sequence_reference.current += e.key.toLowerCase();
+    } else {
+      // start new key sequence
+      key_sequence_reference.current = e.key.toLowerCase();
+    }
+    let key_seq = key_sequence_reference.current;
+    const rtl = rtl_sync.current;
+    if (rtl) {
+      key_seq = StringUtils.reverse(key_seq);
+    }
+    for (const item of Array.from(get_item_list_div().children) as HTMLElement[]) {
+      if (item.children.length < 2 || !item.classList.contains("Option")) {
+        continue;
+      }
+      const label = item.children[1]! as HTMLElement;
+      const label_text = label.innerText.trim().toLowerCase();
+      if (rtl ? label_text.endsWith(key_seq) : label_text.startsWith(key_seq)) {
+        item.focus();
+        break;
+      }
+    }
+    key_sequence_last_timestamp.current = Date.now();
+  }
+
+  // prevent scrolling outside while ComboBox is open,
+  // but still allow scrolling inside the ComboBox.
+  function global_wheel(e: WheelEvent): void {
+    if (!is_open.current) {
+      return;
+    }
+
+    const rect = dropdown.current!.getBoundingClientRect();
+    if (e.clientX >= rect.x && e.clientY >= rect.y && e.clientX < rect.x + rect.width && e.clientY < rect.y + rect.height) {
+      return;
+    }
+
+    e.preventDefault();
+  }
+
   // unregister global event handlers used by the ComboBox.
   function dispose_global_handlers(): void {
     if (global_handlers.current.pointerDown) {
@@ -398,6 +516,7 @@ export function ComboBox(params: {
           }
         }}
         disabled={params.disabled}
+        onClick={open}
         $background={theme.colors.inputBackground}
         $border={theme.colors.inputBorder}
         $foreground={selected_foreground_color}>

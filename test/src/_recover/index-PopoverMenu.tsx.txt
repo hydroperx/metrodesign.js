@@ -44,7 +44,7 @@ function App() {
           style={{
             overflowY: "auto",
           }}>
-          <VGroup>
+          <VGroup padding={10}>
             <MenuTrigger>
               <Button outline>click me</Button>
               <PopoverMenu>

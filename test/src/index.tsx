@@ -13,6 +13,8 @@ import {
   Label,
   Icon,
   NativeIcons,
+  ComboBox,
+  Option,
 } from "@hydroperx/metrodesign/components";
 import { RTLProvider } from "@hydroperx/metrodesign/layout";
 import {
@@ -37,7 +39,12 @@ function App() {
           style={{
             overflowY: "auto",
           }}>
-          <VGroup>
+          <VGroup padding={10}>
+            <ComboBox default="foo">
+              <Option value="foo">foo</Option>
+              <Option value="bar">bar</Option>
+              <Option value="qux">qux</Option>
+            </ComboBox>
           </VGroup>
         </Root>
       </RTLProvider>

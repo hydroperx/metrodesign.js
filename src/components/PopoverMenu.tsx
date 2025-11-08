@@ -414,6 +414,7 @@ export function PopoverMenu(params: {
     // handle escape
     if (input.justPressed("escape")) {
       // close innermost menu
+
       // just root open?
       if (menus.length == 1) {
         close();

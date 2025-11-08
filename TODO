@@ -71,6 +71,7 @@ Baseline group.
 # PopoverMenu
 
 - [x] Done
+- [ ] Convert position/max-width/height to rem after transition
 - [ ] Observe dynamically added items to optionally resize the PopoverMenu.
 
 Each item must contain three tags: the icon, the label, and the ending (usually a shortcut or submenu indicator). All of them, except the label, are wrapped in a `span`. For an item representing a submenu, there is a following sibling tag being the sub-popover-menu.
@@ -100,22 +101,22 @@ Each item must contain three tags: the icon, the label, and the ending (usually 
 
 # ComboBox
 
-- [ ] Done
+- [x] Done
   - [x] Skinning
     - [x] ComboBoxButton
     - [x] ComboBoxDropdown
   - [x] Use PrimaryContext for the selected Option and the ComboBox button (might need enhancing the primary color for the dropdown background)
   - [x] Open logic
   - [x] Close logic
-  - [ ] Click = open
-  - [ ] Escape while open = close
-  - [ ] Click outside while open = close
-  - [ ] Arrow navigation (up/down) among Options
-  - [ ] Prevent scrolling on the entire document while a ComboBox is open
-  - [ ] Typing Option
+  - [x] Click = open
+  - [x] Escape while open = close
+  - [x] Click outside while open = close
+  - [x] Arrow navigation (up/down) among Options
+  - [x] Prevent scrolling on the entire document while a ComboBox is open
+  - [x] Typing Option
   - [x] When displaying the selected option as the ComboBox main display itself, strip icons (`.Icon`) off.
   - [ ] Fix little jump at the end of the ComboBox open transition.
-  - [ ] Convert size to rem after transition
+  - [ ] Convert position/width/height to rem after transition
   - [ ] Re-decide big/medium font size (guess big should be bigger?)
 - [ ] Future: Virtual list support (e.g. support displaying a loading indicator either at the start or end of the dropdown and add/eliminate options as appropriate maintaining correct V-scroll)
 
