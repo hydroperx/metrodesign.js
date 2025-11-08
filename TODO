@@ -84,18 +84,18 @@ Baseline group.
   - [ ] Clicking a submenu Item should open its PopoverMenu (the submenu)
   - [x] Escape key (closes the innermost popover menu)
     - [x] Focus submenu-representing item back if the case
-  - [ ] Open submenu representation items should be highlighted as focused. (`data-open='true'`)
-    - [ ] Skin them
-  - [ ] Arrow navigation
-    - [ ] Left/right (close/open submenu)
-      - [ ] If closing submenu, focus the submenu representation's item.
-      - [ ] If opening submenu, focus its first item.
-      - [ ] RTL
-    - [ ] Up/down
+  - [70%] Open submenu representation items should be highlighted as focused. (`data-open='true'`)
+    - [x] Skin them
+  - [x] Arrow navigation
+    - [x] Left/right (close/open submenu)
+      - [x] If closing submenu, focus the submenu representation's item.
+      - [x] If opening submenu, focus its first item.
+      - [x] RTL
+    - [x] Up/down
       - Up
-        - [ ] If none of the items in the innermost menu are focused, focus the last one.
+        - [x] If none of the items in the innermost menu are focused, focus the last one.
       - Down
-        - [ ] If none of the items in the innermost menu are focused, focus the first one.
+        - [x] If none of the items in the innermost menu are focused, focus the first one.
   - [ ] Typing item name (match label)
     - [ ] RTL
   - [ ] Prevent rolling wheel on the entire document while a popover menu is open. (`passive: false` handler)

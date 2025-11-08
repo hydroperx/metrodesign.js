@@ -3,6 +3,7 @@ import assert from "assert";
 import * as React from "react";
 import { styled } from "styled-components";
 import { Color } from "@hydroperx/color";
+import { TypedEventTarget } from "@hydroperx/event";
 import { input } from "@hydroperx/inputaction";
 import gsap from "gsap";
 import * as FloatingUI from "@floating-ui/dom";
@@ -12,11 +13,11 @@ import $ from "jquery";
 import { RTLContext } from "../layout/RTL";
 import { Theme, ThemeContext } from "../theme/Theme";
 import * as ColorUtils from "../utils/ColorUtils";
+import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
 import * as MathUtils from "../utils/MathUtils";
 import { fitViewport, SimplePlacementType } from "../utils/PlacementUtils";
 import * as REMConvert from "../utils/REMConvert";
 import { COMMON_DELAY, MAXIMUM_Z_INDEX } from "../utils/Constants";
-import { TypedEventTarget } from "@hydroperx/event";
 
 /**
  * Either a popover menu or a context menu.
@@ -309,6 +310,9 @@ export function PopoverMenu(params: {
     // remember as closed
     div_el.removeAttribute("data-open");
 
+    // forget hover
+    div_el.removeAttribute("data-hover");
+
     // dispose of global handlers
     dispose_global_handlers();
 
@@ -395,18 +399,21 @@ export function PopoverMenu(params: {
     }
     const content_div = get_content_div();
 
+    // menu list
+    let menus = Array.from(content_div.querySelectorAll(".PopoverMenu[data-open='true']")) as HTMLDivElement[];
+    menus.splice(0, 0, div_el);
+    const innermost = menus[menus.length - 1];
+    const innermost_content_div = innermost.children[1] as HTMLDivElement;
+
     // handle escape
     if (input.justPressed("escape")) {
       // close innermost menu
-      let menus = Array.from(content_div.querySelectorAll(".PopoverMenu[data-open='true']")) as HTMLDivElement[];
-      menus.splice(0, 0, div_el);
       // just root open?
       if (menus.length == 1) {
         close();
       // otherwise close the innermost submenu and
       // focus back representing item.
       } else {
-        const innermost = menus[menus.length - 1];
         innermost.dispatchEvent(new Event("_PopoverMenu_close"));
         const item = innermost.parentElement!;
         item.focus();
@@ -416,7 +423,78 @@ export function PopoverMenu(params: {
       return;
     }
 
-    fixme();
+    for (let i = 0; i < innermost_content_div.children.length; i++) {
+      // child Item
+      const item = innermost_content_div.children[i] as HTMLElement;
+
+      // if focused
+      if (document.activeElement === item) {
+        // navigate up
+        if (input.justPressed("navigateUp")) {
+          e.preventDefault();
+          focusPrevSibling(item);
+        // navigate down
+        } else if (input.justPressed("navigateDown")) {
+          e.preventDefault();
+          focusNextSibling(item);
+        // open submenu
+        } else if (input.justPressed(rtl_reference.current ? "navigateLeft" : "navigateRight")) {
+          const submenu = item.children.length >= 4 ? item.children[3] as HTMLElement : null;
+          if (submenu?.classList.contains("PopoverMenu")) {
+            (item as HTMLButtonElement).click();
+            if (submenu.children[1].lastElementChild) {
+              e.preventDefault();
+              focusNextSibling(submenu.children[1].lastElementChild! as HTMLElement);
+            }
+          }
+        // close submenu
+        } else if (input.justPressed(rtl_reference.current ? "navigateRight" : "navigateLeft")) {
+          if (innermost.parentElement?.parentElement?.parentElement?.classList.contains("PopoverMenu")) {
+            const parent_item = innermost.parentElement! as HTMLDivElement;
+            innermost!.dispatchEvent(new Event("_PopoverMenu_close"));
+
+            // forget submenu is open in the representing item.
+            parent_item.removeAttribute("data-open");
+
+            // focus back submenu representing item.
+            parent_item.focus();
+          }
+        }
+
+        return;
+      }
+    }
+
+    // if there is no item focused, handle arrows
+    // a little differently.
+
+    // focus last
+    if (input.justPressed("navigateUp")) {
+      const first = innermost_content_div.firstElementChild;
+      if (first) {
+        e.preventDefault();
+        focusPrevSibling(first as HTMLElement);
+      }
+    // focus first
+    } else if (input.justPressed("navigateDown")) {
+      const last = innermost_content_div.lastElementChild;
+      if (last) {
+        e.preventDefault();
+        focusNextSibling(last as HTMLElement);
+      }
+    // close current submenu
+    } else if (input.justPressed(rtl_reference.current ? "navigateRight" : "navigateLeft")) {
+      if (innermost.parentElement?.parentElement?.parentElement?.classList.contains("PopoverMenu")) {
+        const parent_item = innermost.parentElement! as HTMLDivElement;
+        innermost!.dispatchEvent(new Event("_PopoverMenu_close"));
+
+        // forget submenu is open in the representing item.
+        parent_item.removeAttribute("data-open");
+
+        // focus back submenu representing item.
+        parent_item.focus();
+      }
+    }
   }
 
   // handle typing
