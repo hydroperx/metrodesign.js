@@ -16,6 +16,7 @@ import * as ColorUtils from "../utils/ColorUtils";
 import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
 import * as MathUtils from "../utils/MathUtils";
 import { fitViewport, SimplePlacementType } from "../utils/PlacementUtils";
+import * as StringUtils from "../utils/StringUtils";
 import * as REMConvert from "../utils/REMConvert";
 import { COMMON_DELAY, MAXIMUM_Z_INDEX } from "../utils/Constants";
 
@@ -46,6 +47,10 @@ export function PopoverMenu(params: {
     keyDown: null,
     wheel: null,
   });
+
+  // typing cache
+  const key_sequence_reference = React.useRef<string>("");
+  const key_sequence_last_timestamp = React.useRef<number>(0);
 
   // tweens
   const tweens = React.useRef<gsap.core.Tween[]>([]);
@@ -499,7 +504,44 @@ export function PopoverMenu(params: {
 
   // handle typing
   function key_down(e: KeyboardEvent): void {
-    fixme();
+    if (e.key == " ") {
+      e.preventDefault();
+    }
+    if (String.fromCodePoint(e.key.toLowerCase().codePointAt(0) ?? 0) != e.key.toLowerCase()) {
+      key_sequence_last_timestamp.current = 0;
+      return;
+    }
+
+    // menu list
+    let menus = Array.from(get_content_div().querySelectorAll(".PopoverMenu[data-open='true']")) as HTMLDivElement[];
+    menus.splice(0, 0, div.current!);
+    const innermost = menus[menus.length - 1];
+    const innermost_content_div = innermost.children[1] as HTMLDivElement;
+
+    if (Date.now() < key_sequence_last_timestamp.current + 700) {
+      // continue key sequence
+      key_sequence_reference.current += e.key.toLowerCase();
+    } else {
+      // start new key sequence
+      key_sequence_reference.current = e.key.toLowerCase();
+    }
+    let key_seq = key_sequence_reference.current;
+    const rtl = rtl_reference.current;
+    if (rtl) {
+      key_seq = StringUtils.reverse(key_seq);
+    }
+    for (const item of Array.from(innermost_content_div.children) as HTMLElement[]) {
+      if (item.children.length < 2 || !item.classList.contains("Item")) {
+        continue;
+      }
+      const label = item.children[1]! as HTMLElement;
+      const label_text = label.innerText.trim().toLowerCase();
+      if (rtl ? label_text.endsWith(key_seq) : label_text.startsWith(key_seq)) {
+        item.focus();
+        break;
+      }
+    }
+    key_sequence_last_timestamp.current = Date.now();
   }
 
   // prevent scrolling outside while PopoverMenu is open
