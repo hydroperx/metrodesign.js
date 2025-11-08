@@ -9,9 +9,17 @@ import {
   Group,
   HGroup,
   VGroup,
+  Button,
   Label,
+  Icon,
+  NativeIcons,
   ProgressBar,
   ProgressRing,
+  PopoverMenu,
+  MenuTrigger,
+  Item,
+  Indicator,
+  Separator,
 } from "@hydroperx/metrodesign/components";
 import {
   Primary,
@@ -34,9 +42,31 @@ function App() {
         style={{
           overflowY: "auto",
         }}>
-          <HGroup wheelHorizontal>
-            <Label variant="heading" minWidth={3000}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce rutrum odio viverra ante maximus facilisis. Vestibulum at laoreet erat. Aenean quis faucibus arcu. Mauris vel dictum lorem, sit amet dignissim tortor. Aliquam volutpat, orci eget interdum viverra, justo justo accumsan leo, et auctor magna elit et velit. Vivamus eu enim a nibh interdum efficitur. Aliquam erat volutpat. Sed in diam volutpat, ullamcorper erat eu, volutpat nisi. Nulla sodales odio ex. Suspendisse nec ante id nulla mollis malesuada. Mauris sit amet dapibus quam, vitae porttitor risus. Morbi ac nunc vitae dui ultricies pharetra at ac odio. In imperdiet id orci a condimentum.</Label>
-          </HGroup>
+        <VGroup>
+          <MenuTrigger>
+            <Button outline>click me</Button>
+            <PopoverMenu>
+              <Item>
+                <span><Icon type={NativeIcons.INTERNET_EXPLORER}/></span>
+                <Label>Internet Explorer</Label>
+                <span>Ctrl+E</span>
+              </Item>
+              <Separator/>
+              <Item>
+                <span></span>
+                <Label>Submenu</Label>
+                <span><Indicator/></span>
+                <PopoverMenu>
+                  <Item>
+                    <span></span>
+                    <Label>Item 1</Label>
+                    <span></span>
+                  </Item>
+                </PopoverMenu>
+              </Item>
+            </PopoverMenu>
+          </MenuTrigger>
+        </VGroup>
       </Root>
     </ThemeProvider>
   );

@@ -55,6 +55,7 @@ export function Item(params: {
     const popoverMenu = get_popover_menu();
     if (parentPopoverMenu) {
       button.current!.focus();
+      // close other sibling menus
       for (const other of parentPopoverMenu!.children[1].children) {
         if (other === button.current!) {
           continue;
@@ -89,6 +90,7 @@ export function Item(params: {
     const popoverMenu = get_popover_menu();
     if (parentPopoverMenu) {
       button.current!.focus();
+      // close other sibling menus
       for (const other of parentPopoverMenu!.children[1].children) {
         if (other === button.current!) {
           continue;

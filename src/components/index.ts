@@ -13,3 +13,4 @@ export * from "./PopoverMenu";
 export * from "./Item";
 export * from "./Indicator";
 export * from "./Separator";
+export * from "./MenuTrigger";

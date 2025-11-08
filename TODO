@@ -130,28 +130,30 @@ Each item must contain three tags: the icon, the label, and the ending (usually 
 
 Used for triggering a `PopoverMenu` from the direct button child.
 
-- [ ] Done (use the custom event `_PopoverMenu_open` with `CustomEvent<PopoverMenuOpenParams>`)
-  - [ ] prefer (SimplePlacementType)
+- [x] Done (use the custom event `_PopoverMenu_open` with `CustomEvent<PopoverMenuOpenParams>`)
+  - [x] prefer (SimplePlacementType)
 
 # Item
 
 Way contextual; skinning and behavior relies on surrounding container (e.g. `PopoverMenu`).
 
-- [ ] Done
+- [x] Done
 
 # Separator
 
 Way contextual; skinning and behavior relies on surrounding container (e.g. `PopoverMenu`).
 
+- [x] Done
+
 # Option
 
 Way contextual; skinning and behavior relies on surrounding container (e.g. `ComboBox`).
 
-- [ ] Done
+- [x] Done
 
 # Page
 
-Way contextual; skinning and behavior relies on surrounding container. It is basically used within live tiles (but the `Page` node must not be rendered by ReactDOM).
+Way contextual; skinning and behavior relies on surrounding container. It is basically used within live tiles.
 
 - [ ] Done
 

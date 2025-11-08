@@ -9,7 +9,7 @@ import { Color } from "@hydroperx/color";
 import * as REMConvert from "../utils/REMConvert";
 import { MAXIMUM_Z_INDEX } from "../utils/Constants";
 import * as ColorUtils from "../utils/ColorUtils";
-import { DownArrowIcon, Icon } from "./Icon";
+import { Icon, NativeIcons } from "./Icon";
 import { RTLContext } from "../layout/RTL";
 import { PrimaryContext, Theme, ThemeContext } from "../theme/Theme";
 import {
@@ -208,7 +208,7 @@ export function Button(params: ButtonParams) {
     <>
       <Button
         ref={params.ref}
-        className={params.className}
+        className={["Button", ...(params.className ?? "").split(" ").filter(c => c != "")].join(" ")}
         style={newStyle}
         type={params.type ?? "button"}
         disabled={params.disabled ?? false}
@@ -246,7 +246,7 @@ export function Button(params: ButtonParams) {
           <>
             <div className="button-small-inner">{params.children}</div>
             <div className="button-small-arrow">
-              <DownArrowIcon size={8} />
+              <Icon type={NativeIcons.ARROW_DOWN} size={8} />
             </div>
           </>
         ) : (
