@@ -10,6 +10,7 @@ import * as FloatingUI from "@floating-ui/dom";
 import $ from "jquery";
 
 // local
+import { Icon, NativeIcons } from "./Icon";
 import { RTLContext } from "../layout/RTL";
 import { Theme, ThemeContext } from "../theme/Theme";
 import * as ColorUtils from "../utils/ColorUtils";
@@ -149,14 +150,14 @@ export function PopoverMenu(params: {
 
     // enumerate parent PopoverMenus (ascending order)
     const parents: HTMLDivElement[] = [];
-    let possibly_unrelated_parent = div_el.parentElement?.parentElement?.parentElement;
+    let possibly_unrelated_parent = div_el.parentElement?.parentElement;
     for (; possibly_unrelated_parent;) {
       if (possibly_unrelated_parent.classList.contains("PopoverMenu")) {
         parents.splice(0, 0, possibly_unrelated_parent as HTMLDivElement);
       } else {
         break;
       }
-      possibly_unrelated_parent = possibly_unrelated_parent.parentElement?.parentElement?.parentElement;
+      possibly_unrelated_parent = possibly_unrelated_parent.parentElement?.parentElement;
     }
 
     // for this menu to open, parents must be previously opened too.
@@ -420,7 +421,7 @@ export function PopoverMenu(params: {
       // focus back representing item.
       } else {
         innermost.dispatchEvent(new Event("_PopoverMenu_close"));
-        const item = innermost.parentElement!;
+        const item = innermost.previousElementSibling! as HTMLElement;
         item.focus();
         // forget about submenu being open on item.
         item.removeAttribute("data-open");
@@ -444,7 +445,7 @@ export function PopoverMenu(params: {
           focusNextSibling(item);
         // open submenu
         } else if (input.justPressed(rtl_reference.current ? "navigateLeft" : "navigateRight")) {
-          const submenu = item.children.length >= 4 ? item.children[3] as HTMLElement : null;
+          const submenu = (item.nextElementSibling ?? null) as null | HTMLElement;
           if (submenu?.classList.contains("PopoverMenu")) {
             (item as HTMLButtonElement).click();
             if (submenu.children[1].lastElementChild) {
@@ -454,8 +455,8 @@ export function PopoverMenu(params: {
           }
         // close submenu
         } else if (input.justPressed(rtl_reference.current ? "navigateRight" : "navigateLeft")) {
-          if (innermost.parentElement?.parentElement?.parentElement?.classList.contains("PopoverMenu")) {
-            const parent_item = innermost.parentElement! as HTMLDivElement;
+          if (innermost.parentElement?.parentElement?.classList.contains("PopoverMenu")) {
+            const parent_item = innermost.previousElementSibling! as HTMLDivElement;
             innermost!.dispatchEvent(new Event("_PopoverMenu_close"));
 
             // forget submenu is open in the representing item.
@@ -489,8 +490,8 @@ export function PopoverMenu(params: {
       }
     // close current submenu
     } else if (input.justPressed(rtl_reference.current ? "navigateRight" : "navigateLeft")) {
-      if (innermost.parentElement?.parentElement?.parentElement?.classList.contains("PopoverMenu")) {
-        const parent_item = innermost.parentElement! as HTMLDivElement;
+      if (innermost.parentElement?.parentElement?.classList.contains("PopoverMenu")) {
+        const parent_item = innermost.previousElementSibling! as HTMLDivElement;
         innermost!.dispatchEvent(new Event("_PopoverMenu_close"));
 
         // forget submenu is open in the representing item.
@@ -613,11 +614,15 @@ export function PopoverMenu(params: {
       $borderColor={theme.colors.inputBorder}
       $foreground={theme.colors.foreground}>
 
-      <div className="PopoverMenu-up-arrow" ref={arrow_up}></div>
+      <div className="PopoverMenu-up-arrow" ref={arrow_up}>
+        <Icon type={NativeIcons.ARROW_UP} size={13}/>
+      </div>
       <div className="PopoverMenu-content">
         {params.children}
       </div>
-      <div className="PopoverMenu-down-arrow" ref={arrow_down}></div>
+      <div className="PopoverMenu-down-arrow" ref={arrow_down}>
+        <Icon type={NativeIcons.ARROW_DOWN} size={13}/>
+      </div>
     </Div>
   );
 }

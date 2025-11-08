@@ -21,6 +21,7 @@ import {
   Indicator,
   Separator,
 } from "@hydroperx/metrodesign/components";
+import { RTLProvider } from "@hydroperx/metrodesign/layout";
 import {
   Primary,
   ThemePresets,
@@ -49,7 +50,12 @@ function App() {
               <Item>
                 <span><Icon type={NativeIcons.INTERNET_EXPLORER}/></span>
                 <Label>Internet Explorer</Label>
-                <span>Ctrl+E</span>
+                <span><Indicator state="none"/></span>
+              </Item>
+              <Item>
+                <span><Icon type={NativeIcons.BING}/></span>
+                <Label>Bing</Label>
+                <span><Indicator state="checked"/></span>
               </Item>
               <Separator/>
               <Item>
@@ -61,8 +67,105 @@ function App() {
                 <Item>
                   <span></span>
                   <Label>Item 1</Label>
-                  <span></span>
+                  <span><Indicator/></span>
                 </Item>
+                <PopoverMenu>
+                  <Item>
+                    <span></span>
+                    <Label>Item A</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item B</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item C</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item D</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item E</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item F</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item G</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item H</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item I</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item J</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item K</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item L</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item M</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item N</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item O</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item P</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item Q</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item R</Label>
+                    <span></span>
+                  </Item>
+                  <Item>
+                    <span></span>
+                    <Label>Item S</Label>
+                    <span></span>
+                  </Item>
+                </PopoverMenu>
               </PopoverMenu>
             </PopoverMenu>
           </MenuTrigger>

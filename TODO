@@ -71,7 +71,6 @@ Baseline group.
 
 - [x] Done
 - [ ] Close popover menus when clicking a non-submenu Item
-- [ ] Fix handling/detection of submenu PopoverMenus (they should follow the Item tag, not be inside it (idx. 3, len = 4))
 
 Each item must contain three tags: the icon, the label, and the ending (usually a shortcut or submenu indicator). All of them, except the label, are wrapped in a `span`. For an item representing a submenu, there is an extra tag being the sub-popover-menu.
 

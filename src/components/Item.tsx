@@ -62,9 +62,10 @@ export function Item(params: {
         }
         if (other.classList.contains("Item") && other.getAttribute("data-open") == "true") {
           other.removeAttribute("data-open");
-          other.children[3].dispatchEvent(new Event("_PopoverMenu_close"));
+          other.nextElementSibling!.dispatchEvent(new Event("_PopoverMenu_close"));
         }
       }
+      // open submenu
       if (popoverMenu) {
         const p: PopoverMenuOpenParams = {
           reference: button.current!,
@@ -74,6 +75,22 @@ export function Item(params: {
         popoverMenu.dispatchEvent(new CustomEvent("_PopoverMenu_open", {
           detail: p,
         }));
+      // or close all PopoverMenus
+      } else {
+        // enumerate parent PopoverMenus (ascending order)
+        const parents: HTMLDivElement[] = [parentPopoverMenu];
+        let possibly_unrelated_parent = parentPopoverMenu.parentElement?.parentElement;
+        for (; possibly_unrelated_parent;) {
+          if (possibly_unrelated_parent.classList.contains("PopoverMenu")) {
+            parents.splice(0, 0, possibly_unrelated_parent as HTMLDivElement);
+          } else {
+            break;
+          }
+          possibly_unrelated_parent = possibly_unrelated_parent.parentElement?.parentElement;
+        }
+
+        // close them
+        parents[0].dispatchEvent(new Event("_PopoverMenu_close"));
       }
       params.click?.(e);
       return;
@@ -97,7 +114,7 @@ export function Item(params: {
         }
         if (other.classList.contains("Item") && other.getAttribute("data-open") == "true") {
           other.removeAttribute("data-open");
-          other.children[3].dispatchEvent(new Event("_PopoverMenu_close"));
+          other.nextElementSibling!.dispatchEvent(new Event("_PopoverMenu_close"));
         }
       }
       if (popoverMenu) {
@@ -143,11 +160,8 @@ export function Item(params: {
 
   // returns the nested PopoverMenu if the case
   function get_popover_menu(): null | HTMLDivElement {
-    if (button.current!.children.length < 4) {
-      return null;
-    }
-    if (button.current!.children[3].classList.contains("PopoverMenu")) {
-      return button.current!.children[3] as HTMLDivElement;
+    if (button.current!.nextElementSibling?.classList.contains("PopoverMenu")) {
+      return button.current!.nextElementSibling! as HTMLDivElement;
     }
     return null;
   }
