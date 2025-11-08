@@ -37,13 +37,12 @@ Baseline group.
 - [x] Done
 - [x] `error` boolean (for the `Theme`'s danger color)
 - [x] `warning` boolean (for the `Theme`'s warning color)
-- [ ] tooltip must close and not open while a PopoverMenu is open.
 
 # Button
 
 - [x] Done
 - [x] Use an `outline` boolean instead of a variant.
-- [ ] tooltip must close and not open while a PopoverMenu is open.
+- [ ] tooltip must close and not open while a next-sibling PopoverMenu is open.
 - [ ] submit parameter (i.e. makes this button submit the enclosing Form)
 
 # TextInput
@@ -78,8 +77,8 @@ Baseline group.
   - [x] PopoverMenuController (provide optional `controller=` ref)
     - [x] .open() method
     - [x] .close() method (closes the menu and its submenus)
-  - [ ] Open logic
-  - [ ] Close logic
+  - [x] Open logic
+  - [x] Close logic
   - [ ] Hovering a submenu representation's item should open the submenu (without focusing any of its items) and close the previously open siblings.
   - [ ] Clicking outside the open popover menu should close it and other open submenus.
   - [ ] Clicking a submenu Item should open its PopoverMenu (the submenu)

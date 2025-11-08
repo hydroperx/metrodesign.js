@@ -12,7 +12,7 @@ import { RTLContext } from "../layout/RTL";
 import { Theme, ThemeContext } from "../theme/Theme";
 import * as ColorUtils from "../utils/ColorUtils";
 import * as MathUtils from "../utils/MathUtils";
-import { SimplePlacementType } from "../utils/PlacementUtils";
+import { fitViewport, SimplePlacementType } from "../utils/PlacementUtils";
 import * as REMConvert from "../utils/REMConvert";
 import { COMMON_DELAY, MAXIMUM_Z_INDEX } from "../utils/Constants";
 import { TypedEventTarget } from "@hydroperx/event";
@@ -66,8 +66,8 @@ export function PopoverMenu(params: {
     div_el.addEventListener("_PopoverMenu_open", external_open_request as any);
 
     // handle external request to close
-    function external_close_request(e: CustomEvent<{ immediate: boolean }>): void {
-      close(e.detail.immediate);
+    function external_close_request(e: Event): void {
+      close();
     }
     div_el.addEventListener("_PopoverMenu_close", external_close_request as any);
 
@@ -146,9 +146,7 @@ export function PopoverMenu(params: {
       if (parents.includes(menu as HTMLDivElement) || menu === div_el) {
         continue;
       }
-      menu.dispatchEvent(new CustomEvent("_PopoverMenu_close", {
-        detail: { immediate: true },
-      }));
+      menu.dispatchEvent(new Event("_PopoverMenu_close"));
     }
 
     // remember as open
@@ -185,7 +183,9 @@ export function PopoverMenu(params: {
   }
 
   // placement logic
-  function place_smooth(params: PopoverMenuOpenParams): void {
+  async function place_smooth(params: PopoverMenuOpenParams): Promise<void> {
+    const div_el = div.current!;
+
     // placement resolution
     let placement: SimplePlacementType = "bottom";
 
@@ -194,17 +194,87 @@ export function PopoverMenu(params: {
 
     if (params.reference) {
       // position PopoverMenu after a reference element.
-      fixme();
+      let prev_display = div_el.style.display;
+      if (prev_display == "none") div_el.style.display = "inline-flex";
+      const r = await FloatingUI.computePosition(params.reference!, div_el, {
+        placement: params.prefer,
+        middleware: [
+          FloatingUI.flip(), FloatingUI.shift(), FloatingUI.offset(10),
+          FloatingUI.size({
+            apply({ availableWidth, availableHeight, elements }) {
+              Object.assign(elements.floating.style, {
+                maxWidth: availableWidth + "px",
+                maxHeight: availableHeight + "px",
+              });
+            },
+          }),
+        ],
+      });
+      div_el.style.display = prev_display;
+      x = r.x;
+      y = r.y;
+      placement = r.placement.replace(/\-.*/, "") as SimplePlacementType;
     } else {
       // position PopoverMenu at a given point.
-      fixme();
+      assert(
+        params.event !== undefined || params.position !== undefined,
+        "At least a position must be specified when opening a PopoverMenu.",
+      );
+      let x1 = 0, y1 = 0;
+      if (params.event) {
+        x1 = params.event!.clientX;
+        y1 = params.event!.clientY;
+      } else {
+        [x1, y1] = params.position!;
+      }
+      [x, y] = fitViewport(div_el, [x1, y1]);
     }
 
-    fixme();
+    // (x, y, alpha) tween
+    const duration = 0.18;
+    let tween: null | gsap.core.Tween = null;
+    switch (placement) {
+      case "top": {
+        tween = gsap.fromTo(
+          div_el,
+          { left: x + "px", top: (y + 15) + "px", opacity: 0 },
+          { top: y + "px", opacity: 1, duration, ease: "power1.out" },
+        );
+        break;
+      }
+      case "bottom": {
+        tween = gsap.fromTo(
+          div_el,
+          { left: x + "px", top: (y - 15) + "px", opacity: 0 },
+          { top: y + "px", opacity: 1, duration, ease: "power1.out" },
+        );
+        break;
+      }
+      case "left": {
+        tween = gsap.fromTo(
+          div_el,
+          { left: (x + 15) + "px", top: y + "px", opacity: 0 },
+          { left: x + "px", opacity: 1, duration, ease: "power1.out" },
+        );
+        break;
+      }
+      case "right": {
+        tween = gsap.fromTo(
+          div_el,
+          { left: (x - 15) + "px", top: y + "px", opacity: 0 },
+          { left: x + "px", opacity: 1, duration, ease: "power1.out" },
+        );
+        break;
+      }
+    }
+    tween!.then(() => {
+      tweens.current.length = 0;
+    });
+    tweens.current.push(tween!);
   }
 
   // close logic
-  function close(immediate: boolean = false): void {
+  function close(): void {
     const div_el = div.current!;
     if (div_el.getAttribute("data-open") !== "true") {
       return;
@@ -216,9 +286,7 @@ export function PopoverMenu(params: {
 
     // close submenus
     for (const menu of div_el.querySelectorAll(".PopoverMenu[data-open='true']")) {
-      menu.dispatchEvent(new CustomEvent("_PopoverMenu_close", {
-        detail: { immediate },
-      }));
+      menu.dispatchEvent(new Event("_PopoverMenu_close"));
     }
 
     // remember as closed
@@ -233,8 +301,8 @@ export function PopoverMenu(params: {
     }
     tweens.current.length = 0;
 
-    // visibility immediately cleared or play a position-alpha tween before?
-    fixme();
+    // clear visibility
+    div_el.style.visibility = "";
   }
 
   // returns content div
