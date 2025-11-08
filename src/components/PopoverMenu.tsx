@@ -386,17 +386,45 @@ export function PopoverMenu(params: {
     }
   }
 
-  // handle input pressed
+  // handle arrows and escape
   function input_pressed(e: Event): void {
+    // basics
+    const div_el = div.current!;
+    if (div_el.getAttribute("data-open") !== "true") {
+      return;
+    }
+    const content_div = get_content_div();
+
+    // handle escape
+    if (input.justPressed("escape")) {
+      // close innermost menu
+      let menus = Array.from(content_div.querySelectorAll(".PopoverMenu[data-open='true']")) as HTMLDivElement[];
+      menus.splice(0, 0, div_el);
+      // just root open?
+      if (menus.length == 1) {
+        close();
+      // otherwise close the innermost submenu and
+      // focus back representing item.
+      } else {
+        const innermost = menus[menus.length - 1];
+        innermost.dispatchEvent(new Event("_PopoverMenu_close"));
+        const item = innermost.parentElement!;
+        item.focus();
+        // forget about submenu being open on item.
+        item.removeAttribute("data-open");
+      }
+      return;
+    }
+
     fixme();
   }
 
-  // handle key down
+  // handle typing
   function key_down(e: KeyboardEvent): void {
     fixme();
   }
 
-  // handle wheel event on the viewport
+  // prevent scrolling outside while PopoverMenu is open
   function global_wheel(e: WheelEvent): void {
     fixme();
   }
@@ -493,7 +521,8 @@ const Div = styled.div<{
     flex-direction: row-reverse;
   }
   && > .PopoverMenu-content > .Item:focus:not(:disabled),
-  && > .PopoverMenu-content > .Item:active:not(:disabled) {
+  && > .PopoverMenu-content > .Item:active:not(:disabled),
+  && > .PopoverMenu-content > .Item[data-open="true"] {
     background: ${$ => ColorUtils.contrast($.$backgroundColor, 0.4)};
     color: ${$ => $.$foreground};
   }
