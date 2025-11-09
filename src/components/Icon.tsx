@@ -163,8 +163,15 @@ export type NativeIcon =
 /**
  * Used for type inference for a `NativeIcon` identity
  * in case a context type isn't directly typed as `NativeIcon`.
+ * 
+ * @example
+ *
+ * ```
+ * let type: string;
+ * type = TypedNativeIcon("bing");
+ * ```
  */
-export function nativeIcon(icon: NativeIcon): NativeIcon {
+export function TypedNativeIcon(icon: NativeIcon): NativeIcon {
   return icon;
 }
 
@@ -173,40 +180,40 @@ const iconMap = new Map<string, { black: any; white: any }>();
 
 // Initial registers
 IconMap.registerMap(new Map([
-  [nativeIcon("bullet"), { black: bullet_black, white: bullet_white }],
-  [nativeIcon("checked"), { black: checked_black, white: checked_white }],
-  [nativeIcon("arrowLeft"), { black: arrow_left_black, white: arrow_left_white }],
-  [nativeIcon("arrowRight"), { black: arrow_right_black, white: arrow_right_white }],
-  [nativeIcon("arrowUp"), { black: arrow_up_black, white: arrow_up_white }],
-  [nativeIcon("arrowDown"), { black: arrow_down_black, white: arrow_down_white }],
-  [nativeIcon("fullArrowLeft"), { black: fullarrow_left_black, white: fullarrow_left_white }],
-  [nativeIcon("fullArrowRight"), { black: fullarrow_right_black, white: fullarrow_right_white }],
-  [nativeIcon("fullArrowUp"), { black: fullarrow_up_black, white: fullarrow_up_white }],
-  [nativeIcon("fullArrowDown"), { black: fullarrow_down_black, white: fullarrow_down_white }],
-  [nativeIcon("search"), { black: search_black, white: search_white }],
-  [nativeIcon("clear"), { black: clear_black, white: clear_white }],
-  [nativeIcon("games"), { black: games_black, white: games_white }],
-  [nativeIcon("internetExplorer"), { black: ie_black, white: ie_white }],
-  [nativeIcon("video"), { black: video_black, white: video_white }],
-  [nativeIcon("store"), { black: store_black, white: store_white }],
-  [nativeIcon("settings"), { black: settings_black, white: settings_white }],
-  [nativeIcon("mail"), { black: mail_black, white: mail_white }],
-  [nativeIcon("user"), { black: user_black, white: user_white }],
-  [nativeIcon("security"), { black: security_black, white: security_white }],
-  [nativeIcon("calculator"), { black: calc_black, white: calc_white }],
-  [nativeIcon("camera"), { black: camera_black, white: camera_white }],
-  [nativeIcon("bluetooth"), { black: bluetooth_black, white: bluetooth_white }],
-  [nativeIcon("news"), { black: news_black, white: news_white }],
-  [nativeIcon("bing"), { black: bing_black, white: bing_white }],
-  [nativeIcon("opera"), { black: opera_black, white: opera_white }],
-  [nativeIcon("chrome"), { black: chrome_black, white: chrome_white }],
-  [nativeIcon("firefox"), { black: firefox_black, white: firefox_white }],
-  [nativeIcon("msedge"), { black: msedge_black, white: msedge_white }],
-  [nativeIcon("lapis"), { black: lapis_black, white: lapis_white }],
-  [nativeIcon("idea"), { black: idea_black, white: idea_white }],
-  [nativeIcon("help"), { black: help_black, white: help_white }],
-  [nativeIcon("helpCircle"), { black: help_circle_black, white: help_circle_white }],
-  [nativeIcon("new"), { black: new_black, white: new_white }],
+  [TypedNativeIcon("bullet"), { black: bullet_black, white: bullet_white }],
+  [TypedNativeIcon("checked"), { black: checked_black, white: checked_white }],
+  [TypedNativeIcon("arrowLeft"), { black: arrow_left_black, white: arrow_left_white }],
+  [TypedNativeIcon("arrowRight"), { black: arrow_right_black, white: arrow_right_white }],
+  [TypedNativeIcon("arrowUp"), { black: arrow_up_black, white: arrow_up_white }],
+  [TypedNativeIcon("arrowDown"), { black: arrow_down_black, white: arrow_down_white }],
+  [TypedNativeIcon("fullArrowLeft"), { black: fullarrow_left_black, white: fullarrow_left_white }],
+  [TypedNativeIcon("fullArrowRight"), { black: fullarrow_right_black, white: fullarrow_right_white }],
+  [TypedNativeIcon("fullArrowUp"), { black: fullarrow_up_black, white: fullarrow_up_white }],
+  [TypedNativeIcon("fullArrowDown"), { black: fullarrow_down_black, white: fullarrow_down_white }],
+  [TypedNativeIcon("search"), { black: search_black, white: search_white }],
+  [TypedNativeIcon("clear"), { black: clear_black, white: clear_white }],
+  [TypedNativeIcon("games"), { black: games_black, white: games_white }],
+  [TypedNativeIcon("internetExplorer"), { black: ie_black, white: ie_white }],
+  [TypedNativeIcon("video"), { black: video_black, white: video_white }],
+  [TypedNativeIcon("store"), { black: store_black, white: store_white }],
+  [TypedNativeIcon("settings"), { black: settings_black, white: settings_white }],
+  [TypedNativeIcon("mail"), { black: mail_black, white: mail_white }],
+  [TypedNativeIcon("user"), { black: user_black, white: user_white }],
+  [TypedNativeIcon("security"), { black: security_black, white: security_white }],
+  [TypedNativeIcon("calculator"), { black: calc_black, white: calc_white }],
+  [TypedNativeIcon("camera"), { black: camera_black, white: camera_white }],
+  [TypedNativeIcon("bluetooth"), { black: bluetooth_black, white: bluetooth_white }],
+  [TypedNativeIcon("news"), { black: news_black, white: news_white }],
+  [TypedNativeIcon("bing"), { black: bing_black, white: bing_white }],
+  [TypedNativeIcon("opera"), { black: opera_black, white: opera_white }],
+  [TypedNativeIcon("chrome"), { black: chrome_black, white: chrome_white }],
+  [TypedNativeIcon("firefox"), { black: firefox_black, white: firefox_white }],
+  [TypedNativeIcon("msedge"), { black: msedge_black, white: msedge_white }],
+  [TypedNativeIcon("lapis"), { black: lapis_black, white: lapis_white }],
+  [TypedNativeIcon("idea"), { black: idea_black, white: idea_white }],
+  [TypedNativeIcon("help"), { black: help_black, white: help_white }],
+  [TypedNativeIcon("helpCircle"), { black: help_circle_black, white: help_circle_white }],
+  [TypedNativeIcon("new"), { black: new_black, white: new_white }],
 ]));
 
 const Img = styled.img<{
@@ -231,7 +238,7 @@ export function Icon(params: IconParams) {
 
   // icon type
   assert(!!params.type || !!params.native, "Icon type must be specified.");
-  const type = React.useRef(params.type ?? nativeIcon(params.native!));
+  const type = React.useRef(params.type ?? TypedNativeIcon(params.native!));
 
   // compute size
   const computed_size =
@@ -258,7 +265,7 @@ export function Icon(params: IconParams) {
 
   // sync icon type
   React.useEffect(() => {
-    type.current = params.type ?? nativeIcon(params.native!);
+    type.current = params.type ?? TypedNativeIcon(params.native!);
 
     // update source
     const m = iconMap.get(type.current);

@@ -2,7 +2,7 @@
 import extend from "extend";
 import { styled } from "styled-components";
 import { computePosition, offset, flip, shift } from "@floating-ui/dom";
-import React, { Ref, useContext, useRef, useState, useEffect } from "react";
+import React from "react";
 import { Color } from "@hydroperx/color";
 
 // local
@@ -21,16 +21,20 @@ import {
 /**
  * Button component.
  */
-export function Button(params: ButtonParams) {
-  // Take the theme context
-  const theme = useContext(ThemeContext);
+export function Button(params: ButtonParams): React.ReactNode {
+  // bindings
+  const button = React.useRef<null | HTMLButtonElement>(null);
 
-  // Whether to prefer primary
-  const prefer_primary = useContext(PrimaryContext);
+  // ?theme
+  const theme = React.useContext(ThemeContext);
 
-  // Locale direction
-  const rtl = useContext(RTLContext);
+  // ?rtl
+  const rtl = React.useContext(RTLContext);
 
+  // linked popover menu (next-sibling) if any
+  const linked_popover_menu = React.useRef<null | HTMLElement>(null);
+
+  // inline styles
   const newStyle: React.CSSProperties = {};
 
   if (params.minWidth !== undefined)
@@ -49,7 +53,7 @@ export function Button(params: ButtonParams) {
     extend(newStyle, params.style);
   }
 
-  // Emotion CSS
+  // styled-components tag
   let Button_comp = null;
 
   let color: Color | string = "",
@@ -129,28 +133,38 @@ export function Button(params: ButtonParams) {
   }
 
   const tooltip = params.tooltip;
-  const tooltip_place_ref = useRef<SimplePlacementType>("bottom");
-  const [tooltip_visible, set_tooltip_visible] = useState<boolean>(false);
-  const [tooltip_x, set_tooltip_x] = useState<number>(0);
-  const [tooltip_y, set_tooltip_y] = useState<number>(0);
-  const tooltip_el: Ref<HTMLDivElement | null> = useRef(null);
+  const tooltip_place_ref = React.useRef<SimplePlacementType>("bottom");
+  const [tooltip_visible, set_tooltip_visible] = React.useState<boolean>(false);
+  const [tooltip_x, set_tooltip_x] = React.useState<number>(0);
+  const [tooltip_y, set_tooltip_y] = React.useState<number>(0);
+  const tooltip_el: React.RefObject<HTMLDivElement | null> = React.useRef(null);
   let tooltip_timeout = -1;
-  const hovering = useRef<boolean>(false);
+  const hovering = React.useRef<boolean>(false);
 
-  // Display tooltip
-  const userPointerEnter = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  // display tooltip
+  const userPointerEnter = React.useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
   const pointerEnter = (e: PointerEvent) => {
     hovering.current = true;
     if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
       tooltip_timeout = window.setTimeout(() => {
+        // do not open tooltip if linked PopoverMenu is open.
+        if (linked_popover_menu.current?.getAttribute("data-open") == "true") {
+          return;
+        }
+
         if (hovering.current) {
           set_tooltip_visible(true);
         }
       }, 700);
 
-      // Adjust tooltip position
+      // adjust tooltip position
       window.setTimeout(() => {
+        // do not open tooltip if linked PopoverMenu is open.
+        if (linked_popover_menu.current?.getAttribute("data-open") == "true") {
+          return;
+        }
+
         (async() => {
           let prev_display = tooltip_el.current!.style.display;
           if (prev_display === "none") tooltip_el.current!.style.display = "inline-block";
@@ -168,8 +182,8 @@ export function Button(params: ButtonParams) {
     return userPointerEnter.current?.(e as any);
   };
 
-  // Hide tooltip
-  const userPointerLeave = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  // hide tooltip
+  const userPointerLeave = React.useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
   const pointerLeave = (e: PointerEvent): any => {
     hovering.current = false;
     if (tooltip_timeout !== -1) {
@@ -180,27 +194,73 @@ export function Button(params: ButtonParams) {
     return userPointerLeave.current?.(e as any);
   };
 
-  // sync tooltip side
-  useEffect(() => {
+  // detect linked PopoverMenu
+  function detect_linked_menu(): void {
+    // basics
+    const button_el = button.current!;
+    let menu_sibling = (button_el.nextElementSibling ?? null) as null | HTMLElement;
+
+    if (!!menu_sibling && !!tooltip_el.current) {
+      menu_sibling = (menu_sibling.nextElementSibling ?? null) as null | HTMLElement;
+    }
+
+    // delayed detection
+    window.setTimeout(() => {
+      if (menu_sibling?.classList.contains("PopoverMenu")) {
+        linked_popover_menu.current = menu_sibling;
+      } else {
+        linked_popover_menu.current = null;
+      }
+    }, 10);
+  }
+
+  // initialization
+  React.useEffect(() => {
+    // basics
+    const button_el = button.current!;
+
+    // handle external request to close tooltip
+    function external_tooltip_close(): void {
+      set_tooltip_visible(false);
+    }
+    button_el.addEventListener("_Tooltip_close", external_tooltip_close);
+
+    // cleanup
+    return () => {
+      button_el.removeEventListener("_Tooltip_close", external_tooltip_close);
+    };
+  }, []);
+
+  // sync tooltip and detect linked menu
+  React.useEffect(() => {
     tooltip_place_ref.current = getTooltipPlacement(params.tooltip ?? "");
+    // detect linked menu
+    detect_linked_menu();
   }, [params.tooltip ?? ""]);
 
-  // reflect pointer over handler
-  useEffect(() => {
+  // sync pointer over handler
+  React.useEffect(() => {
     userPointerEnter.current = params.pointerEnter;
-  }, []);
+  }, [params.pointerEnter]);
 
-  // reflect pointer out handler
-  useEffect(() => {
+  // sync pointer out handler
+  React.useEffect(() => {
     userPointerLeave.current = params.pointerLeave;
-  }, []);
+  }, [params.pointerLeave]);
 
   const Button = Button_comp!;
 
   return (
     <>
       <Button
-        ref={params.ref}
+        ref={obj => {
+          button.current = obj;
+          if (typeof params.ref == "function") {
+            params.ref(obj);
+          } else if (params.ref) {
+            params.ref!.current = obj;
+          }
+        }}
         className={["Button", ...(params.className ?? "").split(" ").filter(c => c != "")].join(" ")}
         style={newStyle}
         type={params.type ?? "button"}
@@ -640,16 +700,22 @@ const TooltipDiv = styled.div<{
  * Represents a circle button containing an icon.
  */
 export function CircleButton(params: CircleButtonParams) {
-  // Take the theme context
-  const theme = useContext(ThemeContext);
+  // bindings
+  const button = React.useRef<null | HTMLButtonElement>(null);
 
-  // ?RTL
-  const rtl = useContext(RTLContext);
+  // ?theme
+  const theme = React.useContext(ThemeContext);
 
-  // Stylize
+  // ?rtl
+  const rtl = React.useContext(RTLContext);
+
+  // linked popover menu (next-sibling) if any
+  const linked_popover_menu = React.useRef<null | HTMLElement>(null);
+
+  // inline styles
   const iconStyle: React.CSSProperties = {};
 
-  // Misc
+  // misc
   const fg = Color(theme.colors.foreground).isDark() ? "#000" : "#fff";
   const normal_color = params.filled
     ? Color(fg).isDark()
@@ -666,21 +732,26 @@ export function CircleButton(params: CircleButtonParams) {
   const size_rf = REMConvert.pixels.remPlusUnit(size);
 
   const tooltip = params.tooltip;
-  const tooltip_place_ref = useRef<SimplePlacementType>("bottom");
-  const [tooltip_visible, set_tooltip_visible] = useState<boolean>(false);
-  const [tooltip_x, set_tooltip_x] = useState<number>(0);
-  const [tooltip_y, set_tooltip_y] = useState<number>(0);
-  const tooltip_el: Ref<HTMLDivElement | null> = useRef(null);
+  const tooltip_place_ref = React.useRef<SimplePlacementType>("bottom");
+  const [tooltip_visible, set_tooltip_visible] = React.useState<boolean>(false);
+  const [tooltip_x, set_tooltip_x] = React.useState<number>(0);
+  const [tooltip_y, set_tooltip_y] = React.useState<number>(0);
+  const tooltip_el: React.RefObject<HTMLDivElement | null> = React.useRef(null);
   let tooltip_timeout = -1;
-  const hovering = useRef<boolean>(false);
+  const hovering = React.useRef<boolean>(false);
 
-  // Display tooltip
-  const userPointerEnter = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  // display tooltip
+  const userPointerEnter = React.useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
   const pointerEnter = async (e: PointerEvent) => {
     hovering.current = true;
     if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
       tooltip_timeout = window.setTimeout(() => {
+        // do not open tooltip if linked PopoverMenu is open.
+        if (linked_popover_menu.current?.getAttribute("data-open") == "true") {
+          return;
+        }
+
         if (hovering.current) {
           set_tooltip_visible(true);
         }
@@ -688,6 +759,11 @@ export function CircleButton(params: CircleButtonParams) {
 
       // Adjust tooltip position
       window.setTimeout(() => {
+        // do not open tooltip if linked PopoverMenu is open.
+        if (linked_popover_menu.current?.getAttribute("data-open") == "true") {
+          return;
+        }
+
         (async() => {
           let prev_display = tooltip_el.current!.style.display;
           if (prev_display === "none") tooltip_el.current!.style.display = "inline-block";
@@ -705,8 +781,8 @@ export function CircleButton(params: CircleButtonParams) {
     return userPointerEnter.current?.(e as any);
   };
 
-  // Hide tooltip
-  const userPointerLeave = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  // hide tooltip
+  const userPointerLeave = React.useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
   const pointerLeave = (e: PointerEvent): any => {
     hovering.current = false;
     if (tooltip_timeout !== -1) {
@@ -717,26 +793,72 @@ export function CircleButton(params: CircleButtonParams) {
     return userPointerLeave.current?.(e as any);
   };
 
-  // sync tooltip side
-  useEffect(() => {
+  // detect linked PopoverMenu
+  function detect_linked_menu(): void {
+    // basics
+    const button_el = button.current!;
+    let menu_sibling = (button_el.nextElementSibling ?? null) as null | HTMLElement;
+
+    if (!!menu_sibling && !!tooltip_el.current) {
+      menu_sibling = (menu_sibling.nextElementSibling ?? null) as null | HTMLElement;
+    }
+
+    // delayed detection
+    window.setTimeout(() => {
+      if (menu_sibling?.classList.contains("PopoverMenu")) {
+        linked_popover_menu.current = menu_sibling;
+      } else {
+        linked_popover_menu.current = null;
+      }
+    }, 10);
+  }
+
+  // initialization
+  React.useEffect(() => {
+    // basics
+    const button_el = button.current!;
+
+    // handle external request to close tooltip
+    function external_tooltip_close(): void {
+      set_tooltip_visible(false);
+    }
+    button_el.addEventListener("_Tooltip_close", external_tooltip_close);
+
+    // cleanup
+    return () => {
+      button_el.removeEventListener("_Tooltip_close", external_tooltip_close);
+    };
+  }, []);
+
+  // sync tooltip and detect linked menu
+  React.useEffect(() => {
     tooltip_place_ref.current = getTooltipPlacement(params.tooltip ?? "");
+    // detect linked menu
+    detect_linked_menu();
   }, [params.tooltip ?? ""]);
 
-  // Reflect pointer over handler
-  useEffect(() => {
+  // sync pointer over handler
+  React.useEffect(() => {
     userPointerEnter.current = params.pointerEnter;
-  }, []);
+  }, [params.pointerEnter]);
 
-  // Reflect pointer out handler
-  useEffect(() => {
+  // sync pointer out handler
+  React.useEffect(() => {
     userPointerLeave.current = params.pointerLeave;
-  }, []);
+  }, [params.pointerLeave]);
 
   return (
     <>
       <CircleButtonButton
-        ref={params.ref}
-        className={params.className}
+        ref={obj => {
+          button.current = obj;
+          if (typeof params.ref == "function") {
+            params.ref(obj);
+          } else if (params.ref) {
+            params.ref!.current = obj;
+          }
+        }}
+        className={["Button", ...(params.className ?? "").split(" ").filter(c => c != "")].join(" ")}
         disabled={params.disabled}
         autoFocus={params.autoFocus}
         style={params.style}

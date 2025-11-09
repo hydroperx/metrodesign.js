@@ -42,18 +42,18 @@ Baseline group.
 
 - [x] Done
 - [x] Use an `outline` boolean instead of a variant.
-- [ ] tooltip must close and not open while a next-sibling PopoverMenu is open.
+- [x] tooltip must close and not open while a next-sibling PopoverMenu is open.
 - [ ] submit parameter (i.e. makes this button submit the enclosing Form)
 
 # TextInput
 
 - [x] Done
+- [ ] Pressing enter on any single-line text input should submit the enclosing form
 
 # Form
 
 - [ ] Done
 - [ ] submit event
-- [ ] Pressing enter on any single-line text input should submit the form
 
 # FormGroup
 
@@ -146,9 +146,8 @@ Way contextual; skinning and behavior relies on surrounding container. It is bas
 
 - [ ] Trash
 - [ ] Menu (hamburguer icon)
+- [ ] Shutdown
 
 # Themes
 
-- [ ] Provide more theme variants.
-
-
+- [ ] Provide more theme presets.

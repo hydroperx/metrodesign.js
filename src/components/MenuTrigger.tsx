@@ -36,14 +36,24 @@ export function MenuTrigger(params: {
 
   // div
   const div = React.useRef<null | HTMLDivElement>(null);
+  const menu = React.useRef<null | HTMLElement>(null);
 
   // initialization
   React.useEffect(() => {
-    assert(div.current!.children.length == 2, "Expected 2 children inside MenuTrigger.");
+    assert(div.current!.children.length >= 2, "Expected at least 2 children inside MenuTrigger.");
     const button = div.current!.children[0] as HTMLElement;
-    assert(button.classList.contains("Button"), "Expected first child of MenuTrigger to be a Button.");
-    const menu = div.current!.children[1] as HTMLElement;
-    assert(menu.classList.contains("PopoverMenu"), "Expected second child of MenuTrigger to be a PopoverMenu.");
+
+    window.setTimeout(() => {
+      assert(button.classList.contains("Button"), "Expected first child of MenuTrigger to be a Button.");
+      menu.current = div.current!.children[1] as HTMLElement;
+      if (!menu.current!.classList.contains("PopoverMenu") && div.current!.children.length >= 3) {
+        menu.current = div.current!.children[2] as HTMLElement
+      }
+      assert(menu.current!.classList.contains("PopoverMenu"), "Expected second/third child of MenuTrigger to be a PopoverMenu.");
+
+      // handle click
+      button.addEventListener("click", click);
+    }, 10);
 
     // handle click
     function click(): void {
@@ -51,11 +61,15 @@ export function MenuTrigger(params: {
         reference: button,
         prefer: prefer_sync.current,
       };
-      menu.dispatchEvent(new CustomEvent("_PopoverMenu_open", {
+
+      // close tooltip if any
+      button.dispatchEvent(new Event("_Tooltip_close"));
+
+      // open PopoverMenu
+      menu.current!.dispatchEvent(new CustomEvent("_PopoverMenu_open", {
         detail: p,
       }));
     }
-    button.addEventListener("click", click);
 
     // cleaunp
     return () => {

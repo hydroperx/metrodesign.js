@@ -63,7 +63,7 @@ export function Indicator(params: {
   const div = React.useRef<null | HTMLDivElement>(null);
 
   // indicator type
-  const [indicator_type, set_indicator_type] = React.useState<IndicatorState>(params.state ?? "popoverMenu");
+  const [indicator_type, set_indicator_type] = React.useState<IndicatorState>(params.state ?? "none");
 
   // ?rtl
   const rtl = React.useContext(RTLContext);
