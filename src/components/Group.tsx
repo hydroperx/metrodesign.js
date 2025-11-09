@@ -200,11 +200,12 @@ export function Group(params: {
       id={params.id}
       className={
         [
+          "Group",
           ...[params.full ? ["full"] : []],
           ...[params.solid ? ["solid"] : []],
           ...[params.input ? ["input"] : []],
           ...[params.visible === false ? ["invisible"] : []],
-          ...[params.className ? [params.className] : []]
+          ...[(params.className ?? "").split(" ").filter(c => c != "")],
         ].join(" ")
       }
       ref={(node) => {

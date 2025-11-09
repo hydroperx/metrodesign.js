@@ -24,7 +24,7 @@ export function FormGroup(params: {
       $vertical={!!params.vertical}
       $rtl={rtl}
       style={params.style}
-      className={params.className}
+      className={["FormGroup", ...(params.className ?? "").split(" ").filter(c => c != "")].join(" ")}
       id={params.id}
     >
       {params.children}
