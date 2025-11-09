@@ -21,7 +21,7 @@ The small tiles unit (1x1) is used for positioning and sizing of tiles. There ar
     - If `x` and `y` are non-`null`:
       - Save a snapshot of the tiles.
       - Add tile `id` to the specified (x, y) position with the given size.
-      - Call `fit(id, tile)`
+      - Call `fit(tile)`
       - If `resolveConflicts(id)` is true
         - Call `fillMinimumPosition();`
         - Call `compact();`
@@ -38,7 +38,7 @@ The small tiles unit (1x1) is used for positioning and sizing of tiles. There ar
   - That supports a `bool MoveTile(string id, int x, int y)` method.
     - Save a snapshot of the tiles.
     - Move tile `id` to the specified (x, y) position.
-    - Call `fit(id, tile)`
+    - Call `fit(tile)`
     - If `resolveConflicts(id)` is true
       - Call `fillMinimumPosition();`
       - Call `compact();`
@@ -69,12 +69,6 @@ The small tiles unit (1x1) is used for positioning and sizing of tiles. There ar
     - If there are holes between tiles, snap tile clusters such that there are no holes anymore (e.g. undo horizontal holes by snapping clusters from right to left; undo vertical holes by snapping clusters from the bottom to the top).
   - That implements an internal method `void fillMinimumPosition()`.
     - If there are any tiles and the position (0, 0) is not occupied, snap tile clusters such that the position (0, 0) is occupied.
-  - That implements an internal method `void fit(string tileId, Tile tile)`
-    - If the tile does not overflow the container
-      - Exit
-    - Walk the overflowing position in rows/columns and slightly increase/decrease the necessary for the tile to fit in. Important when switching from horizontal to vertical layout.
-      - Whether to go rows-first or columns-first primarily that depends on what axis the overflow occurs.
-      - Note that while doing this, conflicting tiles must be skipped until there is no conflicting tile (how they are skipped, again, depends on what axis the overflow occurs).
   - That provides an utility method for determining whether a rectangle fully enters a tile. Useful for implementing folders.
     - Folder implementation would be like "drag tile over another": if it hadn't began 'merging into a folder', then begin and stay so for 1.5 secs; if already, then move tile instead.
 - A `TilesParams` struct with

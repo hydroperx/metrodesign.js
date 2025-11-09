@@ -1,9 +1,13 @@
+// third-party
 import assert from "assert";
 
+// local
+import * as MathUtils from "../utils/MathUtils";
+
 /**
- * A tile in the `BaseLayout` class.
+ * A tile in the `SimpleGroup` class.
  */
-export class BaseTile {
+export class Tile {
   /**
    * @param x X coordinate in small tiles unit (1x1).
    * @param y Y coordinate in small tiles unit (1x1).
@@ -36,7 +40,7 @@ export class BaseTile {
   /**
    * Checks whether two tiles intersect.
    */
-  public intersects(other: BaseTile): boolean {
+  public intersects(other: Tile): boolean {
     return !(
       this.x + this.width <= other.x ||
       this.x >= other.x + other.width ||
@@ -45,7 +49,7 @@ export class BaseTile {
     );
   }
 
-    intersection(other: BaseTile): null | BaseTile {
+    intersection(other: Tile): null | Tile {
       const { x: ax1, y: ay1 } = this;
       const ax2 = this.x + this.width;
       const ay2 = this.y + this.height;
@@ -59,7 +63,7 @@ export class BaseTile {
       const iy2 = Math.min(ay2, by2);
 
       if (ix1 < ix2 && iy1 < iy2) {
-        return new BaseTile(ix1, iy1, ix2 - ix1, iy2 - iy1);
+        return new Tile(ix1, iy1, ix2 - ix1, iy2 - iy1);
       }
       return null;
   }
@@ -67,20 +71,20 @@ export class BaseTile {
   /**
    * Determines what side of `other` this tile intersects with.
    */
-  public intersectsSideOf(other: BaseTile): null | IntersectionSide {
-    // Based on ChatGPT
+  public intersectsSideOf(other: Tile): null | IntersectionSide {
+    // based on ChatGPT
 
     const intersection = this.intersection(other);
     if (!intersection) {
       return null;
     }
 
-    // Compute overlap depths
+    // compute overlap depths
     const overlap_x = intersection!.width;
     const overlap_y = intersection!.height;
 
     if (overlap_x < overlap_y) {
-      // Horizontal penetration is smaller → collision is Left/Right
+      // horizontal penetration is smaller → collision is Left/Right
       let from_left  = Math.abs(this.right - other.left);
       let from_right = Math.abs(other.right - this.left);
 
@@ -90,7 +94,7 @@ export class BaseTile {
         return "right";
       }
     } else {
-      // Vertical penetration is smaller → collision is Top/Bottom
+      // vertical penetration is smaller → collision is Top/Bottom
       let from_top    = Math.abs(this.bottom - other.top);
       let from_bottom = Math.abs(other.bottom - this.top);
 
@@ -105,8 +109,8 @@ export class BaseTile {
   /**
    * Clones tile data.
    */
-  public clone(): BaseTile {
-    return new BaseTile(this.x, this.y, this.width, this.height);
+  public clone(): Tile {
+    return new Tile(this.x, this.y, this.width, this.height);
   }
 }
 
@@ -120,7 +124,8 @@ export type IntersectionSide =
   | "right";
 
 /**
- * A layout mimmicking the Windows 8 or 10's live tile layout.
+ * A layout mimmicking the Windows 8 or 10's live tile layout,
+ * representing a group's rectangle.
  *
  * Tiles have a minimum position of (0, 0), and the maximum
  * position is either infinite, or:
@@ -128,11 +133,11 @@ export type IntersectionSide =
  * - If `width` is given in the constructor, maximum X = `width`.
  * - If `height` is given in the constructor, maximum Y = `height`.
  */
-export class BaseLayout {
+export class SimpleGroup {
   /**
    * Tile data.
    */
-  public tiles: Map<string, BaseTile> = new Map();
+  public tiles: Map<string, Tile> = new Map();
 
   /**
    * Maximum width.
@@ -145,14 +150,14 @@ export class BaseLayout {
   private maxHeight?: number;
 
   /**
-   * A `BaseLayout` is horizontal if there is a set height.
+   * A `SimpleGroup` is horizontal if there is a set height.
    */
   public get isHorizontal() {
     return this.maxHeight !== undefined;
   }
 
   /**
-   * A `BaseLayout` is vertical if there is a set width.
+   * A `SimpleGroup` is vertical if there is a set width.
    */
   public get isVertical() {
     return this.maxWidth !== undefined;
@@ -176,10 +181,10 @@ export class BaseLayout {
   }
 
   /**
-   * Clones the `BaseLayout`.
+   * Clones the `SimpleGroup`.
    */
   public clone() {
-    const r = new BaseLayout({
+    const r = new SimpleGroup({
       width: this.maxWidth,
       height: this.maxHeight,
     });
@@ -223,12 +228,13 @@ export class BaseLayout {
   public addTile(id: string, x: number | null, y: number | null, width: number, height: number): boolean {
     assert(!this.tiles.has(id), `Tile ${id} already exists.`);
     assert(!((x === null || y === null) && (x !== null || y !== null)), "If any of (x,y) are null, then both must be null.");
-    // If both (x, y) are specified, add tile and shift
+    // if both (x, y) are specified, add tile and shift
     // as needed.
     if (x !== null && y !== null) {
       const snapshot = this.snapshot();
-      this.tiles.set(id, new BaseTile(x!, y!, width, height));
-      this.fitBaseTile(id, tile);
+      const tile = new Tile(x!, y!, width, height);
+      this.tiles.set(id, tile);
+      this.fit(tile);
       if (this.resolveConflicts(id)) {
         this.fillMinimumPosition();
         this.compact();
@@ -236,17 +242,17 @@ export class BaseLayout {
       }
       this.restoreSnapshot(snapshot);
       return false;
-    // If `x` and `y` are `null`, the tile is positioned at the best *last* position.
+    // if `x` and `y` are `null`, the tile is positioned at the best *last* position.
     } else {
       let [x, y] = this.findBestLastPosition(width, height);
-      // If the resulting (x,y) leave holes between other tile clusters,
+      // if the resulting (x,y) leave holes between other tile clusters,
       // then snap the resulting (x,y) so there is no hole between other tiles
       // (e.g. ensure they are contiguous).
       const [horizontal_hole, vertical_hole] = this.findHoles(x, y, width, height);
       x -= horizontal_hole;
       y -= vertical_hole;
-      // Contribute tile.
-      this.tiles.set(id, new BaseTile(x!, y!, width, height));
+      // contribute tile.
+      this.tiles.set(id, new Tile(x!, y!, width, height));
     }
     return true;
   }
@@ -286,8 +292,8 @@ export class BaseLayout {
     this.tiles.clear();
   }
 
-  // Intersecting tiles
-  private getIntersectingTiles(tile: BaseTile, excludeId: string): string[] {
+  // returns intersecting tiles
+  private getIntersectingTiles(tile: Tile, excludeId: string): string[] {
     const result: string[] = [];
     for (const [id, other] of this.tiles.entries()) {
       if (id !== excludeId && tile.intersects(other)) {
@@ -297,9 +303,9 @@ export class BaseLayout {
     return result;
   }
 
-  // Finds best last position for a tile.
+  // finds best last position for a tile.
   private findBestLastPosition(width: number, height: number): [number, number] {
-    let testTile = new BaseTile(0, 0, width, height);
+    let testTile = new Tile(0, 0, width, height);
     if (this.isHorizontal) {
       const layout_height = this.maxHeight!;
       for (let x = 0;; x++) {
@@ -325,10 +331,10 @@ export class BaseLayout {
     }
   }
 
-  // Find holes (horizontal, vertical) between
+  // find holes (horizontal, vertical) between
   // a given position and tile clusters.
   private findHoles(x: number, y: number, width: number, height: number): [number, number] {
-    let testTile = new BaseTile(x, y, 1, height);
+    let testTile = new Tile(x, y, 1, height);
     let horizontal_holes = 0;
     let vertical_holes = 0;
     for (let dec_x = x; dec_x > 0;) {
@@ -353,36 +359,69 @@ export class BaseLayout {
     return [horizontal_holes, vertical_holes];
   }
 
-  // In case a tile overflows the container, change its position
+  // in case a tile overflows the container, change its position
   // so it fits the container.
-  private fit(tileId: string, tile: BaseTile): void {
-    const overflow = this.isHorizontal ? tile.y - this.maxHeight! : tile.x - this.maxWidth!;
-    if (overflow < 0) {
+  //
+  // this is, perhaps, a bit useful when switching from horizontal to vertical
+  // and vice-versa.
+  private fit(tile: Tile): void {
+    let horz_overflow = this.isVertical ? (tile.x + tile.width) - this.maxWidth! : 0;
+    let vert_overflow = this.isHorizontal ? (tile.y + tile.height) - this.maxHeight! : 0;
+    if (horz_overflow <= 0 && vert_overflow <= 0) {
       // no overflow: exit
       return;
     }
 
-    // Walk the overflowing position in rows/columns and
-    // slightly increase/decrease the necessary for the tile to fit in.
-    // Important when switching from horizontal to vertical layout.
+    // walk the overflowing position
+
+    // for horizontal overflow (in a vertical container) = go row-by-row (up-down);
+    //   for each row, move by the count of overflowing columns
+    if (horz_overflow > 0) {
+      horz_overflow -= tile.width;
+      const max_width = this.maxWidth!;
+      for (tile.y += 1; /*Infinity*/; tile.y++) {
+        tile.x = MathUtils.clamp(horz_overflow, 0, max_width - tile.width);
+        // const remainder = horz_overflow - tile.x;
+        horz_overflow -= tile.x;
+        // horz_overflow += remainder;
+        if (horz_overflow <= 0) {
+          break;
+        }
+      }
+
+    // vert_overflow > 0
     //
-    // - Whether to go rows-first or columns-first primarily
-    //   that depends on what axis the overflow occurs.
-    // - Note that while doing this, conflicting tiles must be skipped
-    //   until there is no conflicting tile (how they are skipped,
-    //   again, depends on what axis the overflow occurs).
+    // for vertical overflow (in a horizontal container) = go column-by-column (left-right);
+    //   for each column, move by the count of overflowing rows
+    } else {
+      vert_overflow -= tile.height;
+      const max_height = this.maxHeight!;
+      for (tile.x += 1; /*Infinity*/; tile.x++) {
+        tile.y = MathUtils.clamp(vert_overflow, 0, max_height - tile.height);
+        // const remainder = vert_overflow - tile.y;
+        vert_overflow -= tile.y;
+        // vert_overflow += remainder;
+        if (vert_overflow <= 0) {
+          break;
+        }
+      }
+    }
+  }
+
+  // shift conflicting tiles.
+  private resolveConflicts(targetId: string): boolean {
     fixme();
   }
 
-  // Returns a copy of the tile data.
-  private snapshot(): Map<string, BaseTile> {
+  // returns a copy of the tile data.
+  private snapshot(): Map<string, Tile> {
     return new Map(
       [...this.tiles.entries()].map(([id, tile]) => [id, tile.clone()])
     );
   }
 
-  // Restore tile data.
-  private restoreSnapshot(snapshot: Map<string, BaseTile>): void {
+  // restore tile data.
+  private restoreSnapshot(snapshot: Map<string, Tile>): void {
     this.tiles = new Map(snapshot);
   }
 }
