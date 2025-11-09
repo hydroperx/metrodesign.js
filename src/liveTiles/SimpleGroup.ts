@@ -49,23 +49,23 @@ export class Tile {
     );
   }
 
-    intersection(other: Tile): null | Tile {
-      const { x: ax1, y: ay1 } = this;
-      const ax2 = this.x + this.width;
-      const ay2 = this.y + this.height;
-      const { x: bx1, y: by1 } = other;
-      const bx2 = other.x + other.width;
-      const by2 = other.y + other.height;
+  intersection(other: Tile): null | Tile {
+    const { x: ax1, y: ay1 } = this;
+    const ax2 = this.x + this.width;
+    const ay2 = this.y + this.height;
+    const { x: bx1, y: by1 } = other;
+    const bx2 = other.x + other.width;
+    const by2 = other.y + other.height;
 
-      const ix1 = Math.max(ax1, bx1);
-      const iy1 = Math.max(ay1, by1);
-      const ix2 = Math.min(ax2, bx2);
-      const iy2 = Math.min(ay2, by2);
+    const ix1 = Math.max(ax1, bx1);
+    const iy1 = Math.max(ay1, by1);
+    const ix2 = Math.min(ax2, bx2);
+    const iy2 = Math.min(ay2, by2);
 
-      if (ix1 < ix2 && iy1 < iy2) {
-        return new Tile(ix1, iy1, ix2 - ix1, iy2 - iy1);
-      }
-      return null;
+    if (ix1 < ix2 && iy1 < iy2) {
+      return new Tile(ix1, iy1, ix2 - ix1, iy2 - iy1);
+    }
+    return null;
   }
   
   /**
@@ -409,14 +409,8 @@ export class SimpleGroup {
   }
 
   // shift conflicting tiles.
-  //
-  // `ignore` is the list of tiles not to shift.
-  // it grows as tiles are shifted and must not be
-  // shifted anymore.
-  private resolveConflicts(targetId: string, ignore: null | string[] = null, shiftDirection: null | ShiftDirection = null): boolean {
-    ignore ??= [targetId];
-    let conflicting_tiles = this.getIntersectingTiles(this.tiles.get(targetId)!, targetId);
-    conflicting_tiles = conflicting_tiles.filter(id => !ignore!.includes(id));
+  private resolveConflicts(targetId: string, shiftDirection: null | ShiftDirection = null): boolean {
+    const conflicting_tiles = this.getIntersectingTiles(this.tiles.get(targetId)!, targetId);
     if (conflicting_tiles.length == 0) {
       return true;
     }
@@ -478,10 +472,67 @@ export class SimpleGroup {
       }
 
       switch (shiftDirection!) {
-        //
+        case "upward": {
+          // shift upward in a horizontal layout.
+          // this one has a limit.
+          if (conflicting_tile.y <= 0 && conflicting_tile.x <= 0) {
+            return false;
+          }
+          conflicting_tile.y -= conflicting_tile.height;
+          if (conflicting_tile.y < 0) {
+            conflicting_tile.x -= conflicting_tile.width;
+            conflicting_tile.y = this.maxHeight! - conflicting_tile.height;
+            if (conflicting_tile.x < 0) {
+              return false;
+            }
+          }
+
+          break;
+        }
+        case "downward": {
+          // shift downward in a horizontal layout.
+          // (here, jump the height delta)
+          const delta = target_tile.intersection(conflicting_tile)!.height;
+          conflicting_tile.y += delta;
+          if (conflicting_tile.y >= this.maxHeight!) {
+            conflicting_tile.x += Math.max(target_tile.width, conflicting_tile.width);
+            conflicting_tile.y = 0;
+          }
+          break;
+        }
+        case "leftward": {
+          // shift leftward in a vertical layout.
+          // this one has a limit.
+          if (conflicting_tile.x <= 0 && conflicting_tile.y <= 0) {
+            return false;
+          }
+          conflicting_tile.x -= conflicting_tile.width;
+          if (conflicting_tile.x < 0) {
+            conflicting_tile.x = this.maxWidth! - conflicting_tile.width;
+            conflicting_tile.y -= conflicting_tile.height;
+            if (conflicting_tile.y < 0) {
+              return false;
+            }
+          }
+          break;
+        }
+        case "rightward": {
+          // shift rightward in a vertical layout.
+          // (here, jump the width delta)
+          const delta = target_tile.intersection(conflicting_tile)!.width;
+          conflicting_tile.x += delta;
+          if (conflicting_tile.x >= this.maxWidth!) {
+            conflicting_tile.x = 0;
+            conflicting_tile.y += Math.max(target_tile.height, conflicting_tile.height);
+          }
+          break;
+        }
       }
 
-      fixme();
+      // shift other conflicting tiles like a snail.
+      if (!this.resolveConflicts(conflicting_id, shiftDirection!)) {
+        return false;
+      }
     }
 
     return true;
