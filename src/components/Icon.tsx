@@ -70,7 +70,7 @@ import new_white from "../icons/new-white.svg";
 
 // third-party
 import { Color, ColorObserver } from "@hydroperx/color";
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React from "react";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
 import assert from "assert";
@@ -212,48 +212,51 @@ const Img = styled.img<{
  * Icon component.
  */
 export function Icon(params: IconParams) {
-  // IMG ref
-  const ref = useRef(null);
+  // image ref
+  const ref = React.useRef<null | HTMLImageElement>(null);
 
-  // Icon color
-  const [color, set_color] = useState<string>("white");
-  const color_ref = useRef<string>("white");
+  // icon color
+  const color_ref = React.useRef<string>("white");
 
-  // Icon type
+  // icon type
   assert(params.type, "Icon type must be specified.");
-  const type = params.type;
+  const type = React.useRef(params.type);
 
-  // Compute size
+  // compute size
   const computed_size =
     params.size !== undefined ? REMConvert.pixels.remPlusUnit(params.size) : "100%";
 
-  // Adjust color
-  useEffect(() => {
-    const colorObserver = new ColorObserver(ref.current, (color: Color) => {
+  // adjust color
+  React.useEffect(() => {
+    const color_observer = new ColorObserver(ref.current!, (color: Color) => {
       const new_color = color.isLight() ? "white" : "black";
       if (new_color !== color_ref.current) {
-        set_color(new_color);
+        color_ref.current = new_color;
+
+        // update source
+        const m = iconMap.get(type.current);
+        assert(m !== undefined, "Icon is not defined: " + type.current);
+        ref.current!.src = (m as any)[new_color];
       }
     });
 
     return () => {
-      colorObserver.cleanup();
+      color_observer.cleanup();
     };
   }, []);
 
-  // Reflect color
-  useEffect(() => {
-    color_ref.current = color;
-  }, [color]);
+  React.useEffect(() => {
+    type.current = params.type!;
+  }, [params.type]);
 
-  const m = iconMap.get(type);
-  assert(m !== undefined, "Icon is not defined: " + type);
+  const m = iconMap.get(params.type);
+  assert(m !== undefined, "Icon is not defined: " + params.type);
   return (
     <Img
       ref={ref}
-      src={(m as any)[color]}
+      src={(m as any)[color_ref.current]}
       draggable={false}
-      alt={type}
+      alt={params.type}
       style={params.style}
       className={["Icon", ...(params.className ?? "").split(" ").filter(c => c != "")].join(" ")}
       id={params.id}

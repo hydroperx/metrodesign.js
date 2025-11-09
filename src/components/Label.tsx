@@ -122,15 +122,19 @@ export function Label(params: {
       }, 700);
 
       // Adjust tooltip position
-      let prev_display = tooltip_el.current.style.display;
-      if (prev_display === "none") tooltip_el.current.style.display = "inline-block";
-      const r = await computePosition(e.target as HTMLElement, tooltip_el.current, {
-        placement: (tooltip_place_ref.current + "-start") as any,
-        middleware: [ offset(7), flip(), shift() ],
-      });
-      tooltip_el.current.style.display = prev_display;
-      set_tooltip_x(r.x);
-      set_tooltip_y(r.y);
+      window.setTimeout(() => {
+        (async() => {
+          let prev_display = tooltip_el.current!.style.display;
+          if (prev_display === "none") tooltip_el.current!.style.display = "inline-block";
+          const r = await computePosition(e.target as HTMLElement, tooltip_el.current!, {
+            placement: (tooltip_place_ref.current + "-start") as any,
+            middleware: [ offset(7), flip(), shift() ],
+          });
+          tooltip_el.current!.style.display = prev_display;
+          set_tooltip_x(r.x);
+          set_tooltip_y(r.y);
+        })();
+      }, 10);
     }
   };
 

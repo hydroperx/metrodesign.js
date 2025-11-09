@@ -139,7 +139,7 @@ export function Button(params: ButtonParams) {
 
   // Display tooltip
   const userPointerEnter = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
-  const pointerEnter = async (e: PointerEvent) => {
+  const pointerEnter = (e: PointerEvent) => {
     hovering.current = true;
     if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
@@ -150,15 +150,19 @@ export function Button(params: ButtonParams) {
       }, 700);
 
       // Adjust tooltip position
-      let prev_display = tooltip_el.current.style.display;
-      if (prev_display === "none") tooltip_el.current.style.display = "inline-block";
-      const r = await computePosition(button, tooltip_el.current, {
-        placement: (tooltip_place_ref.current + "-start") as any,
-        middleware: [ offset(7), flip(), shift() ],
-      });
-      tooltip_el.current.style.display = prev_display;
-      set_tooltip_x(r.x);
-      set_tooltip_y(r.y);
+      window.setTimeout(() => {
+        (async() => {
+          let prev_display = tooltip_el.current!.style.display;
+          if (prev_display === "none") tooltip_el.current!.style.display = "inline-block";
+          const r = await computePosition(button, tooltip_el.current!, {
+            placement: (tooltip_place_ref.current + "-start") as any,
+            middleware: [ offset(7), flip(), shift() ],
+          });
+          tooltip_el.current!.style.display = prev_display;
+          set_tooltip_x(r.x);
+          set_tooltip_y(r.y);
+        })();
+      }, 10);
     }
 
     return userPointerEnter.current?.(e as any);
@@ -644,9 +648,6 @@ export function CircleIconButton(params: CircleIconButtonParams) {
 
   // Stylize
   const iconStyle: React.CSSProperties = {};
-  if (params.rotation !== undefined) {
-    iconStyle.transform = `rotate(${params.rotation}deg)`;
-  }
 
   // Misc
   const fg = Color(theme.colors.foreground).isDark() ? "#000" : "#fff";
@@ -661,7 +662,7 @@ export function CircleIconButton(params: CircleIconButtonParams) {
     : Color(fg).isDark()
       ? "#fff"
       : "#000";
-  const size = params.size ?? 27;
+  const size = params.size ?? 45;
   const size_rf = REMConvert.pixels.remPlusUnit(size);
 
   const tooltip = params.tooltip;
@@ -686,15 +687,19 @@ export function CircleIconButton(params: CircleIconButtonParams) {
       }, 700);
 
       // Adjust tooltip position
-      let prev_display = tooltip_el.current.style.display;
-      if (prev_display === "none") tooltip_el.current.style.display = "inline-block";
-      const r = await computePosition(button, tooltip_el.current, {
-        placement: (tooltip_place_ref.current + "-start") as any,
-        middleware: [ offset(7), flip(), shift() ],
-      });
-      tooltip_el.current.style.display = prev_display;
-      set_tooltip_x(r.x);
-      set_tooltip_y(r.y);
+      window.setTimeout(() => {
+        (async() => {
+          let prev_display = tooltip_el.current!.style.display;
+          if (prev_display === "none") tooltip_el.current!.style.display = "inline-block";
+          const r = await computePosition(button, tooltip_el.current!, {
+            placement: (tooltip_place_ref.current + "-start") as any,
+            middleware: [ offset(7), flip(), shift() ],
+          });
+          tooltip_el.current!.style.display = prev_display;
+          set_tooltip_x(r.x);
+          set_tooltip_y(r.y);
+        })();
+      }, 10);
     }
 
     return userPointerEnter.current?.(e as any);
@@ -765,7 +770,7 @@ export function CircleIconButton(params: CircleIconButtonParams) {
       >
         <Icon
           type={params.icon}
-          size={size - (size <= 10.5 ? 0 : 10.5)}
+          size={size - (size <= 16 ? 0 : 16)}
           style={iconStyle}
         />
       </CircleIconButtonButton>
@@ -805,10 +810,6 @@ export type CircleIconButtonParams = {
    */
   tooltip?: string;
 
-  /**
-   * Rotation degrees.
-   */
-  rotation?: number;
   size?: number;
   disabled?: boolean;
   autoFocus?: boolean;
@@ -851,7 +852,7 @@ const CircleIconButtonButton = styled.button<{
   $size_rf: string;
 }>`
   && {
-    border: 0.17rem solid ${($) => $.$fg};
+    border: 0.2rem solid ${($) => $.$fg};
     border-radius: 100%;
     outline: none;
     color: ${($) => $.$normal_color};
@@ -897,8 +898,11 @@ export function ArrowButton(params: ArrowButtonParams) {
 
   return (
     <CircleIconButton
-      icon="fullarrow"
-      rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
+      icon={
+        d == "left" ? NativeIcons.FULLARROW_LEFT :
+        d == "right" ? NativeIcons.FULLARROW_RIGHT :
+        d == "up" ? NativeIcons.FULLARROW_UP : NativeIcons.FULLARROW_DOWN
+      }
       ref={params.ref}
       className={params.className}
       disabled={params.disabled ?? false}
