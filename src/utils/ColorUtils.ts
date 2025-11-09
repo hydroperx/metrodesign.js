@@ -23,27 +23,10 @@ export function enhance({ background, color }: {
   color: any,
 }): string {
   const a = Color(background);
+  const a_isDark = a.isDark();
   const b = Color(color);
-  if (like(a, b)) {
-    let r = a.isDark() ? lighten(b, 0.25) : darken(b, 0.25);
-    r = a.isDark()
-      ? (Color(r).isDark()
-        ? lighten(r, 0.25)
-        : r)
-      : (Color(r).isLight()
-        ? darken(r, 0.25)
-        : r);
-    r = a.isDark()
-      ? (Color(r).isDark()
-        ? lighten(r, 0.25)
-        : r)
-      : (Color(r).isLight()
-        ? darken(r, 0.25)
-        : r);
-    return r;
-  }
   let r = (
-    a.isDark()
+    a_isDark
       ? (b.isDark()
         ? lighten(b, 0.25)
         : b.toString())
@@ -51,15 +34,19 @@ export function enhance({ background, color }: {
         ? darken(b, 0.25)
         : b.toString())
   );
-  r = (
-    a.isDark()
-      ? (Color(r).isDark()
-        ? lighten(r, 0.25)
-        : r.toString())
-      : (Color(r).isLight()
-        ? darken(r, 0.25)
-        : r.toString())
-  );
+  for (let i = 0; i < 5; i++) {
+    if (a_isDark) {
+      if (Color(r).isDark()) {
+        r = lighten(r, 0.0045);
+      } else {
+        break;
+      }
+    } else if (Color(r).isLight()) {
+      r = darken(r, 0.0045);
+    } else {
+      break;
+    }
+  }
   return r;
 }
 

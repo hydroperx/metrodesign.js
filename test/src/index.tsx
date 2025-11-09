@@ -12,6 +12,8 @@ import {
   Button,
   Label,
   Icon,
+  CheckBox,
+  FormGroup,
 } from "@hydroperx/metrodesign/components";
 import { RTLProvider } from "@hydroperx/metrodesign/layout";
 import {
@@ -25,9 +27,11 @@ import {
  * The test.
  */
 function App() {
+  const [checked, set_checked] = React.useState<boolean>(false);
+
   return (
     <ThemeProvider theme={ThemePresets.dark}>
-      <RTLProvider rtl={false}>
+      <RTLProvider rtl={true}>
         <Primary prefer>
           <Root
             full
@@ -36,7 +40,11 @@ function App() {
             style={{
               overflowY: "auto",
             }}>
-            <VGroup>
+            <VGroup padding={10}>
+              <FormGroup>
+                <Label bold for="c1">{checked ? "On" : "Off"}</Label>
+                <CheckBox id="c1" default={false} change={v => {set_checked(v)}}/>
+              </FormGroup>
             </VGroup>
           </Root>
         </Primary>
