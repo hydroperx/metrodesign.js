@@ -7,7 +7,7 @@ import * as MathUtils from "../utils/MathUtils";
 /**
  * A tile in the `SimpleGroup` class.
  */
-export class Tile {
+export class SimpleTile {
   /**
    * @param x X coordinate in small tiles unit (1x1).
    * @param y Y coordinate in small tiles unit (1x1).
@@ -40,7 +40,7 @@ export class Tile {
   /**
    * Checks whether two tiles intersect.
    */
-  public intersects(other: Tile): boolean {
+  public intersects(other: SimpleTile): boolean {
     return !(
       this.x + this.width <= other.x ||
       this.x >= other.x + other.width ||
@@ -49,7 +49,7 @@ export class Tile {
     );
   }
 
-  intersection(other: Tile): null | Tile {
+  intersection(other: SimpleTile): null | SimpleTile {
     const { x: ax1, y: ay1 } = this;
     const ax2 = this.x + this.width;
     const ay2 = this.y + this.height;
@@ -63,7 +63,7 @@ export class Tile {
     const iy2 = Math.min(ay2, by2);
 
     if (ix1 < ix2 && iy1 < iy2) {
-      return new Tile(ix1, iy1, ix2 - ix1, iy2 - iy1);
+      return new SimpleTile(ix1, iy1, ix2 - ix1, iy2 - iy1);
     }
     return null;
   }
@@ -71,7 +71,7 @@ export class Tile {
   /**
    * Determines what side of `other` this tile intersects with.
    */
-  public intersectsSideOf(other: Tile): null | IntersectionSide {
+  public intersectsSideOf(other: SimpleTile): null | IntersectionSide {
     // based on ChatGPT
 
     const intersection = this.intersection(other);
@@ -109,8 +109,8 @@ export class Tile {
   /**
    * Clones tile data.
    */
-  public clone(): Tile {
-    return new Tile(this.x, this.y, this.width, this.height);
+  public clone(): SimpleTile {
+    return new SimpleTile(this.x, this.y, this.width, this.height);
   }
 }
 
@@ -137,7 +137,7 @@ export class SimpleGroup {
   /**
    * Tile data.
    */
-  public tiles: Map<string, Tile> = new Map();
+  public tiles: Map<string, SimpleTile> = new Map();
 
   /**
    * Maximum width.
@@ -232,9 +232,9 @@ export class SimpleGroup {
     // as needed.
     if (x !== null && y !== null) {
       const snapshot = this.snapshot();
-      const tile = new Tile(x!, y!, width, height);
+      const tile = new SimpleTile(x!, y!, width, height);
       this.tiles.set(id, tile);
-      this.fit(tile);
+      this.fit(tile, id);
 
       // leave no holes
       let [horizontal_hole, vertical_hole] = this.findHoles(x!, y!, width, height);
@@ -262,7 +262,7 @@ export class SimpleGroup {
       x -= horizontal_hole;
       y -= vertical_hole;
       // contribute tile.
-      this.tiles.set(id, new Tile(x!, y!, width, height));
+      this.tiles.set(id, new SimpleTile(x!, y!, width, height));
     }
     return true;
   }
@@ -354,7 +354,7 @@ export class SimpleGroup {
   }
 
   // returns intersecting tiles
-  private getIntersectingTiles(tile: Tile, excludeId: string): string[] {
+  private getIntersectingTiles(tile: SimpleTile, excludeId: string): string[] {
     const result: string[] = [];
     for (const [id, other] of this.tiles.entries()) {
       if (id !== excludeId && tile.intersects(other)) {
@@ -366,7 +366,7 @@ export class SimpleGroup {
 
   // finds best last position for a tile.
   private findBestLastPosition(width: number, height: number): [number, number] {
-    let testTile = new Tile(0, 0, width, height);
+    let testTile = new SimpleTile(0, 0, width, height);
     if (this.isHorizontal) {
       const layout_height = this.maxHeight!;
       for (let x = 0;; x++) {
@@ -395,7 +395,7 @@ export class SimpleGroup {
   // find holes (horizontal, vertical) between
   // a given position and tile clusters.
   private findHoles(x: number, y: number, width: number, height: number): [number, number] {
-    let testTile = new Tile(x, y, 1, height);
+    let testTile = new SimpleTile(x, y, 1, height);
     let horizontal_holes = 0;
     let vertical_holes = 0;
     for (let dec_x = x; dec_x > 0;) {
@@ -432,7 +432,7 @@ export class SimpleGroup {
   //
   // this is, perhaps, a bit useful when switching from horizontal to vertical
   // and vice-versa.
-  private fit(tile: Tile): void {
+  private fit(tile: SimpleTile, id: string): void {
     let horz_overflow = this.isVertical ? (tile.x + tile.width) - this.maxWidth! : 0;
     let vert_overflow = this.isHorizontal ? (tile.y + tile.height) - this.maxHeight! : 0;
     if (horz_overflow <= 0 && vert_overflow <= 0) {
@@ -447,7 +447,7 @@ export class SimpleGroup {
     if (horz_overflow > 0) {
       horz_overflow -= tile.width;
       const max_width = this.maxWidth!;
-      for (tile.y += 1; /*Infinity*/; tile.y++) {
+      for (tile.y++; /*Infinity*/; tile.y++) {
         tile.x = MathUtils.clamp(horz_overflow, 0, max_width - tile.width);
         // const remainder = horz_overflow - tile.x;
         horz_overflow -= tile.x;
@@ -458,7 +458,13 @@ export class SimpleGroup {
       }
 
       // skip conflicting tiles without shifting them
-      fixme();
+      a: for (;; tile.x = 0, tile.y++) {
+        for (; tile.x + tile.width <= max_width; tile.x++) {
+          if (this.getIntersectingTiles(tile, id).length == 0) {
+            break a;
+          }
+        }
+      }
 
     // vert_overflow > 0
     //
@@ -467,7 +473,7 @@ export class SimpleGroup {
     } else {
       vert_overflow -= tile.height;
       const max_height = this.maxHeight!;
-      for (tile.x += 1; /*Infinity*/; tile.x++) {
+      for (tile.x++; /*Infinity*/; tile.x++) {
         tile.y = MathUtils.clamp(vert_overflow, 0, max_height - tile.height);
         // const remainder = vert_overflow - tile.y;
         vert_overflow -= tile.y;
@@ -478,7 +484,13 @@ export class SimpleGroup {
       }
 
       // skip conflicting tiles without shifting them
-      fixme();
+      a: for (;; tile.x++, tile.y = 0) {
+        for (; tile.y + tile.height <= max_height; tile.y++) {
+          if (this.getIntersectingTiles(tile, id).length == 0) {
+            break a;
+          }
+        }
+      }
     }
   }
 
@@ -506,11 +518,11 @@ export class SimpleGroup {
           && target_tile.height == conflicting_tile.height
           && target_tile.y == conflicting_tile.y
       ) {
-        let cheap_space: null | Tile = null;
+        let cheap_space: null | SimpleTile = null;
         if (side == "left") {
-          cheap_space = new Tile(target_tile.x + target_tile.width, target_tile.y, conflicting_tile.width, conflicting_tile.height);
+          cheap_space = new SimpleTile(target_tile.x + target_tile.width, target_tile.y, conflicting_tile.width, conflicting_tile.height);
         } else {
-          cheap_space = new Tile(target_tile.x - target_tile.width, target_tile.y, conflicting_tile.width, conflicting_tile.height);
+          cheap_space = new SimpleTile(target_tile.x - target_tile.width, target_tile.y, conflicting_tile.width, conflicting_tile.height);
         }
         if (cheap_space!.x >= 0 && this.getIntersectingTiles(cheap_space!, "").length == 0) {
           conflicting_tile.x = cheap_space!.x;
@@ -524,11 +536,11 @@ export class SimpleGroup {
           && target_tile.height == conflicting_tile.height
           && target_tile.x == conflicting_tile.x
       ) {
-        let cheap_space: null | Tile = null;
+        let cheap_space: null | SimpleTile = null;
         if (side == "top") {
-          cheap_space = new Tile(target_tile.x, target_tile.y + target_tile.height, conflicting_tile.width, conflicting_tile.height);
+          cheap_space = new SimpleTile(target_tile.x, target_tile.y + target_tile.height, conflicting_tile.width, conflicting_tile.height);
         } else {
-          cheap_space = new Tile(target_tile.x, target_tile.y - target_tile.height, conflicting_tile.width, conflicting_tile.height);
+          cheap_space = new SimpleTile(target_tile.x, target_tile.y - target_tile.height, conflicting_tile.width, conflicting_tile.height);
         }
         if (cheap_space!.x >= 0 && this.getIntersectingTiles(cheap_space!, "").length == 0) {
           conflicting_tile.x = cheap_space!.x;
@@ -613,14 +625,14 @@ export class SimpleGroup {
   }
 
   // returns a copy of the tile data.
-  private snapshot(): Map<string, Tile> {
+  private snapshot(): Map<string, SimpleTile> {
     return new Map(
       [...this.tiles.entries()].map(([id, tile]) => [id, tile.clone()])
     );
   }
 
   // restore tile data.
-  private restoreSnapshot(snapshot: Map<string, Tile>): void {
+  private restoreSnapshot(snapshot: Map<string, SimpleTile>): void {
     this.tiles = new Map(snapshot);
   }
 }

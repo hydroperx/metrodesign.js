@@ -3,6 +3,7 @@ import assert from "assert";
 import { TypedEventTarget } from "@hydroperx/event";
 
 // local
+import { SimpleGroup, SimpleTile } from "./SimpleGroup";
 import { REMObserver } from "../utils/REMObserver";
 import * as MathUtils from "../utils/MathUtils";
 
