@@ -3,7 +3,7 @@
 - [ ] `.direction` getter/setter
   - [ ] changes the layout and re-detect past DOM nodes.
 - [ ] `.detect()`
-  - [ ] Contributes a newly-added DOM tile, or detects moving X/Y and resizing.
+  - [ ] Contributes a newly-added DOM tile, or detects moving X/Y, resizing and group transfer (look at parent).
   - [ ] Or contributes a newly-added DOM group, or detects label change.
 - [ ] `.remove()`
   - [ ] Removes a tile (by its DOM node) or group after a transition. Returns a promise which fulfills after the transition is done. The end user has to manually remove the DOM node.
