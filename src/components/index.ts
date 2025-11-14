@@ -20,3 +20,5 @@ export * from "./CheckBox";
 export * from "./Form";
 export * from "./DesktopGroup";
 export * from "./MobileGroup";
+export * from "./HSlider";
+export * from "./VSlider";
