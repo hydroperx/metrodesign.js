@@ -1,5 +1,13 @@
 # Getting started
 
+## Installation
+
+Using the NPM package manager:
+
+```sh
+npm i @hydroperx/metrodesign
+```
+
 ## Fonts
 
 The library requires the following fonts:
@@ -41,4 +49,30 @@ function SimpleExample(): React.ReactNode {
         </ThemeProvider>
     );
 }
+```
+
+## Primary colors
+
+To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `Primary` context provider:
+
+```tsx
+import { Primary } from "@hydroperx/metrodesign/theme";
+
+// somewhere in React content
+<Primary prefer>
+    ...
+</Primary>
+```
+
+## Right-to-left
+
+Indicate whether a LTR layout or RTL layout is preferred through `RTLProvider`:
+
+```tsx
+import { RTLProvider } from "@hydroperx/metrodesign/layout";
+
+// somewhere in React content
+<RTLProvider rtl={false}>
+    ...
+</RTLProvider>
 ```
