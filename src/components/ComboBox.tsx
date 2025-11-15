@@ -594,7 +594,7 @@ const ComboBoxButton = styled.button<{
 }> `
   && {
     background: ${$ => $.$background};
-    border: 0.15rem solid ${$ => ColorUtils.alphaZeroIfFar({ background: $.$background_behind, color: $.$border })};
+    border: 0.16rem solid ${$ => ColorUtils.alphaZeroIfFar({ background: $.$background_behind, color: $.$border })};
     color: ${$ => $.$foreground};
     display: flex;
     flex-direction: row;
@@ -688,7 +688,7 @@ const ComboBoxDropdown = styled.div<{
 
   &&:not(.running-effect) {
     background: ${$ => $.$option_background};
-    border: 0.15rem solid ${$ => $.$option_border};
+    border: 0.16rem solid ${$ => $.$option_border};
   }
 
   &&.ComboBox-big:not(.running-effect),
@@ -739,8 +739,8 @@ const ComboBoxDropdown = styled.div<{
     font-weight: lighter;
   }
   &&.running-effect .ComboBox-list > .Option {
-    border-left: 0.15rem solid ${$ => $.$option_border};
-    border-right: 0.15rem solid ${$ => $.$option_border};
+    border-left: 0.16rem solid ${$ => $.$option_border};
+    border-right: 0.16rem solid ${$ => $.$option_border};
   }
   &&.ComboBox-big.running-effect .ComboBox-list > .Option,
   &&.ComboBox-medium.running-effect .ComboBox-list > .Option {

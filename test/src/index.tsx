@@ -12,6 +12,7 @@ import {
   Button,
   Label,
   Icon,
+  TextInput,
 } from "@hydroperx/metrodesign/components";
 import { RTLProvider } from "@hydroperx/metrodesign/layout";
 import {
@@ -25,8 +26,6 @@ import {
  * The test.
  */
 function App() {
-  const [checked, set_checked] = React.useState<boolean>(false);
-
   return (
     <ThemeProvider theme={ThemePresets.dark}>
       <RTLProvider rtl={false}>

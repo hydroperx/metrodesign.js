@@ -12,8 +12,7 @@ import {
   Button,
   Label,
   Icon,
-  HSlider,
-  VSlider,
+  BlackoutModal,
 } from "@hydroperx/metrodesign/components";
 import { RTLProvider } from "@hydroperx/metrodesign/layout";
 import {
@@ -27,6 +26,8 @@ import {
  * The test.
  */
 function App() {
+  const [modal_open, set_modal_open] = React.useState<boolean>(false);
+
   return (
     <ThemeProvider theme={ThemePresets.dark}>
       <RTLProvider rtl={false}>
@@ -39,26 +40,20 @@ function App() {
               overflowY: "auto",
             }}>
             <VGroup padding={10} gap={10}>
-              <HSlider default={0} start={0} end={10}/>
-              <HSlider
-                default={0.5}
-                integer={false}
-                start={0.5}
-                end={0.9}
-                increment={0.05}
-                fixed={2}/>
-              <HSlider default={0} stops={[{ value: 0, label: "100x100" }, { value: 1, label: "240x240" }, { value: 2, label: "800x600" }]}/>
-              <HGroup gap={10}>
-                <VSlider default={0} start={0} end={10}/>
-                <VSlider
-                  default={0.5}
-                  integer={false}
-                  start={0.5}
-                  end={0.9}
-                  increment={0.05}
-                  fixed={2}/>
-                <VSlider default={0} stops={[{ value: 0, label: "100x100" }, { value: 1, label: "240x240" }, { value: 2, label: "800x600" }]}/>
-              </HGroup>
+              <Button outline click={e=>{set_modal_open(true)}}>Open modal</Button>
+              {
+                modal_open ?
+                  <BlackoutModal close={()=>{set_modal_open(false)}}>
+                    <VGroup solid style={{flexGrow: "1"}} padding={10} paddingTop={64} paddingBottom={64}>
+                      <VGroup horizontalAlign="right">
+                        <HGroup gap={10}>
+                          <Button outline click={()=>{set_modal_open(false)}}>Close</Button>
+                        </HGroup>
+                      </VGroup>
+                    </VGroup>
+                  </BlackoutModal> :
+                  undefined
+              }
             </VGroup>
           </Root>
         </Primary>

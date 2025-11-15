@@ -28,8 +28,6 @@ import {
  * The test.
  */
 function App() {
-  const [checked, set_checked] = React.useState<boolean>(false);
-
   return (
     <ThemeProvider theme={ThemePresets.dark}>
       <RTLProvider rtl={false}>
@@ -54,7 +52,7 @@ function App() {
                   </Group>
                   <VGroup horizontalAlign="right">
                     <HGroup gap={10}>
-                      <Button type="submit" outline>Sign up</Button>
+                      <Button outline>Sign up</Button>
                       <Button type="submit" outline variant="primary">Sign in</Button>
                     </HGroup>
                   </VGroup>
