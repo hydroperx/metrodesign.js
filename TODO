@@ -114,10 +114,14 @@ Each item must contain three tags: the icon, the label, and the ending (usually 
     - [ ] ... dragging the thumb (i.e. pointer not hovering the thumb)
   - [x] Thumb should have a little larger size for nice drag-n-drop, with invisible ends. (Visible = .significant)
   - [ ] Drag-n-drop
-  - [ ] Snap thumb depending on the stops (if specified) on drag stop.
+    - [ ] changed = true
+    - [ ] set_cast_value() for start..end
+    - [ ] For stops, snap on drag stop.
   - [ ] Pointer down anywhere other than the thumb should jump-set value to that point (?closest to a stop?).
-  - [ ] Arrow keys
-    - [ ] Move by stop, or between start..end
+    - [ ] changed = true
+    - [ ] set_cast_value()
+  - [x] Arrow keys
+    - [x] Move by stop, or between start..end
 
 # VSlider
 
@@ -172,3 +176,4 @@ Way contextual; skinning and behavior relies on surrounding container. It is bas
 # Themes
 
 - [ ] Provide more theme presets. (Maybe, for light and dark, provide different primary colors (affecting also sliders).)
+- [ ] Provide a ThemePreset enumeration and allow converting it into a theme preset `Theme` object. (Useful for theme reuse across apps based on internal data.)

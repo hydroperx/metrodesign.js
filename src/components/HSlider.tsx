@@ -2,6 +2,7 @@
 import * as assert from "assert";
 import React from "react";
 import Draggable from "@hydroperx/draggable";
+import { input } from "@hydroperx/inputaction";
 import { styled } from "styled-components";
 
 // local
@@ -36,6 +37,20 @@ export function HSlider(params: {
    * End (inclusive).
    */
   end?: number,
+  /**
+   * When `start..end` are specified, indicates whether
+   * to use integer values when the user changes
+   * the value.
+   *
+   * @default true
+   */
+  integer?: boolean,
+  /**
+   * Increment used for arrow control when `start..end` are specified.
+   *
+   * @default 1
+   */
+  increment?: number,
   stops?: SliderStop[],
 
   disabled?: boolean,
@@ -83,6 +98,9 @@ export function HSlider(params: {
   const rtl = React.useContext(RTLContext);
   const rtl_ref = React.useRef(rtl);
   const rem = React.useRef<number>(16);
+  const input_pressed_handler = React.useRef<null | (() => void)>(null);
+  const integer = React.useRef<boolean>(params.integer ?? true);
+  const increment = React.useRef<number>(params.increment ?? 1);
 
   // drag things
   const draggable = React.useRef<null | Draggable>(null);
@@ -105,9 +123,29 @@ export function HSlider(params: {
     // cleanup
     return () => {
       rem_observer.cleanup();
+
+      // dispose of global input handler
+      if (input_pressed_handler.current) {
+        input.off("inputPressed", input_pressed_handler.current);
+        input_pressed_handler.current = null;
+      }
     };
 
   }, []);
+
+  // sync `integer` option
+  React.useEffect(() => {
+
+    integer.current = params.integer ?? true;
+
+  }, [params.integer ?? true]);
+
+  // sync `increment` option
+  React.useEffect(() => {
+
+    increment.current = params.increment ?? 1;
+
+  }, [params.increment ?? 1]);
 
   // sync default
   React.useEffect(() => {
@@ -174,13 +212,19 @@ export function HSlider(params: {
 
   }, [rtl]);
 
+  // sets value and rounds it to an integer
+  // if the option is chosen.
+  function set_cast_value(v: number): void {
+    value.current = integer.current ? Math.round(v) : v;
+  }
+
   // position everything right.
   function put_slider_position(): void {
     const v = value.current!;
     let percent = 0;
 
     // determine percent based on stops
-    if (typeof start_ref.current == "undefined") {
+    if (stops_ref.current) {
       const stops = stops_ref.current!;
       const min = stops[0].value;
       const max = stops[stops.length - 1].value;
@@ -252,6 +296,65 @@ export function HSlider(params: {
     return label;
   }
 
+  // handle global input pressed
+  function global_input_pressed(): void {
+    const left = input.justPressed("navigateLeft");
+    const right = input.justPressed("navigateRight");
+    if (!(left || right)) {
+      return;
+    }
+
+    // handle arrows moving across stops
+    if (stops_ref.current) {
+      const stops = stops_ref.current!;
+      const i = stops.findIndex(s => s.value == value.current);
+      if (i !== -1) {
+        if (left) {
+          if (i > 0) {
+            value.current = stops[i - 1].value;
+            put_slider_position();
+            change_handler.current?.(value.current);
+            changed.current = true;
+          }
+        } else if (i < stops.length - 1) {
+          value.current = stops[i + 1].value;
+          put_slider_position();
+          change_handler.current?.(value.current);
+          changed.current = true;
+        }
+      }
+    // handle arrows moving between start..end range
+    } else {
+      const start = start_ref.current!;
+      const end = end_ref.current!;
+      const new_val = left ? value.current - increment.current : value.current + increment.current;
+      if (new_val >= start && new_val <= end) {
+        set_cast_value(new_val);
+        put_slider_position();
+        change_handler.current?.(value.current);
+        changed.current = true;
+      }
+    }
+  }
+
+  // handle focus
+  function button_focus(): void {
+    if (input_pressed_handler.current) {
+      return;
+    }
+    input_pressed_handler.current = global_input_pressed;
+    input.on("inputPressed", input_pressed_handler.current);
+  }
+
+  // handle blur
+  function button_blur(): void {
+    if (!input_pressed_handler.current) {
+      return;
+    }
+    input.off("inputPressed", input_pressed_handler.current);
+    input_pressed_handler.current = null;
+  }
+
   return (
     <>
       <HSliderButton
@@ -271,7 +374,10 @@ export function HSlider(params: {
           }
         }}
         disabled={params.disabled}
-        $bg={non_past_bg}>
+        onFocus={button_focus}
+        onBlur={button_blur}
+        $bg={non_past_bg}
+        $focus_dashes={theme.colors.focusDashes}>
         <HSlider_past_div ref={past_div} $bg={past_bg}/>
         <HSlider_thumb_div ref={thumb_div} $bg={theme.colors.foreground}>
           <div ref={thumb_significant_div} className="significant"></div>
@@ -294,6 +400,7 @@ export function HSlider(params: {
 
 const HSliderButton = styled.button<{
   $bg: string,
+  $focus_dashes: string,
 }> `
   && {
     position: relative;
@@ -301,6 +408,11 @@ const HSliderButton = styled.button<{
     background: ${$ => $.$bg};
     border: none;
     outline: none;
+  }
+
+  &&:focus:not(:disabled) {
+    outline: 0.05rem dotted ${$ => $.$focus_dashes};
+    outline-offset: 0.3rem;
   }
 
   &&:disabled {
