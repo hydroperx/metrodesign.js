@@ -1,5 +1,5 @@
 // third-party
-import * as assert from "assert";
+import assert from "assert";
 import React from "react";
 import Draggable from "@hydroperx/draggable";
 import { input } from "@hydroperx/inputaction";
@@ -11,8 +11,9 @@ import { RTLContext } from "../layout/RTL";
 import { ThemeContext, PrimaryContext } from "../theme/Theme";
 import { MAXIMUM_Z_INDEX } from "../utils/Constants";
 import { REMObserver } from "../utils/REMObserver";
-import * as MathUtils from "../utils/MathUtils";
 import * as ColorUtils from "../utils/ColorUtils";
+import * as MathUtils from "../utils/MathUtils";
+import * as ScaleUtils from "../utils/ScaleUtilts";
 
 /**
  * Horizontal slider.
@@ -195,6 +196,22 @@ export function HSlider(params: {
   React.useEffect(() => {
 
     disabled_ref.current = !!params.disabled;
+    if (disabled_ref.current) {
+      if (draggable.current) {
+        draggable.current!.destroy();
+        draggable.current = null;
+      }
+    } else {
+      initialize_draggable();
+    }
+
+    // cleanup
+    return () => {
+      if (draggable.current) {
+        draggable.current!.destroy();
+        draggable.current = null;
+      }
+    };
 
   }, [params.disabled]);
 
@@ -353,6 +370,43 @@ export function HSlider(params: {
     }
     input.off("inputPressed", input_pressed_handler.current);
     input_pressed_handler.current = null;
+  }
+
+  // initialize draggable
+  function initialize_draggable(): void {
+    if (draggable.current) {
+      draggable.current!.destroy();
+    }
+    draggable.current = new Draggable(thumb_div.current!, {
+      cascadingUnit: "rem",
+
+      // limit drag-n-drop
+      limit(x: number, y: number, x0: number, y0: number): { x: number, y: number } {
+        const button_offsetParent_scale = ScaleUtils.getScale(button.current!.offsetParent! as HTMLElement);
+        const min_x = -((thumb_significant_div.current!.offsetLeft - thumb_div.current!.offsetLeft) / button_offsetParent_scale.x);
+        const max_x = Math.abs(min_x);
+        return { x: MathUtils.clamp(x, min_x, max_x), y: y0 };
+      },
+
+      onDrag: thumb_drag,
+      onDragStart: thumb_dragStart,
+      onDragEnd: thumb_dragEnd,
+    });
+  }
+
+  // thumb drag start
+  function thumb_dragStart(element: Element, x: number, y: number, event: Event): void {
+    // fixme();
+  }
+
+  // thumb drag
+  function thumb_drag(element: Element, x: number, y: number, event: Event): void {
+    // fixme();
+  }
+
+  // thumb dragEnd
+  function thumb_dragEnd(element: Element, x: number, y: number, event: Event): void {
+    // fixme();
   }
 
   return (
