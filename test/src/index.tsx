@@ -41,6 +41,13 @@ function App() {
             }}>
             <VGroup padding={10} gap={10}>
               <HSlider default={0} start={0} end={10}/>
+              <HSlider
+                default={0.5}
+                integer={false}
+                start={0.5}
+                end={0.9}
+                increment={0.05}
+                fixed={2}/>
               <HSlider default={0} stops={[{ value: 0, label: "100x100" }, { value: 1, label: "240x240" }, { value: 2, label: "800x600" }]}/>
             </VGroup>
           </Root>

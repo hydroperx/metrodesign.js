@@ -52,6 +52,11 @@ export function HSlider(params: {
    * @default 1
    */
   increment?: number,
+  /**
+   * When `start..end` are specified, indicates the maximum number
+   * of digits after the decimal point.
+   */
+  fixed?: number,
   stops?: SliderStop[],
 
   disabled?: boolean,
@@ -101,6 +106,7 @@ export function HSlider(params: {
   const input_pressed_handler = React.useRef<null | (() => void)>(null);
   const integer = React.useRef<boolean>(params.integer ?? true);
   const increment = React.useRef<number>(params.increment ?? 1);
+  const fixed = React.useRef<undefined | number>(params.fixed);
   const dnd = React.useRef<null | DND>(null);
 
   // colors
@@ -109,6 +115,16 @@ export function HSlider(params: {
 
   // initialization
   React.useEffect(() => {
+
+    // resize observer
+    const resize_observer = new ResizeObserver(() => {
+      // when resizing, slider positions may get slightly wrong.
+      // fix them.
+      if (!dnd.current!.dragging) {
+        put_slider_position();
+      }
+    });
+    resize_observer.observe(button.current!);
 
     // drag-n-drop
     dnd.current = new DND(
@@ -141,6 +157,7 @@ export function HSlider(params: {
 
     // cleanup
     return () => {
+      resize_observer.disconnect();
       rem_observer.cleanup();
 
       // dispose of global input handler
@@ -165,6 +182,13 @@ export function HSlider(params: {
     increment.current = params.increment ?? 1;
 
   }, [params.increment ?? 1]);
+
+  // sync `fixed` option
+  React.useEffect(() => {
+
+    fixed.current = params.fixed;
+
+  }, [params.fixed]);
 
   // sync default
   React.useEffect(() => {
@@ -245,6 +269,9 @@ export function HSlider(params: {
   // if the option is chosen.
   function set_cast_value(v: number): void {
     value.current = integer.current ? Math.round(v) : v;
+    if (typeof fixed.current !== "undefined") {
+      value.current = parseFloat(value.current.toFixed(fixed.current!));
+    }
   }
 
   // position everything right.
@@ -299,8 +326,10 @@ export function HSlider(params: {
 
     if (rtl_ref.current) {
       thumb_div.current!.style.right = mapped + "%";
+      thumb_div.current!.style.left = "0";
     } else {
       thumb_div.current!.style.left = mapped + "%";
+      thumb_div.current!.style.right = "0";
     }
   }
 
@@ -388,8 +417,8 @@ export function HSlider(params: {
     } else {
       const start = start_ref.current!;
       const end = end_ref.current!;
-      const new_val = left ? value.current - increment.current : value.current + increment.current;
-      if (new_val >= start && new_val <= end) {
+      const new_val = MathUtils.clamp(left ? value.current - increment.current : value.current + increment.current, start, end);
+      if (new_val != value.current) {
         set_cast_value(new_val);
         value.current = MathUtils.clamp(value.current, start, end);
         put_slider_position();
