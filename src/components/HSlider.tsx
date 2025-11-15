@@ -4,6 +4,7 @@ import React from "react";
 import Draggable from "@hydroperx/draggable";
 import { input } from "@hydroperx/inputaction";
 import { styled } from "styled-components";
+import * as FloatingUI from "@floating-ui/dom";
 
 // local
 import { SliderStop } from "./SliderStop";
@@ -401,17 +402,32 @@ export function HSlider(params: {
 
   // thumb drag start
   function thumb_dragStart(element: Element, x: number, y: number, event: Event): void {
-    // fixme();
+    // show value display div
+    val_display_div.current!.style.visibility = "hidden";
+    FloatingUI.computePosition(thumb_div.current!, val_display_div.current!, {
+      placement: "top",
+      middleware: [
+        FloatingUI.offset(16),
+        FloatingUI.flip(),
+        FloatingUI.shift(),
+      ],
+    }).then(r => {
+      val_display_div.current!.style.left = r.x + "px";
+      val_display_div.current!.style.top = r.y + "px";
+    });
   }
 
   // thumb drag
   function thumb_drag(element: Element, x: number, y: number, event: Event): void {
-    // fixme();
+    fixme();
   }
 
   // thumb dragEnd
   function thumb_dragEnd(element: Element, x: number, y: number, event: Event): void {
-    // fixme();
+    // hide value display div
+    val_display_div.current!.style.visibility = "";
+
+    fixme();
   }
 
   return (
