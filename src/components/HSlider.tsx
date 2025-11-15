@@ -117,7 +117,9 @@ export function HSlider(params: {
       val_display_div.current!,
       put_slider_position,
       set_cast_value,
-      get_display_label
+      get_display_label,
+      changed,
+      value
     );
 
     // REMObserver
@@ -496,6 +498,7 @@ class DND {
   private m_global_pointerMove: null | ((e: PointerEvent) => void) = null;
   private m_global_pointerUp: null | ((e: PointerEvent) => void) = null;
   private m_global_pointerCancel: null | ((e: PointerEvent) => void) = null;
+  private m_activePointerId: number = -1;
 
   // new DND()
   public constructor(
@@ -504,7 +507,9 @@ class DND {
     private val_display_div: HTMLDivElement,
     private put_slider_position: (thumb?: boolean) => void,
     private set_cast_value: (value: number) => void,
-    private get_display_label: () => string
+    private get_display_label: () => string,
+    private changed: React.RefObject<boolean>,
+    private value: React.RefObject<number>
   ) {
     //
   }
@@ -545,6 +550,89 @@ class DND {
 
   // pointer down on the button
   private handle_pointer_down(e: PointerEvent): void {
+    if (this.m_activePointerId != -1) {
+      return;
+    }
+
+    // remember pointer ID
+    this.m_activePointerId = e.pointerId;
+
+    // register global pointer move event
+    this.m_global_pointerMove = this.drag_move.bind(this);
+    window.addEventListener("pointermove", this.m_global_pointerMove);
+
+    // register global pointer up event
+    this.m_global_pointerUp = this.drag_stop.bind(this);
+    window.addEventListener("pointerup", this.m_global_pointerUp);
+
+    // register global pointer cancel event
+    this.m_global_pointerCancel = this.drag_stop.bind(this);
+    window.addEventListener("pointercancel", this.m_global_pointerCancel);
+
+    // handle drag start
+    this.drag_start(e);
+  }
+
+  // drag start
+  private drag_start(e: PointerEvent): void {
+    this.update_position(e);
+  }
+
+  // drag move
+  private drag_move(e: PointerEvent): void {
+    if (e.pointerId != this.m_activePointerId) {
+      return;
+    }
+
+    this.update_position(e);
+  }
+
+  // drag move
+  private drag_stop(e: PointerEvent): void {
+    if (e.pointerId != this.m_activePointerId) {
+      return;
+    }
+
+    // forget pointer ID
+    this.m_activePointerId = -1;
+
+    // hide value display div
+    this.val_display_div.style.visibility = "";
+
+    // forget global handlers
+    if (this.m_global_pointerMove) {
+      window.removeEventListener("pointermove", this.m_global_pointerMove);
+      this.m_global_pointerMove = null;
+    }
+    if (this.m_global_pointerUp) {
+      window.removeEventListener("pointerup", this.m_global_pointerUp);
+      this.m_global_pointerUp!(new PointerEvent("pointerup"));
+      this.m_global_pointerUp = null;
+    }
+    if (this.m_global_pointerCancel) {
+      window.removeEventListener("pointercancel", this.m_global_pointerCancel);
+      this.m_global_pointerCancel = null;
+    }
+
+    // update slider position
+    this.put_slider_position();
+  }
+
+  // updates position based on where the pointer is moving
+  // and where it originally started pressing at.
+  private update_position(e: PointerEvent): void {
+    // not at initial state anymore
+    this.changed.current = true;
+
+    // remember old value
+    const old_value = this.value.current;
+
+    // position thumb in %
+    fixme();
+
+    // put slider position (except for the thumb)
+    this.put_slider_position(false);
+
     fixme();
   }
 }
