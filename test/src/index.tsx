@@ -39,8 +39,9 @@ function App() {
             style={{
               overflowY: "auto",
             }}>
-            <VGroup padding={10}>
+            <VGroup padding={10} gap={10}>
               <HSlider default={0} start={0} end={10}/>
+              <HSlider default={0} stops={[{ value: 0, label: "100x100" }, { value: 1, label: "240x240" }, { value: 2, label: "800x600" }]}/>
             </VGroup>
           </Root>
         </Primary>

@@ -287,14 +287,19 @@ export function HSlider(params: {
     thumb_div.current!.style.left = "";
     thumb_div.current!.style.right = "";
 
-    const thumb_dec = ((
-      thumb_div.current!.offsetWidth/2
-    ) / ScaleUtils.getScale(button.current!).x) / rem.current;
+    const thumb_width = thumb_div.current!.offsetWidth;
+    const track_width = button.current!.clientWidth;
+
+    // usable visual percentage of track
+    const usable = 100 - (thumb_width / track_width) * 100;
+
+    // percent mapped to the usable range
+    const mapped = (percent / 100) * usable;
 
     if (rtl_ref.current) {
-      thumb_div.current!.style.right = "calc(" + percent + "% - " + thumb_dec + "rem)";
+      thumb_div.current!.style.right = mapped + "%";
     } else {
-      thumb_div.current!.style.left = "calc(" + percent + "% - " + thumb_dec + "rem)";
+      thumb_div.current!.style.left = mapped + "%";
     }
   }
 
