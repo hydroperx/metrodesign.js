@@ -116,10 +116,16 @@ export function HSlider(params: {
       thumb_div.current!,
       val_display_div.current!,
       put_slider_position,
+      put_thumb_position,
       set_cast_value,
       get_display_label,
       changed,
-      value
+      change_handler,
+      value,
+      rtl_ref,
+      start_ref,
+      end_ref,
+      stops_ref
     );
 
     // REMObserver
@@ -263,29 +269,30 @@ export function HSlider(params: {
     past_div.current!.style.left = "";
     past_div.current!.style.width = "";
 
-    if (thumb) {
-      thumb_div.current!.style.left = "";
-      thumb_div.current!.style.right = "";
+    if (rtl_ref.current) {
+      past_div.current!.style.right = "0";
+      past_div.current!.style.width = percent + "%";
+    } else {
+      past_div.current!.style.left = "0";
+      past_div.current!.style.width = percent + "%";
     }
+
+    put_thumb_position(percent);
+  }
+
+  // position only the thumb
+  function put_thumb_position(percent: number): void {
+    thumb_div.current!.style.left = "";
+    thumb_div.current!.style.right = "";
 
     const thumb_dec = ((
       thumb_div.current!.offsetWidth/2
     ) / ScaleUtils.getScale(button.current!).x) / rem.current;
 
     if (rtl_ref.current) {
-      past_div.current!.style.right = "0";
-      past_div.current!.style.width = percent + "%";
-
-      if (thumb) {
-        thumb_div.current!.style.right = "calc(" + percent + "% - " + thumb_dec + "rem)";
-      }
+      thumb_div.current!.style.right = "calc(" + percent + "% - " + thumb_dec + "rem)";
     } else {
-      past_div.current!.style.left = "0";
-      past_div.current!.style.width = percent + "%";
-
-      if (thumb) {
-        thumb_div.current!.style.left = "calc(" + percent + "% - " + thumb_dec + "rem)";
-      }
+      thumb_div.current!.style.left = "calc(" + percent + "% - " + thumb_dec + "rem)";
     }
   }
 
@@ -354,6 +361,7 @@ export function HSlider(params: {
       const new_val = left ? value.current - increment.current : value.current + increment.current;
       if (new_val >= start && new_val <= end) {
         set_cast_value(new_val);
+        value.current = MathUtils.clamp(value.current, start, end);
         put_slider_position();
         change_handler.current?.(value.current);
         changed.current = true;
@@ -499,7 +507,7 @@ class DND {
   private m_global_pointerCancel: null | ((e: PointerEvent) => void) = null;
   private m_global_wheel: null | ((e: WheelEvent) => void) = null;
   private m_activePointerId: number = -1;
-  private m_dragStart: [number, number] = [0, 0];
+  // private m_dragStart: [number, number] = [0, 0];
 
   // new DND()
   public constructor(
@@ -507,10 +515,16 @@ class DND {
     private thumb_div: HTMLDivElement,
     private val_display_div: HTMLDivElement,
     private put_slider_position: (thumb?: boolean) => void,
+    private put_thumb_position: (percent: number) => void,
     private set_cast_value: (value: number) => void,
     private get_display_label: () => string,
     private changed: React.RefObject<boolean>,
-    private value: React.RefObject<number>
+    private change_handler: React.RefObject<undefined | ((value: any) => void)>,
+    private value: React.RefObject<number>,
+    private rtl: React.RefObject<boolean>,
+    private start: React.RefObject<undefined | number>,
+    private end: React.RefObject<undefined | number>,
+    private stops: React.RefObject<undefined | SliderStop[]>
   ) {
     //
   }
@@ -588,7 +602,7 @@ class DND {
     this.m_activePointerId = e.pointerId;
 
     // remember drag start
-    this.m_dragStart = [e.clientX, e.clientY];
+    // this.m_dragStart = [e.clientX, e.clientY];
 
     // update position
     this.update_position(e);
@@ -648,12 +662,54 @@ class DND {
     // remember old value
     const old_value = this.value.current;
 
+    // calculate the position percent
+    const x = MathUtils.clamp(
+      e.clientX,
+      this.button.getBoundingClientRect().left,
+      this.button.getBoundingClientRect().right
+    ) - this.button.getBoundingClientRect().left;
+    let percent = MathUtils.clamp((x / this.button.getBoundingClientRect().width) * 100, 0, 100);
+    if (this.rtl.current) {
+      percent = Math.abs(percent - 100);
+    }
+
     // position thumb in %
-    fixme();
+    this.put_thumb_position(percent);
+
+    // update value
+    //
+    // snap to a stop
+    if (this.stops.current) {
+      fixme();
+    // cast to start..end range
+    } else {
+      const start = this.start.current!;
+      const end = this.end.current!;
+      this.set_cast_value(((end - start) * (percent / 100)) + start);
+      this.value.current = MathUtils.clamp(this.value.current, start, end);
+    }
 
     // put slider position (except for the thumb)
     this.put_slider_position(false);
 
-    fixme();
+    // show value display div
+    this.val_display_div.style.visibility = "hidden";
+    this.val_display_div.innerText = this.get_display_label();
+    FloatingUI.computePosition(this.thumb_div, this.val_display_div, {
+      placement: "top",
+      middleware: [
+        FloatingUI.offset(16),
+        FloatingUI.flip(),
+        FloatingUI.shift(),
+      ],
+    }).then(r => {
+      this.val_display_div.style.left = r.x + "px";
+      this.val_display_div.style.top = r.y + "px";
+    });
+
+    // trigger `change` event
+    if (this.value.current != old_value) {
+      this.change_handler.current?.(this.value.current);
+    }
   }
 }

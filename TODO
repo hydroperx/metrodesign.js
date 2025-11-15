@@ -111,9 +111,9 @@ Each item must contain three tags: the icon, the label, and the ending (usually 
 - [ ] Done
   - [ ] Value display (position like a tooltip over the thumb (pref. top), but with a more substantial offset) while...
     - [ ] ... hovering the thumb
-    - [ ] ... dragging the thumb (i.e. pointer not hovering the thumb)
+    - [x] ... dragging the thumb (i.e. pointer not hovering the thumb)
   - [x] (DND) drag-n-drop start
-    - [ ] update_position()
+    - [x] update_position()
   - [x] (DND) drag-n-drop move
     - [x] update_position()
   - [x] (DND) drag-n-drop stop
@@ -121,15 +121,15 @@ Each item must contain three tags: the icon, the label, and the ending (usually 
     - [x] *Put slider position*
   - [ ] (DND) update_position()
     - [x] changed = true
-    - [ ] Position thumb in %
-    - [ ] *Put slider position* (except for the thumb)
+    - [x] Position thumb in %
     - [ ] Update value
       - [ ] set_cast_value() for start..end
-      - [ ] For stops, snap `value.current` on drag stop.
-    - [ ] Show value display div
-    - [ ] Update value display div's text
-    - [ ] Update value display div's position
-    - [ ] Trigger `change` event (if really changed)
+      - [ ] For stops, set `value.current` to a snapped stop.
+    - [x] *Put slider position* (except for the thumb)
+    - [x] Show value display div
+    - [x] Update value display div's text
+    - [x] Update value display div's position
+    - [x] Trigger `change` event (if really changed)
   - [x] Arrow keys
     - [x] Move by stop, or between start..end
 
