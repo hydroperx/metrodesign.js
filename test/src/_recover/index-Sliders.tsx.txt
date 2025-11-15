@@ -12,6 +12,8 @@ import {
   Button,
   Label,
   Icon,
+  HSlider,
+  VSlider,
 } from "@hydroperx/metrodesign/components";
 import { RTLProvider } from "@hydroperx/metrodesign/layout";
 import {
@@ -39,6 +41,26 @@ function App() {
               overflowY: "auto",
             }}>
             <VGroup padding={10} gap={10}>
+              <HSlider default={0} start={0} end={10}/>
+              <HSlider
+                default={0.5}
+                integer={false}
+                start={0.5}
+                end={0.9}
+                increment={0.05}
+                fixed={2}/>
+              <HSlider default={0} stops={[{ value: 0, label: "100x100" }, { value: 1, label: "240x240" }, { value: 2, label: "800x600" }]}/>
+              <HGroup gap={10}>
+                <VSlider default={0} start={0} end={10}/>
+                <VSlider
+                  default={0.5}
+                  integer={false}
+                  start={0.5}
+                  end={0.9}
+                  increment={0.05}
+                  fixed={2}/>
+                <VSlider default={0} stops={[{ value: 0, label: "100x100" }, { value: 1, label: "240x240" }, { value: 2, label: "800x600" }]}/>
+              </HGroup>
             </VGroup>
           </Root>
         </Primary>

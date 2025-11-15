@@ -303,6 +303,7 @@ export function HSlider(params: {
   function put_past_position(percent: number): void {
     past_div.current!.style.left = "";
     past_div.current!.style.width = "";
+    past_div.current!.style.right = "";
 
     if (rtl_ref.current) {
       past_div.current!.style.right = "0";
@@ -387,10 +388,14 @@ export function HSlider(params: {
 
   // handle global input pressed
   function global_input_pressed(): void {
-    const left = input.justPressed("navigateLeft");
-    const right = input.justPressed("navigateRight");
+    let left = input.justPressed("navigateLeft");
+    let right = input.justPressed("navigateRight");
     if (!(left || right)) {
       return;
+    }
+    if (rtl_ref.current) {
+      left = !left;
+      right = !right;
     }
 
     // handle arrows moving across stops
