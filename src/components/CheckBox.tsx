@@ -35,9 +35,9 @@ export function CheckBox(params: CheckBoxParams) {
 
   const changed = React.useRef<boolean>(false);
   const value_ref = React.useRef<boolean>(!!params.default);
-  let [checked_horizontal_pos, set_checked_horizontal_pos] = React.useState<number>(
-    rtl ? (value_ref.current ? 100 : 0) : (value_ref.current ? 0 : 100),
-  ); // percent
+  // let [checked_horizontal_pos, set_checked_horizontal_pos] = React.useState<number>(
+  //  rtl ? (value_ref.current ? 100 : 0) : (value_ref.current ? 0 : 100),
+  // ); // percent
   const rem = React.useRef<number>(16);
 
   // misc.
@@ -119,7 +119,7 @@ export function CheckBox(params: CheckBoxParams) {
         x /= rem.current;
 
         // position checked rectangle
-        set_checked_horizontal_pos(MathUtils.clamp(Math.round(100 - (x / (rightmost_carret_pos-leftmost_carret_pos))*100), 0, 100));
+        update_checked_rect(MathUtils.clamp(Math.round(100 - (x / (rightmost_carret_pos-leftmost_carret_pos))*100), 0, 100));
 
         // reset top property set by Draggable
         carret_ref.current!.style.top = "";
@@ -207,12 +207,25 @@ export function CheckBox(params: CheckBoxParams) {
     }, 17);
   }
 
-  function update_positions() {
+  function update_positions(): void {
     const value = value_ref.current;
     const carret_left = !rtl_ref.current ? (value ? 100 : 0) : value ? 0 : 100;
     carret_ref.current!.style.left = (carret_left/100 * (rightmost_carret_pos - leftmost_carret_pos)) + "rem";
     // position checked rectangle
-    set_checked_horizontal_pos(rtl_ref.current ? (value ? 100 : 0) : (value ? 0 : 100));
+    update_checked_rect(rtl_ref.current ? (value ? 100 : 0) : (value ? 0 : 100));
+  }
+
+  function update_checked_rect(percent: number): void {
+    checked_div_ref.current!.style.left = "";
+    checked_div_ref.current!.style.right = "";
+    checked_div_ref.current!.style.width = "";
+    if (rtl_ref.current) {
+      checked_div_ref.current!.style.right = "0";
+      checked_div_ref.current!.style.width = percent + "%";
+    } else {
+      checked_div_ref.current!.style.left = "0";
+      checked_div_ref.current!.style.right = percent + "%";
+    }
   }
 
   return (
@@ -243,10 +256,7 @@ export function CheckBox(params: CheckBoxParams) {
       $unchecked_hover_color={unchecked_hover_color}
       $checked_color={checked_color}
       $checked_hover_color={checked_hover_color}
-      $rtl={rtl}
-      $carret_w={carret_w}
-      $checked_horizontal_pos={checked_horizontal_pos}
-    >
+      $carret_w={carret_w}>
       <div ref={unchecked_div_ref} className="CheckBox-unchecked-rect"></div>
       <div ref={checked_div_ref} className="CheckBox-checked-rect"></div>
       <div
@@ -296,9 +306,7 @@ const Button = styled.button<{
   $unchecked_hover_color: string;
   $checked_color: string;
   $checked_hover_color: string;
-  $rtl: boolean;
   $carret_w: number;
-  $checked_horizontal_pos: number;
 }>`
   && {
     background: none;
@@ -334,8 +342,6 @@ const Button = styled.button<{
 
   && .CheckBox-checked-rect {
     position: absolute;
-    ${$ => (!$.$rtl ? "left" : "right")}: 0;
-    ${$ => (!$.$rtl ? "right" : "width")}: ${$ => $.$checked_horizontal_pos}%;
     top: 0;
     bottom: 0;
     transition: left 110ms ease-out, right 110ms ease-out;
