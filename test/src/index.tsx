@@ -27,7 +27,7 @@ import {
  */
 function App() {
   return (
-    <ThemeProvider theme={ThemePresets.dark}>
+    <ThemeProvider theme={ThemePresets.get("dark")}>
       <RTLProvider rtl={false}>
         <Primary prefer={false}>
           <Root

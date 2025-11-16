@@ -1,5 +1,9 @@
+// third-party
 import * as React from "react";
 import { Color } from "@hydroperx/color";
+
+// local
+import * as ColorUtils from "../utils/ColorUtils";
 
 /**
  * Basic theme description specifying the color scheme.
@@ -206,7 +210,7 @@ blue.colors.anchor = "#26e4d0";
 
 // purple
 const purple: Theme = structuredClone(dark);
-purple.colors.background = "#180053";
+purple.colors.background = "#450086";
 
 // pink
 const pink = structuredClone(dark);
@@ -269,18 +273,18 @@ export type ThemeColor =
   ;
 
 const __map__ = new Map<ThemeColor, Theme>([
-  ["light", light],
   ["dark", dark],
   ["gray", gray],
+  ["light", light],
   ["red", red],
+  ["orange", orange],
+  ["yellow", yellow],
   ["green", green],
+  ["cyan", cyan],
   ["blue", blue],
   ["purple", purple],
   ["pink", pink],
-  ["orange", orange],
-  ["yellow", yellow],
   ["brown", brown],
-  ["cyan", cyan],
 ]);
 
 /**

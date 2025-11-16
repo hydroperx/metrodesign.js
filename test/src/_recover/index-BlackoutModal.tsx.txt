@@ -29,7 +29,7 @@ function App() {
   const [modal_open, set_modal_open] = React.useState<boolean>(false);
 
   return (
-    <ThemeProvider theme={ThemePresets.dark}>
+    <ThemeProvider theme={ThemePresets.get("dark")}>
       <RTLProvider rtl={false}>
         <Primary prefer={false}>
           <Root

@@ -42,7 +42,7 @@ import {
 // simple example
 function SimpleExample(): React.ReactNode {
     return (
-        <ThemeProvider theme={ThemePresets.dark}>
+        <ThemeProvider theme={ThemePresets.get("dark")}>
             <Root full solid selection={false}>
                 <Label variant="heading">simple</Label>
             </Root>
