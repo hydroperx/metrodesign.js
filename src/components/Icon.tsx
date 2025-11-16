@@ -67,6 +67,18 @@ import help_circle_black from "../icons/help-circle-black.svg";
 import help_circle_white from "../icons/help-circle-white.svg";
 import new_black from "../icons/new-black.svg";
 import new_white from "../icons/new-white.svg";
+import trash_white from "../icons/trash-white.png";
+import trash_black from "../icons/trash-black.png";
+import hamburguer_menu_white from "../icons/hamburguer-menu-white.png";
+import hamburguer_menu_black from "../icons/hamburguer-menu-black.png";
+import shutdown_white from "../icons/shutdown-white.png";
+import shutdown_black from "../icons/shutdown-black.png";
+import seen_white from "../icons/seen-white.png";
+import seen_black from "../icons/seen-black.png";
+import open_envelope_white from "../icons/open-envelope-white.png";
+import open_envelope_black from "../icons/open-envelope-black.png";
+import notification_envelope_white from "../icons/notification-envelope-white.png";
+import notification_envelope_black from "../icons/notification-envelope-black.png";
 
 // third-party
 import { Color, ColorObserver } from "@hydroperx/color";
@@ -158,7 +170,16 @@ export type NativeIcon =
   | "idea"
   | "help"
   | "helpCircle"
-  | "new";
+  | "new"
+  | "trash"
+  | "hamburguerMenu"
+  | "shutdown"
+  | "power"
+  | "seen"
+  | "openEnvelope"
+  | "markAsRead"
+  | "notificationEnvelope"
+  | "markAsUnread";
 
 /**
  * Used for type inference for a `NativeIcon` identity
@@ -181,15 +202,20 @@ const iconMap = new Map<string, { black: any; white: any }>();
 // Initial registers
 IconMap.registerMap(new Map([
   [TypedNativeIcon("bullet"), { black: bullet_black, white: bullet_white }],
+
+  // arrow
   [TypedNativeIcon("checked"), { black: checked_black, white: checked_white }],
   [TypedNativeIcon("arrowLeft"), { black: arrow_left_black, white: arrow_left_white }],
   [TypedNativeIcon("arrowRight"), { black: arrow_right_black, white: arrow_right_white }],
   [TypedNativeIcon("arrowUp"), { black: arrow_up_black, white: arrow_up_white }],
   [TypedNativeIcon("arrowDown"), { black: arrow_down_black, white: arrow_down_white }],
+
+  // full arrow
   [TypedNativeIcon("fullArrowLeft"), { black: fullarrow_left_black, white: fullarrow_left_white }],
   [TypedNativeIcon("fullArrowRight"), { black: fullarrow_right_black, white: fullarrow_right_white }],
   [TypedNativeIcon("fullArrowUp"), { black: fullarrow_up_black, white: fullarrow_up_white }],
   [TypedNativeIcon("fullArrowDown"), { black: fullarrow_down_black, white: fullarrow_down_white }],
+
   [TypedNativeIcon("search"), { black: search_black, white: search_white }],
   [TypedNativeIcon("clear"), { black: clear_black, white: clear_white }],
   [TypedNativeIcon("games"), { black: games_black, white: games_white }],
@@ -214,6 +240,22 @@ IconMap.registerMap(new Map([
   [TypedNativeIcon("help"), { black: help_black, white: help_white }],
   [TypedNativeIcon("helpCircle"), { black: help_circle_black, white: help_circle_white }],
   [TypedNativeIcon("new"), { black: new_black, white: new_white }],
+  [TypedNativeIcon("trash"), { black: trash_black, white: trash_white }],
+  [TypedNativeIcon("hamburguerMenu"), { black: hamburguer_menu_black, white: hamburguer_menu_white }],
+
+  // shutdown / power
+  [TypedNativeIcon("shutdown"), { black: shutdown_black, white: shutdown_white }],
+  [TypedNativeIcon("power"), { black: shutdown_black, white: shutdown_white }],
+
+  [TypedNativeIcon("seen"), { black: seen_black, white: seen_white }],
+
+  // mark as read / open envelope
+  [TypedNativeIcon("openEnvelope"), { black: open_envelope_black, white: open_envelope_white }],
+  [TypedNativeIcon("markAsRead"), { black: open_envelope_black, white: open_envelope_white }],
+
+  // mark as unread / notification envelope
+  [TypedNativeIcon("notificationEnvelope"), { black: notification_envelope_black, white: notification_envelope_white }],
+  [TypedNativeIcon("markAsUnread"), { black: notification_envelope_black, white: notification_envelope_white }],
 ]));
 
 const Img = styled.img<{

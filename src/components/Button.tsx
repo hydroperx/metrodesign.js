@@ -498,7 +498,7 @@ const SecondaryButton = styled.button<ButtonCSSProps>`
   && {
     background: ${($) => $.$theme.colors.secondary};
     color: ${($) => $.$theme.colors.foreground};
-    font-weight: bold;
+    font-weight: 600;
     padding: 0.6rem 1rem;
     border: none;
     border-radius: 0;
@@ -529,7 +529,7 @@ const PrimaryButton = styled.button<ButtonCSSProps>`
   && {
     background: ${($) => $.$theme.colors.primary};
     color: ${($) => $.$theme.colors.primaryForeground};
-    font-weight: bold;
+    font-weight: 600;
     padding: 0.6rem 1rem;
     border: none;
     border-radius: 0;
@@ -560,7 +560,7 @@ const DangerButton = styled.button<ButtonCSSProps>`
   && {
     background: ${($) => $.$theme.colors.danger};
     color: ${($) => $.$theme.colors.dangerForeground};
-    font-weight: bold;
+    font-weight: 600;
     padding: 0.6rem 1rem;
     border: none;
     border-radius: 0;
@@ -591,7 +591,7 @@ const OutlineButton = styled.button<ButtonCSSProps>`
   && {
     background: none;
     color: ${($) => $.$color as string};
-    font-weight: bold;
+    font-weight: 600;
     padding: 0.6rem 1rem;
     border: 0.16rem solid ${($) => $.$color as string};
     border-radius: 0;
@@ -622,7 +622,7 @@ const OutlinePrimaryButton = styled.button<ButtonCSSProps>`
   && {
     background: ${($) => $.$bg};
     color: ${($) => $.$color as string};
-    font-weight: bold;
+    font-weight: 600;
     padding: 0.6rem 1rem;
     border: 0.16rem solid ${($) => $.$color as string};
     border-radius: 0;
