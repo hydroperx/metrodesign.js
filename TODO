@@ -1,70 +1,3 @@
-# README
-
-- [ ] Done
-
-# Fonts
-
-- [x] `@hydroperx/metrodesign/fonts`
-
-# Root
-
-Baseline group.
-
-- [x] Done
-
-# Group
-
-- [x] Done
-- [x] Enhance wheelHorizontal
-
-# HGroup
-
-- [x] Done
-- [x] Enhance wheelHorizontal
-
-# VGroup
-
-- [x] Done
-
-# Tooltip change
-
-- Discard tooltipPlacement and use a prefix for indicating the tooltip's placement. (`<?top?>`, `<?bottom?>`, `<?left?>`, `<?right?>`)
-  - [x] Label
-  - [x] Button
-
-# Label
-
-- [x] Done
-- [x] `error` boolean (for the `Theme`'s danger color)
-- [x] `warning` boolean (for the `Theme`'s warning color)
-
-# Button
-
-- [x] Done
-- [x] Use an `outline` boolean instead of a variant.
-- [x] tooltip must close and not open while a next-sibling PopoverMenu is open.
-
-# TextInput
-
-- [x] Done
-
-# Form
-
-- [x] Done
-- [x] submit event
-
-# FormGroup
-
-- [x] Done
-
-# ProgressBar
-
-- [x] Done
-
-# ProgressRing
-
-- [x] Done
-
 # PopoverMenu
 
 - [x] Done
@@ -77,22 +10,6 @@ Baseline group.
   - [ ] Fix little border-ish-jump at the end of the ComboBox open transition.
 - [ ] Future: Virtual list support (e.g. support displaying a loading indicator either at the start or end of the dropdown and add/eliminate options as appropriate maintaining correct V-scroll)
 
-# CheckBox
-
-- [x] Done
-
-# HSlider
-
-- [x] Done
-
-# VSlider
-
-- [x] Done
-
-# BlackoutModal
-
-- [x] Done
-
 # DatePicker
 
 - [ ] Done
@@ -100,14 +17,6 @@ Baseline group.
 # TabBar
 
 - [ ] Done
-
-# DesktopGroup
-
-- [x] Done
-
-# MobileGroup
-
-- [x] Done
 
 # Live tiles
 
@@ -121,8 +30,3 @@ Baseline group.
 Way contextual; skinning and behavior relies on surrounding container. It is basically used within live tiles.
 
 - [ ] Done
-
-# Documentation
-
-- [ ] ESCAPABLE class name
-- [ ] BUTTON_NAVIGABLE class name

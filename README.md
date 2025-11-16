@@ -15,6 +15,8 @@ Modern Metro design library for React.js, with look and feel close to Windows 8.
 - [Getting started](./docs/getting-started.md)
 - [Icons](./docs/icons.md)
 - [Scale factor](./docs/scale-factor.md)
+- [Escapable](./docs/escapable.md)
+- [Button navigable](./docs/button-navigable.md)
 - Components
   - [PopoverMenu](./docs/components/popover-menu.md)
 

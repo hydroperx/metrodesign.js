@@ -51,6 +51,8 @@ function SimpleExample(): React.ReactNode {
 }
 ```
 
+The `<Root>` component integrates basic style sheets of the Metro design library for its children.
+
 ## Primary colors
 
 To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `Primary` context provider:
