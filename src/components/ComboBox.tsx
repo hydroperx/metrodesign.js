@@ -626,7 +626,7 @@ const ComboBoxButton = styled.button<{
     border: none;
     font-weight: lighter;
     padding: ${REMConvert.pixels.rem(6)}rem 0.7rem;
-    opacity: 0.7;
+    opacity: 0.87;
   }
 
   &&.ComboBox-big {

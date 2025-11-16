@@ -64,17 +64,15 @@ export function Button(params: ButtonParams): React.ReactNode {
 
   switch (params.variant ?? "secondary") {
     case "none": {
-      const dark = Color(theme.colors.background).isDark();
-      color = dark ? "#fff" : "#000";
-      hover_bg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
+      color = theme.colors.foreground;
+      hover_bg = Color(theme.colors.foreground).alpha(0.4).hexa().toString();
 
       Button_comp = NoneButton;
       break;
     }
     case "big": {
-      const dark = Color(theme.colors.background).isDark();
-      color = dark ? "#fff" : "#000";
-      hover_bg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
+      color = theme.colors.foreground;
+      hover_bg = Color(theme.colors.foreground).alpha(0.4).hexa().toString();
 
       Button_comp = BigButton;
       break;
@@ -88,12 +86,10 @@ export function Button(params: ButtonParams): React.ReactNode {
     }
     case "secondary": {
       if (params.outline) {
-        const dark = Color(theme.colors.background).isDark();
-        color = dark ? "#fff" : "#000";
-        hover_bg = dark
-          ? ColorUtils.lighten(theme.colors.background, 0.4).toString()
-          : ColorUtils.darken(theme.colors.background, 0.3).toString();
-        pressed_color = dark ? "#000" : "#fff";
+        const dark = Color(theme.colors.foreground).isDark();
+        color = theme.colors.foreground;
+        hover_bg = Color(theme.colors.foreground).alpha(0.27).hexa().toString();
+        pressed_color = dark ? "#fff" : "#000";
 
         Button_comp = OutlineButton;
       } else {
@@ -104,15 +100,11 @@ export function Button(params: ButtonParams): React.ReactNode {
     }
     case "primary": {
       if (params.outline) {
-        const dark = Color(theme.colors.background).isDark();
-        color = dark ? "#fff" : "#000";
-        bg = dark
-          ? ColorUtils.lighten(theme.colors.background, 0.5).toString()
-          : ColorUtils.darken(theme.colors.background, 0.3).toString();
-        hover_bg = dark
-          ? ColorUtils.lighten(theme.colors.background, 0.7).toString()
-          : ColorUtils.darken(theme.colors.background, 0.5).toString();
-        pressed_color = dark ? "#000" : "#fff";
+        const dark = Color(theme.colors.foreground).isDark();
+        color = theme.colors.foreground;
+        bg = Color(theme.colors.foreground).alpha(0.3).hexa().toString();
+        hover_bg = Color(theme.colors.foreground).alpha(0.45).hexa().toString();
+        pressed_color = dark ? "#fff" : "#000";
 
         Button_comp = OutlinePrimaryButton;
       } else {
@@ -993,7 +985,7 @@ const CircleButtonButton = styled.button<{
   $size_rf: string;
 }>`
   && {
-    border: 0.16rem solid ${($) => $.$fg};
+    border: 0.2rem solid ${($) => $.$fg};
     border-radius: 100%;
     outline: none;
     color: ${($) => $.$normal_color};

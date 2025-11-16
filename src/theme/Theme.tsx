@@ -121,14 +121,14 @@ const light: Theme = {
     progressBarForeground: "#000",
 
     sliderBackground: "#777",
-    sliderPastBackground: "#3a00c8",
+    sliderPastBackground: "#3000aa",
 
     anchor: "#b700f3",
 
     scrollBarTrack: "#E9E9E9",
     scrollBarThumb: "#CDCDCD",
 
-    primary: "#3a00c8",
+    primary: "#3000aa",
     primaryForeground: "#fff",
 
     pressed: "#000",
@@ -157,14 +157,14 @@ const dark: Theme = {
     progressBarForeground: "#fff",
 
     sliderBackground: "#555",
-    sliderPastBackground: "#3a00c8",
+    sliderPastBackground: "#8c5fff",
 
     anchor: "#695C97",
 
     scrollBarTrack: "rgba(0,0,0,0)",
     scrollBarThumb: "#333",
 
-    primary: "#3a00c8",
+    primary: "#8c5fff",
     primaryForeground: "#fff",
 
     pressed: "#fff",
@@ -191,49 +191,50 @@ gray.colors.anchor = "#00e4ff";
 const red = structuredClone(dark);
 red.colors.background = "#a52100";
 red.colors.sliderPastBackground =
-red.colors.primary = "#bb0000";
+red.colors.primary = "#ff5151";
 red.colors.anchor = "#66de0d";
 
 // green
 const green = structuredClone(dark);
 green.colors.background = "#3F8700";
 green.colors.sliderPastBackground =
-green.colors.primary = "#4F970E";
-green.colors.anchor = "#ef7127";
+green.colors.primary = "#88fc22";
+green.colors.anchor = "#ff8e4c";
 
 // blue
 const blue = structuredClone(dark);
-blue.colors.background = "#047dc4";
+blue.colors.background = "#007ac0";
 blue.colors.sliderPastBackground =
-blue.colors.primary = "#0075d4";
+blue.colors.primary = "#3fa5f8";
 blue.colors.anchor = "#26e4d0";
 
 // purple
 const purple: Theme = structuredClone(dark);
 purple.colors.background = "#450086";
+purple.colors.anchor = "#26e4d0";
 
 // pink
 const pink = structuredClone(dark);
-pink.colors.background = "#c55ac0";
+pink.colors.background = "#b848b2";
 pink.colors.sliderPastBackground =
-pink.colors.primary = "#c500a4";
+pink.colors.primary = "#ff5fe4";
 pink.colors.anchor = "#38e6e4";
 pink.colors.danger = "#a50000";
 
 // orange
 const orange = structuredClone(dark);
-orange.colors.background = "#cf7b0d";
+orange.colors.background = "#ca770a";
 orange.colors.sliderPastBackground =
-orange.colors.primary = "#d8571c";
+orange.colors.primary = "#ff8d40";
 orange.colors.anchor = "#0ddecd";
 orange.colors.danger = "#a00000";
 orange.colors.warning = "#f8d800";
 
 // yellow
 const yellow = structuredClone(dark);
-yellow.colors.background = "#d8ca08";
+yellow.colors.background = "#c2b507";
 yellow.colors.sliderPastBackground =
-yellow.colors.primary = "#ebc000";
+yellow.colors.primary = "#f7d958";
 yellow.colors.anchor = "#1a90fe";
 yellow.colors.danger = "#fe1a1a";
 yellow.colors.warning = "#e48101";
@@ -242,17 +243,17 @@ yellow.colors.warning = "#e48101";
 const brown = structuredClone(dark);
 brown.colors.background = "#7c6a1a";
 brown.colors.sliderPastBackground =
-brown.colors.primary = "#9c8417";
+brown.colors.primary = "#cfae18";
 brown.colors.anchor = "#01e4cc";
 brown.colors.danger = "#fb2020";
 brown.colors.warning = "#e2ca00";
 
 // cyan
 const cyan = structuredClone(dark);
-cyan.colors.background = "#0cbdae";
+cyan.colors.background = "#00a396";
 cyan.colors.sliderPastBackground =
-cyan.colors.primary = "#00d1c7";
-cyan.colors.anchor = "#d741ed";
+cyan.colors.primary = "#09eee2";
+cyan.colors.anchor = "#9b00b3";
 
 /**
  * A theme color used in the presets.
