@@ -535,6 +535,11 @@ export class SimpleGroup {
       return true;
     }
     const original_target_tile = this.tiles.get(targetId)!;
+
+    // whether shifting occured fine.
+    let success = true;
+
+    // conflict loop
     conflicts: for (let conflicting_id of conflicting_tiles) {
       let conflicting_tile = this.tiles.get(conflicting_id)!;
 
@@ -623,7 +628,25 @@ export class SimpleGroup {
       let tryOpposite = false;
       let snapshot: null | Map<string, SimpleTile> = null;
 
+      // initial target of the conflict resolution?
+      let initialTarget = false;
+
       if (!shiftDirection) {
+        // if shift direction isn't determined, then
+        // that's because we're resolving conflicts from
+        // a basemost target tile to be positioned.
+        //
+        // in case we fail to shift tile later,
+        // we use that variable to determine if we can try
+        // re-positioning the target tile at the same place
+        // of the conflicting tile. (e.g. sometimes
+        // a drag-n-drop might be imprecisely putting a tile
+        // over another)
+        initialTarget = true;
+
+        // get a snapshot to restore later.
+        snapshot = this.snapshot();
+
         if (this.isHorizontal) {
           shiftDirection =
             target_tile.isMoreAbove(conflicting_tile) ?
@@ -634,7 +657,6 @@ export class SimpleGroup {
           if (shiftDirection === null) {
             shiftDirection = "upward";
             tryOpposite = true;
-            snapshot = this.snapshot();
           }
         } else {
           shiftDirection =
@@ -646,7 +668,6 @@ export class SimpleGroup {
           if (shiftDirection === null) {
             shiftDirection = "leftward";
             tryOpposite = true;
-            snapshot = this.snapshot();
           }
         }
       }
@@ -656,14 +677,34 @@ export class SimpleGroup {
           // shift upward in a horizontal layout.
           // this one has a limit.
           if (conflicting_tile.y <= 0 && conflicting_tile.x <= 0) {
-            return false;
+            if (initialTarget
+            && conflicting_tile.y + target_tile.height <= this.maxHeight!) {
+              target_tile.x = conflicting_tile.x;
+              target_tile.y = conflicting_tile.y;
+              if (this.resolveConflicts(targetId, "downward")) {
+                return true;
+              }
+              this.restoreSnapshot(snapshot!);
+            }
+            success = false;
+            continue conflicts;
           }
           conflicting_tile.y -= conflicting_tile.height;
           if (conflicting_tile.y < 0) {
             conflicting_tile.x -= conflicting_tile.width;
             conflicting_tile.y = this.maxHeight! - conflicting_tile.height;
             if (conflicting_tile.x < 0) {
-              return false;
+              if (initialTarget
+              && conflicting_tile.y + target_tile.height <= this.maxHeight!) {
+                target_tile.x = conflicting_tile.x;
+                target_tile.y = conflicting_tile.y;
+                if (this.resolveConflicts(targetId, "downward")) {
+                  return true;
+                }
+                this.restoreSnapshot(snapshot!);
+              }
+              success = false;
+              continue conflicts;
             }
           }
 
@@ -684,14 +725,34 @@ export class SimpleGroup {
           // shift leftward in a vertical layout.
           // this one has a limit.
           if (conflicting_tile.x <= 0 && conflicting_tile.y <= 0) {
-            return false;
+            if (initialTarget
+            && conflicting_tile.x + target_tile.width <= this.maxWidth!) {
+              target_tile.x = conflicting_tile.x;
+              target_tile.y = conflicting_tile.y;
+              if (this.resolveConflicts(targetId, "rightward")) {
+                return true;
+              }
+              this.restoreSnapshot(snapshot!);
+            }
+            success = false;
+            continue conflicts;
           }
           conflicting_tile.x -= conflicting_tile.width;
           if (conflicting_tile.x < 0) {
             conflicting_tile.x = this.maxWidth! - conflicting_tile.width;
             conflicting_tile.y -= conflicting_tile.height;
             if (conflicting_tile.y < 0) {
-              return false;
+              if (initialTarget
+              && conflicting_tile.x + target_tile.width <= this.maxWidth!) {
+                target_tile.x = conflicting_tile.x;
+                target_tile.y = conflicting_tile.y;
+                if (this.resolveConflicts(targetId, "rightward")) {
+                  return true;
+                }
+                this.restoreSnapshot(snapshot!);
+              }
+              success = false;
+              continue conflicts;
             }
           }
           break;
@@ -711,7 +772,7 @@ export class SimpleGroup {
 
       // shift other conflicting tiles like a snail.
       if (!this.resolveConflicts(conflicting_id, shiftDirection!)) {
-        // try opposite direction
+        // if failed, try opposite direction
         if (tryOpposite) {
           this.restoreSnapshot(snapshot!);
           return this.resolveConflicts(
@@ -724,11 +785,11 @@ export class SimpleGroup {
               "rightward" :
               "leftward");
         }
-        return false;
+        success = false;
       }
     }
 
-    return true;
+    return success;
   }
 
   // returns a copy of the tile data.

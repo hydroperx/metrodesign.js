@@ -8,7 +8,7 @@ Modern Metro design library for React.js, with look and feel close to Windows 8.
 
 ## Status
 
-- **Live tiles:** Live tiles were included in the former [library](https://github.com/hydroperx/metro-jan-26-2025.js). They are not supported currently. Maybe someday.
+- **Live tiles:** Live tiles were included in the former [library](https://github.com/hydroperx/metro-jan-26-2025.js). They are being re-implemented for this library yet.
 
 ## Documentation
 
