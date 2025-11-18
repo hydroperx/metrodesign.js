@@ -10,6 +10,7 @@ import * as REMConvert from "../utils/REMConvert";
 import { REMObserver } from "../utils/REMObserver";
 import * as MathUtils from "../utils/MathUtils";
 import * as ScaleUtils from "../utils/ScaleUtils";
+import { DND } from "./DND";
 
 /**
  * Live tiles core implementation.
@@ -94,6 +95,11 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
    * @hidden
    */
   public _rem: number = 16;
+
+  /**
+   * @hidden
+   */
+  public _dnd: DND = new DND();
 
   /**
    * Tile size in the `rem` unit.
@@ -206,7 +212,7 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     }
 
     // destroy the unique tileDND Draggable
-    fixme();
+    this._dnd.tileDNDDraggable?.destroy();
 
     // discard deferred rearrangement
     if (this._rearrange_timeout != -1) {
@@ -398,12 +404,6 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
   }
   public set dragEnabled(val) {
     this._drag_enabled = val;
-
-    // if `dragEnabled=true`, attach missing handlers.
-    fixme();
-
-    // if `dragEnabled=false`, detach handlers.
-    fixme();
   }
 
   /**
@@ -612,6 +612,8 @@ export class CoreGroup {
 
 /**
  * Tile state.
+ *
+ * @hidden
  */
 export class CoreTile {
   public dom: null | HTMLButtonElement;

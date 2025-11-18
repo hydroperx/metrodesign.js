@@ -15,9 +15,11 @@ Tiles:
 - [ ] Contributes a newly-added DOM tile, or detects moving X/Y, resizing and group transfer (look at parent).
   - [ ] Update tile's forDirection & forLimit
   - [ ] If the tile was previously detected for a different layout limit (width/height)/direction, then disregard whether X/Y has changed or not.
-- [ ] ... or, given a removed DOM tile, remove tile from state, remove parent group if empty and rearrange groups.
+- [ ] ... or, given a removed DOM tile, remove tile from state (both SimpleGroup and CoreGroup's tiles), remove parent group if empty and rearrange groups.
   - *This is usually called on React.js effect cleanup.*
-- [ ] If `dragEnabled=true`, attach handler.
+- [ ] Attach mouse down/click/touch down/touch end handlers for click, check and drag-n-drop events
+  - [ ] Drag-n-drop only occurs if `Core.dragEnabled=true`
+  - [ ] (un-)checking tiles only occurs if `Core.checkEnabled=true`
 
 Groups:
 
