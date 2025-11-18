@@ -18,7 +18,9 @@ Tiles:
 
 Groups:
 
-- [ ] Contributes a newly-added DOM group, or detects label change.
+- [ ] Contributes a newly-added DOM group, or detects label change, or reorders group (based on the `data-index` attribute changing from state's index).
+  - [ ] If `data-index` is `> groups.length` (that is, it's not an existing group's place neither the last place available) then trigger a `moveGroup` event to put it at the last position.
+  - [ ] If another group's index, then trigger `moveGroup` for the other group it's swaping index with.
 - [ ] ... or, given a removed DOM group, remove group from state and rearrange groups.
   - *This is usually called on React.js effect cleanup.*
 - [ ] Group indices are based in DOM order among sibling `TileGroup`s (e.g. disregard `TileDND`).
