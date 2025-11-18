@@ -39,7 +39,62 @@ export type CoreTilesClassNames = {
  * Events emitted by `Tiles` instances.
  */
 export type CoreTilesEventMap = {
-  //
+  /**
+   * Bulk change event.
+   */
+  bulkChange: CustomEvent<BulkChange>,
+  /**
+   * Move group event.
+   */
+  moveGroup: CustomEvent<{ id: string, index: number }>,
+  /**
+   * Rename group event.
+   */
+  renameGroup: CustomEvent<{ id: string, label: string }>,
+  /**
+   * Tile's drag start event.
+   */
+  dragStart: CustomEvent<{ id: string, dom: HTMLButtonElement }>,
+  /**
+   * Tile's drag move event.
+   */
+  dragMove: CustomEvent<{ id: string, dom: HTMLButtonElement }>,
+  /**
+   * Tile's drag start event.
+   */
+  dragEnd: CustomEvent<{ id: string, dom: HTMLButtonElement }>,
+  /**
+   * Group's drag start event.
+   */
+  groupDragStart: CustomEvent<{ id: string, dom: HTMLDivElement }>,
+  /**
+   * Group's drag move event.
+   */
+  groupDragMove: CustomEvent<{ id: string, dom: HTMLDivElement }>,
+  /**
+   * Group's drag start event.
+   */
+  groupDragEnd: CustomEvent<{ id: string, dom: HTMLDivElement }>,
+};
+
+/**
+ * Bulk change in a live tiles layout.
+ */
+export type BulkChange = {
+  /**
+   * Moves (in response to actions like drag-n-drop or direction change).
+   */
+  moves: { id: string, x: number, y: number }[],
+  /**
+   * Group transfers (tiles moving to other groups,
+   * in response to actions like drag-n-drop).
+   */
+  groupTransfers: { id: string, group: string, x: number, y: number }[],
+  /**
+   * Group removals (in response to drag-n-drop or
+   * explicit tile removal (in case group turns empty))
+   */
+  groupRemovals: { id: string }[],
 };
 
 /**
@@ -67,14 +122,21 @@ export class CoreGroup {
  * Tile state.
  */
 export class CoreTile {
+  public dom: null | HTMLButtonElement;
   public x: number;
   public y: number;
   public size: TileSize;
 
   //
   public constructor(params: {
-    //
+    dom: null | HTMLButtonElement,
+    x: number,
+    y: number,
+    size: TileSize,
   }) {
-    //
+    this.dom = params.dom;
+    this.x = params.x;
+    this.y = params.y;
+    this.size = params.size;
   }
 }

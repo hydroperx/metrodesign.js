@@ -2,15 +2,20 @@
 
 - [ ] `.direction` getter/setter
   - [ ] changes the layout and re-detect past DOM nodes (e.g. clear things up and add groups and tiles back based on past data).
-- [ ] `.detect()`
-  - [ ] Contributes a newly-added DOM tile, or detects moving X/Y, resizing and group transfer (look at parent).
-    - [ ] If the tile was previously detected for a different layout limit/direction, then disregard whether X/Y has changed or not.
-  - [ ] Or contributes a newly-added DOM group, or detects label change.
-- [ ] `.removeTile()`
-  - [ ] Given a removed DOM node, remove tile from state, remove parent group if empty, rearrange groups and adds the DOM node to the DOM back temporarily, executes a scale tween and then removes the DOM node again.
+
+## CoreTiles.detect()
+
+Tiles:
+
+- [ ] Contributes a newly-added DOM tile, or detects moving X/Y, resizing and group transfer (look at parent).
+  - [ ] If the tile was previously detected for a different layout limit/direction, then disregard whether X/Y has changed or not.
+- [ ] ... or, given a removed DOM tile, remove tile from state, remove parent group if empty and rearrange groups.
   - *This is usually called on React.js effect cleanup.*
-- [ ] `.removeGroup()`
-  - [ ] Given a removed DOM node, remove group from state and rearrange groups.
+
+Groups:
+
+- [ ] Contributes a newly-added DOM group, or detects label change.
+- [ ] ... or, given a removed DOM group, remove group from state and rearrange groups.
   - *This is usually called on React.js effect cleanup.*
 
 ## Group label
