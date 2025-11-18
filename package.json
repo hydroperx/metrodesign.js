@@ -35,6 +35,11 @@
       "types": "./dist/layout/index.d.ts",
       "default": "./dist/layout/index.js"
     },
+    "./liveTiles": {
+      "typedoc": "./src/liveTiles/index.ts",
+      "types": "./dist/liveTiles/index.d.ts",
+      "default": "./dist/liveTiles/index.js"
+    },
     "./theme": {
       "typedoc": "./src/theme/index.ts",
       "types": "./dist/theme/index.d.ts",

@@ -4,6 +4,7 @@ import { TypedEventTarget } from "@hydroperx/event";
 
 // local
 import { SimpleGroup, SimpleTile } from "./SimpleGroup";
+import { TileSize } from "./TileSize";
 import { REMObserver } from "../utils/REMObserver";
 import * as MathUtils from "../utils/MathUtils";
 
@@ -42,7 +43,38 @@ export type CoreTilesEventMap = {
 };
 
 /**
- * Core tiles state.
+ * Ĝroup state.
  */
-export class CoreTilesState {
+export class CoreGroup {
+  public dom: null | HTMLDivElement = null;
+  public id: string;
+  public label: string;
+  public tiles: Map<string, CoreTile> = new Map();
+
+  //
+  public constructor(params: {
+    dom: null | HTMLDivElement,
+    id: string,
+    label: string,
+  }) {
+    this.dom = params.dom;
+    this.id = params.id;
+    this.label = params.label;
+  }
+}
+
+/**
+ * Tile state.
+ */
+export class CoreTile {
+  public x: number;
+  public y: number;
+  public size: TileSize;
+
+  //
+  public constructor(params: {
+    //
+  }) {
+    //
+  }
 }

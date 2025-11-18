@@ -6,8 +6,12 @@
   - [ ] Contributes a newly-added DOM tile, or detects moving X/Y, resizing and group transfer (look at parent).
     - [ ] If the tile was previously detected for a different layout limit/direction, then disregard whether X/Y has changed or not.
   - [ ] Or contributes a newly-added DOM group, or detects label change.
-- [ ] `.remove()`
-  - [ ] Removes a tile (by its DOM node) or group after a transition. Returns a promise which fulfills after the transition is done. The end user has to manually remove the DOM node.
+- [ ] `.removeTile()`
+  - [ ] Given a removed DOM node, remove tile from state, remove parent group if empty, rearrange groups and adds the DOM node to the DOM back temporarily, executes a scale tween and then removes the DOM node again.
+  - *This is usually called on React.js effect cleanup.*
+- [ ] `.removeGroup()`
+  - [ ] Given a removed DOM node, remove group from state and rearrange groups.
+  - *This is usually called on React.js effect cleanup.*
 
 ## Group label
 

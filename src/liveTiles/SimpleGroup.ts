@@ -792,9 +792,10 @@ export class SimpleGroup {
 
       // shift other conflicting tiles like a snail.
       if (!this.resolveConflicts(conflicting_id, shiftDirection!)) {
-        // if failed, try opposite direction
+        // if failed and at basemost target tile,
+        // try opposite direction
         if (tryOpposite) {
-          this.restoreSnapshot(snapshot!);
+          this.restoreSnapshot(before_conflict_snapshot);
           return this.resolveConflicts(
             target_id,
             shiftDirection! == "upward" ?
@@ -809,6 +810,9 @@ export class SimpleGroup {
       }
     }
 
+    if (!success) {
+      this.restoreSnapshot(before_conflict_snapshot);
+    }
     return success;
   }
 
