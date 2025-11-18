@@ -529,12 +529,15 @@ export class SimpleGroup {
   }
 
   // shift conflicting tiles.
-  private resolveConflicts(targetId: string, shiftDirection: null | ShiftDirection = null): boolean {
-    const conflicting_tiles = this.getIntersectingTiles(this.tiles.get(targetId)!, targetId);
+  private resolveConflicts(originalTargetId: string, shiftDirection: null | ShiftDirection = null): boolean {
+    const original_target_tile = this.tiles.get(originalTargetId)!;
+    const conflicting_tiles = this.getIntersectingTiles(original_target_tile, originalTargetId);
     if (conflicting_tiles.length == 0) {
       return true;
     }
-    const original_target_tile = this.tiles.get(targetId)!;
+
+    // snapshot before the conflict loop
+    const before_conflict_snapshot = this.snapshot();
 
     // whether shifting occured fine.
     let success = true;
@@ -552,6 +555,7 @@ export class SimpleGroup {
       // swap targets if one tile is more towards the opposite
       // shift direction.
       let target_tile = original_target_tile;
+      let target_id = originalTargetId;
       if (shiftDirection) {
         let swap = false;
         if (shiftDirection == "upward") {
@@ -573,9 +577,9 @@ export class SimpleGroup {
           let k_conflicing_tile = conflicting_tile;
           let k_conflicting_id = conflicting_id;
           conflicting_tile = target_tile;
-          conflicting_id = targetId;
+          conflicting_id = target_id;
           target_tile = k_conflicing_tile;
-          targetId = k_conflicting_id;
+          target_id = k_conflicting_id;
         }
       }
 
@@ -591,13 +595,13 @@ export class SimpleGroup {
           && target_tile.y == conflicting_tile.y
       ) {
         let cheap_space = new SimpleTile(target_tile.x + target_tile.width, target_tile.y, conflicting_tile.width, conflicting_tile.height);
-        if (cheap_space!.x >= 0 && this.getIntersectingTiles(cheap_space!, targetId).length == 0) {
+        if (cheap_space!.x >= 0 && this.getIntersectingTiles(cheap_space!, target_id).length == 0) {
           conflicting_tile.x = cheap_space!.x;
           conflicting_tile.y = cheap_space!.y;
           continue conflicts;
         }
         cheap_space = new SimpleTile(target_tile.x - target_tile.width, target_tile.y, conflicting_tile.width, conflicting_tile.height);
-        if (cheap_space!.x >= 0 && this.getIntersectingTiles(cheap_space!, targetId).length == 0) {
+        if (cheap_space!.x >= 0 && this.getIntersectingTiles(cheap_space!, target_id).length == 0) {
           conflicting_tile.x = cheap_space!.x;
           conflicting_tile.y = cheap_space!.y;
           continue conflicts;
@@ -608,13 +612,13 @@ export class SimpleGroup {
         && target_tile.x == conflicting_tile.x
       ) {
         let cheap_space = new SimpleTile(target_tile.x, target_tile.y + target_tile.height, conflicting_tile.width, conflicting_tile.height);
-        if (cheap_space!.y >= 0 && this.getIntersectingTiles(cheap_space!, targetId).length == 0) {
+        if (cheap_space!.y >= 0 && this.getIntersectingTiles(cheap_space!, target_id).length == 0) {
           conflicting_tile.x = cheap_space!.x;
           conflicting_tile.y = cheap_space!.y;
           continue conflicts;
         }
         cheap_space = new SimpleTile(target_tile.x, target_tile.y - target_tile.height, conflicting_tile.width, conflicting_tile.height);
-        if (cheap_space!.y >= 0 && this.getIntersectingTiles(cheap_space!, targetId).length == 0) {
+        if (cheap_space!.y >= 0 && this.getIntersectingTiles(cheap_space!, target_id).length == 0) {
           conflicting_tile.x = cheap_space!.x;
           conflicting_tile.y = cheap_space!.y;
           continue conflicts;
@@ -676,17 +680,22 @@ export class SimpleGroup {
         case "upward": {
           // shift upward in a horizontal layout.
           // this one has a limit.
+          let k_conflict_x = conflicting_tile.x;
+          let k_conflict_y = conflicting_tile.y;
           if (conflicting_tile.y <= 0 && conflicting_tile.x <= 0) {
             if (initialTarget
             && conflicting_tile.y + target_tile.height <= this.maxHeight!) {
+              this.restoreSnapshot(before_conflict_snapshot);
               target_tile.x = conflicting_tile.x;
               target_tile.y = conflicting_tile.y;
-              if (this.resolveConflicts(targetId, "downward")) {
+              if (this.resolveConflicts(target_id, "downward")) {
                 return true;
               }
               this.restoreSnapshot(snapshot!);
             }
             success = false;
+            conflicting_tile.x = k_conflict_x;
+            conflicting_tile.y = k_conflict_y;
             continue conflicts;
           }
           conflicting_tile.y -= conflicting_tile.height;
@@ -696,14 +705,17 @@ export class SimpleGroup {
             if (conflicting_tile.x < 0) {
               if (initialTarget
               && conflicting_tile.y + target_tile.height <= this.maxHeight!) {
+                this.restoreSnapshot(before_conflict_snapshot);
                 target_tile.x = conflicting_tile.x;
                 target_tile.y = conflicting_tile.y;
-                if (this.resolveConflicts(targetId, "downward")) {
+                if (this.resolveConflicts(target_id, "downward")) {
                   return true;
                 }
                 this.restoreSnapshot(snapshot!);
               }
               success = false;
+              conflicting_tile.x = k_conflict_x;
+              conflicting_tile.y = k_conflict_y;
               continue conflicts;
             }
           }
@@ -724,17 +736,22 @@ export class SimpleGroup {
         case "leftward": {
           // shift leftward in a vertical layout.
           // this one has a limit.
+          let k_conflict_x = conflicting_tile.x;
+          let k_conflict_y = conflicting_tile.y;
           if (conflicting_tile.x <= 0 && conflicting_tile.y <= 0) {
             if (initialTarget
             && conflicting_tile.x + target_tile.width <= this.maxWidth!) {
+              this.restoreSnapshot(before_conflict_snapshot);
               target_tile.x = conflicting_tile.x;
               target_tile.y = conflicting_tile.y;
-              if (this.resolveConflicts(targetId, "rightward")) {
+              if (this.resolveConflicts(target_id, "rightward")) {
                 return true;
               }
               this.restoreSnapshot(snapshot!);
             }
             success = false;
+            conflicting_tile.x = k_conflict_x;
+            conflicting_tile.y = k_conflict_y;
             continue conflicts;
           }
           conflicting_tile.x -= conflicting_tile.width;
@@ -744,14 +761,17 @@ export class SimpleGroup {
             if (conflicting_tile.y < 0) {
               if (initialTarget
               && conflicting_tile.x + target_tile.width <= this.maxWidth!) {
+                this.restoreSnapshot(before_conflict_snapshot);
                 target_tile.x = conflicting_tile.x;
                 target_tile.y = conflicting_tile.y;
-                if (this.resolveConflicts(targetId, "rightward")) {
+                if (this.resolveConflicts(target_id, "rightward")) {
                   return true;
                 }
                 this.restoreSnapshot(snapshot!);
               }
               success = false;
+              conflicting_tile.x = k_conflict_x;
+              conflicting_tile.y = k_conflict_y;
               continue conflicts;
             }
           }
@@ -776,7 +796,7 @@ export class SimpleGroup {
         if (tryOpposite) {
           this.restoreSnapshot(snapshot!);
           return this.resolveConflicts(
-            targetId,
+            target_id,
             shiftDirection! == "upward" ?
               "downward" :
             shiftDirection! == "downward" ?
