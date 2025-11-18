@@ -53,6 +53,12 @@ export abstract class Layout {
     // group tile-list div
     const group_tiles_div = group.dom ? group.dom!.getElementsByClassName(this.$._class_names.groupTiles)[0] as HTMLElement : null;
 
+    // re-assign group label height
+    if (group.dom) {
+      const label = group.dom!.getElementsByClassName(this.$._class_names.groupLabel)[0] as HTMLElement;
+      label.style.height = this.$._label_height + "rem";
+    }
+
     for (const [tileId, tile] of group.tiles) {
       const pos = group.tilePosition(tileId);
       const simple = group.simple.tiles.get(tileId)!;

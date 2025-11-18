@@ -27,14 +27,6 @@ Groups:
 
 - [x] Done
 
-## Core._rearrange_now()
-
-Implementation should be split into two layout classes: HorizontalLayout and VerticalLayout, which are created as throwaway objects.
-
-- [ ] Layout.rearrangeGroup(): Hide overflow of the groupTiles div while tweening off view.
-- [ ] Re-assigns group label's `height` style
-- [ ] Trigger bulk change event if the case
-
 ## Group label
 
 - [ ] Editing
