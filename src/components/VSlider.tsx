@@ -591,12 +591,16 @@ const ValueDisplayDiv = styled.div<{
 
 // drag-n-drop
 class DND {
-  private m_pointerDown: null | ((e: PointerEvent) => void) = null;
-  private m_global_pointerMove: null | ((e: PointerEvent) => void) = null;
-  private m_global_pointerUp: null | ((e: PointerEvent) => void) = null;
-  private m_global_pointerCancel: null | ((e: PointerEvent) => void) = null;
+  private m_mouseDown: null | ((e: MouseEvent) => void) = null;
+  private m_touchStart: null | ((e: TouchEvent) => void) = null;
+  private m_global_mouseMove: null | ((e: MouseEvent) => void) = null;
+  private m_global_touchMove: null | ((e: TouchEvent) => void) = null;
+  private m_global_mouseUp: null | ((e: MouseEvent) => void) = null;
+  private m_global_click: null | ((e: MouseEvent) => void) = null;
+  private m_global_touchEnd: null | ((e: TouchEvent) => void) = null;
+  private m_global_touchCancel: null | ((e: TouchEvent) => void) = null;
   private m_global_wheel: null | ((e: WheelEvent) => void) = null;
-  private m_activePointerId: number = -1;
+  private m_activeTouchId: number = -1;
 
   // new DND()
   public constructor(
@@ -613,7 +617,7 @@ class DND {
     private changed: React.RefObject<boolean>,
     private change_handler: React.RefObject<undefined | ((value: any) => void)>,
     private value: React.RefObject<number>,
-    private bottomup: React.RefObject<boolean>,
+    private rtl: React.RefObject<boolean>,
     private start: React.RefObject<undefined | number>,
     private end: React.RefObject<undefined | number>,
     private stops: React.RefObject<undefined | SliderStop[]>
@@ -623,34 +627,55 @@ class DND {
 
   // enable drag-n-drop
   public enable(): void {
-    if (!this.m_pointerDown) {
-      this.m_pointerDown = this.handle_pointer_down.bind(this);
-      this.button.addEventListener("pointerdown", this.m_pointerDown);
+    if (!this.m_mouseDown) {
+      this.m_mouseDown = this.handle_pointer_down.bind(this);
+      this.button.addEventListener("mousedown", this.m_mouseDown);
+    }
+    if (!this.m_touchStart) {
+      this.m_touchStart = this.handle_pointer_down.bind(this);
+      this.button.addEventListener("touchstart", this.m_touchStart);
     }
   }
 
   // diasble drag-n-drop
   public disable(): void {
-    if (this.m_pointerDown) {
-      this.button.removeEventListener("pointerdown", this.m_pointerDown);
-      this.m_pointerDown = null;
+    // forget pointer ID
+    this.m_activeTouchId = -1;
+
+    // hide value display div
+    this.val_display_div.style.visibility = "";
+
+    if (this.m_mouseDown) {
+      this.button.removeEventListener("mousedown", this.m_mouseDown);
+      this.m_mouseDown = null;
     }
-    if (this.m_global_pointerMove) {
-      window.removeEventListener("pointermove", this.m_global_pointerMove);
-      this.m_global_pointerMove = null;
+    if (this.m_touchStart) {
+      this.button.removeEventListener("touchstart", this.m_touchStart);
+      this.m_touchStart = null;
     }
-    if (this.m_global_pointerUp) {
-      window.removeEventListener("pointerup", this.m_global_pointerUp);
-      if (this.m_activePointerId != -1) {
-        this.m_global_pointerUp!(new PointerEvent("pointerup", {
-          pointerId: this.m_activePointerId,
-        }));
-      }
-      this.m_global_pointerUp = null;
+    if (this.m_global_mouseMove) {
+      window.removeEventListener("mousemove", this.m_global_mouseMove);
+      this.m_global_mouseMove = null;
     }
-    if (this.m_global_pointerCancel) {
-      window.removeEventListener("pointercancel", this.m_global_pointerCancel);
-      this.m_global_pointerCancel = null;
+    if (this.m_global_touchMove) {
+      window.removeEventListener("touchmove", this.m_global_touchMove);
+      this.m_global_touchMove = null;
+    }
+    if (this.m_global_mouseUp) {
+      window.removeEventListener("mouseup", this.m_global_mouseUp);
+      this.m_global_mouseUp = null;
+    }
+    if (this.m_global_click) {
+      window.removeEventListener("click", this.m_global_click);
+      this.m_global_click = null;
+    }
+    if (this.m_global_touchEnd) {
+      window.removeEventListener("touchend", this.m_global_touchEnd);
+      this.m_global_touchEnd = null;
+    }
+    if (this.m_global_touchCancel) {
+      window.removeEventListener("touchcancel", this.m_global_touchCancel);
+      this.m_global_touchCancel = null;
     }
     if (this.m_global_wheel) {
       window.removeEventListener("wheel", this.m_global_wheel);
@@ -665,26 +690,38 @@ class DND {
 
   // whether dragging or not.
   public get dragging(): boolean {
-    return this.m_activePointerId != -1;
+    return !!this.m_global_mouseMove || !!this.m_global_touchMove;
   }
 
   // pointer down on the button
-  private handle_pointer_down(e: PointerEvent): void {
-    if (this.m_activePointerId != -1) {
+  private handle_pointer_down(e: Event): void {
+    if (this.m_activeTouchId != -1 || !!this.m_global_mouseMove) {
       return;
     }
 
     // register global pointer move event
-    this.m_global_pointerMove = this.drag_move.bind(this);
-    window.addEventListener("pointermove", this.m_global_pointerMove);
+    this.m_global_mouseMove = this.drag_move.bind(this);
+    window.addEventListener("mousemove", this.m_global_mouseMove);
+
+    // register global pointer move event
+    this.m_global_touchMove = this.drag_move.bind(this);
+    window.addEventListener("touchmove", this.m_global_touchMove);
 
     // register global pointer up event
-    this.m_global_pointerUp = this.drag_stop.bind(this);
-    window.addEventListener("pointerup", this.m_global_pointerUp);
+    this.m_global_mouseUp = this.drag_stop.bind(this);
+    window.addEventListener("mouseup", this.m_global_mouseUp);
+
+    // register global pointer up event
+    this.m_global_click = this.drag_stop.bind(this);
+    window.addEventListener("click", this.m_global_click);
+
+    // register global pointer up event
+    this.m_global_touchEnd = this.drag_stop.bind(this);
+    window.addEventListener("touchend", this.m_global_touchEnd);
 
     // register global pointer cancel event
-    this.m_global_pointerCancel = this.drag_stop.bind(this);
-    window.addEventListener("pointercancel", this.m_global_pointerCancel);
+    this.m_global_touchCancel = this.drag_stop.bind(this);
+    window.addEventListener("touchcancel", this.m_global_touchCancel);
 
     // register global wheel event
     this.m_global_wheel = (e: WheelEvent): void => {
@@ -698,18 +735,11 @@ class DND {
   }
 
   // drag start
-  private drag_start(e: PointerEvent): void {
+  private drag_start(e: Event): void {
     // remember pointer ID
-    this.m_activePointerId = e.pointerId;
-
-    // update position
-    this.update_position(e);
-  }
-
-  // drag move
-  private drag_move(e: PointerEvent): void {
-    if (e.pointerId != this.m_activePointerId) {
-      return;
+    this.m_activeTouchId = -1;
+    if (e instanceof TouchEvent) {
+      this.m_activeTouchId = (e as TouchEvent).touches[0].identifier;
     }
 
     // update position
@@ -717,29 +747,57 @@ class DND {
   }
 
   // drag move
-  private drag_stop(e: PointerEvent): void {
-    if (e.pointerId != this.m_activePointerId) {
-      return;
+  private drag_move(e: Event): void {
+    // update position
+    this.update_position(e);
+  }
+
+  // drag move
+  private drag_stop(e: Event): void {
+    if (e instanceof TouchEvent) {
+      let found = false;
+      // no way to use `Array.from()` with TouchList.
+      for (const touch of (e as TouchEvent).changedTouches) {
+        if (touch.identifier == this.m_activeTouchId) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        return;
+      }
     }
 
     // forget pointer ID
-    this.m_activePointerId = -1;
+    this.m_activeTouchId = -1;
 
     // hide value display div
     this.val_display_div.style.visibility = "";
 
     // forget global handlers
-    if (this.m_global_pointerMove) {
-      window.removeEventListener("pointermove", this.m_global_pointerMove);
-      this.m_global_pointerMove = null;
+    if (this.m_global_mouseMove) {
+      window.removeEventListener("mousemove", this.m_global_mouseMove);
+      this.m_global_mouseMove = null;
     }
-    if (this.m_global_pointerUp) {
-      window.removeEventListener("pointerup", this.m_global_pointerUp);
-      this.m_global_pointerUp = null;
+    if (this.m_global_touchMove) {
+      window.removeEventListener("touchmove", this.m_global_touchMove);
+      this.m_global_touchMove = null;
     }
-    if (this.m_global_pointerCancel) {
-      window.removeEventListener("pointercancel", this.m_global_pointerCancel);
-      this.m_global_pointerCancel = null;
+    if (this.m_global_mouseUp) {
+      window.removeEventListener("mouseup", this.m_global_mouseUp);
+      this.m_global_mouseUp = null;
+    }
+    if (this.m_global_click) {
+      window.removeEventListener("click", this.m_global_click);
+      this.m_global_click = null;
+    }
+    if (this.m_global_touchEnd) {
+      window.removeEventListener("touchend", this.m_global_touchEnd);
+      this.m_global_touchEnd = null;
+    }
+    if (this.m_global_touchCancel) {
+      window.removeEventListener("touchcancel", this.m_global_touchCancel);
+      this.m_global_touchCancel = null;
     }
     if (this.m_global_wheel) {
       window.removeEventListener("wheel", this.m_global_wheel);
@@ -752,7 +810,26 @@ class DND {
 
   // updates position based on where the pointer is moving
   // and where it originally started pressing at.
-  private update_position(e: PointerEvent): void {
+  private update_position(e: Event): void {
+    // x
+    let e_clientY = 0;
+    if (e instanceof TouchEvent) {
+      let found = false;
+      // no way to use `Array.from()` with TouchList.
+      for (const touch of (e as TouchEvent).changedTouches) {
+        if (touch.identifier == this.m_activeTouchId) {
+          found = true;
+          e_clientY = touch.clientY;
+          break;
+        }
+      }
+      if (!found) {
+        return;
+      }
+    } else {
+      e_clientY = (e as MouseEvent).clientY;
+    }
+
     // not at initial state anymore
     this.changed.current = true;
 
@@ -760,13 +837,13 @@ class DND {
     const old_value = this.value.current;
 
     // calculate the position percent
-    const y = MathUtils.clamp(
-      e.clientY,
+    const x = MathUtils.clamp(
+      e_clientY,
       this.button.getBoundingClientRect().top,
       this.button.getBoundingClientRect().bottom
     ) - this.button.getBoundingClientRect().top;
-    let percent = MathUtils.clamp((y / this.button.getBoundingClientRect().height) * 100, 0, 100);
-    if (this.bottomup.current) {
+    let percent = MathUtils.clamp((x / this.button.getBoundingClientRect().height) * 100, 0, 100);
+    if (this.rtl.current) {
       percent = Math.abs(percent - 100);
     }
 
