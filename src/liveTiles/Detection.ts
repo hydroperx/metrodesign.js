@@ -1,5 +1,7 @@
 // local
 import type { Core, BulkChange } from "./Core";
+import { CoreGroup, CoreTile } from "./CoreGroup";
+import { SimpleGroup } from "./SimpleGroup";
 import { TileSize } from "./TileSize";
 
 // node detection for groups and tiles
@@ -63,10 +65,41 @@ export class Detection {
 
     // in a group?
     if (node.parentElement?.classList.contains(this.$._class_names.groupTiles)) {
+      const group_id = node.parentElement!.getAttribute("data-id") ?? "";
+
+      // initialize group
+      let new_group = this.$._groups.find(g => g.id == group_id);
+      if (!new_group) {
+        const group_dom = node.parentElement!.parentElement! as HTMLDivElement;
+        const simple = new SimpleGroup({
+          width: this.$._dir == "vertical" ? this.$._group_width : undefined,
+          height: this.$._dir == "horizontal" ? this.$._group_height : undefined,
+        });
+        new_group = new CoreGroup({
+          dom: group_dom,
+          id: group_id,
+          label: group_dom.getAttribute("data-label") ?? "",
+          simple,
+        });
+      }
+
+      // find maybe old group
+      const maybe_old_group = this.$._groups.find(g => g.tiles.has(id));
+      let tile = maybe_old_group?.tiles.get(id);
+
       // attach pointer handlers (if not already attached)
       //
       // `CoreTile.attachedHandlers` (compare element)
-      fixme();
+      if (tile ? tile.attachedHandlers !== node : true) {
+        fixme();
+      }
+
+      // initialize tile
+      if (!tile) {
+        fixme();
+      }
+      tile!.attachedHandlers = node;
+      tile!.dom = node;
 
       //
       let changed = false;
@@ -111,23 +144,38 @@ export class Detection {
   // detect group.
   //
   // return false if there were no changes detected.
-  private _detect_group(node: HTMLDivElement, bulkChange: BulkChange): boolean {
-    const id = node.getAttribute("data-id")!;
-    const new_index = parseInt(node.getAttribute("data-index") || "-1");
-    const new_label = node.getAttribute("data-label") ?? "";
+  private _detect_group(group_dom: HTMLDivElement, bulkChange: BulkChange): boolean {
+    const group_id = group_dom.getAttribute("data-id")!;
+    const new_index = parseInt(group_dom.getAttribute("data-index") || "-1");
+    const new_label = group_dom.getAttribute("data-label") ?? "";
 
     // remove group if it has no parent
-    if (!node.parentElement) {
-      const i = this.$._groups.findIndex(g => g.id == id);
+    if (!group_dom.parentElement) {
+      const i = this.$._groups.findIndex(g => g.id == group_id);
       if (i == -1) {
         return false;
       }
       this.$._groups.splice(i, 1);
-      if (this.$._dnd.groupDraggable?.[0] == id) {
+      if (this.$._dnd.groupDraggable?.[0] == group_id) {
         this.$._dnd.groupDraggable![1].destroy();
         this.$._dnd.groupDraggable = null;
       }
       return true;
+    }
+
+    // initialize group
+    let group = this.$._groups.find(g => g.id == group_id);
+    if (!group) {
+      const simple = new SimpleGroup({
+        width: this.$._dir == "vertical" ? this.$._group_width : undefined,
+        height: this.$._dir == "horizontal" ? this.$._group_height : undefined,
+      });
+      group = new CoreGroup({
+        dom: group_dom,
+        id: group_id,
+        label: group_dom.getAttribute("data-label") ?? "",
+        simple,
+      });
     }
 
     // attach pointer handlers (if not already attached)

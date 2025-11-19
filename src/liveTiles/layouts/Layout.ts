@@ -2,7 +2,8 @@
 import { gsap } from "gsap/gsap-core";
 
 // local
-import type { BulkChange, Core, CoreGroup, CoreTile } from "../Core";
+import type { BulkChange, Core } from "../Core";
+import { CoreGroup, CoreTile } from "../CoreGroup";
 import { TileSize, TileSizeMapPair, getWidth, getHeight } from "../TileSize";
 import { SimpleTile } from "../SimpleGroup";
 
@@ -54,10 +55,14 @@ export abstract class Layout {
     // group tile-list div
     const group_tiles_div = group.dom ? group.dom!.getElementsByClassName(this.$._class_names.groupTiles)[0] as HTMLElement : null;
 
-    // re-assign group label height
+    // re-assign group label, its height and `position`
     if (group.dom) {
       const label = group.dom!.getElementsByClassName(this.$._class_names.groupLabel)[0] as HTMLElement;
       label.style.height = this.$._label_height + "rem";
+      label.style.position = "relative";
+
+      const label_text = group.dom!.getElementsByClassName(this.$._class_names.groupLabelText)[0] as HTMLElement;
+      label_text.innerText = group.label;
     }
 
     for (const [tileId, tile] of group.tiles) {

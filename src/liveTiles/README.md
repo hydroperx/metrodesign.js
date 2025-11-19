@@ -6,6 +6,7 @@
   - Groups
     - 1. Group label (a `<div>`)
       - Group label text (a `<span>`)
+      - Conditionally present *Group label input* (an `<input type="text">`)
     - 2. Group tiles (a `<div>`; alternatively called the *tile-list*)
       - Tiles (a `<button>` that should not be scaled up/down)
         - Tile content (a `<div>` with custom content that may be scaled up/down). In general, do any styling (like border, background and tilting) on this `<div>` instead of the tile itself.
