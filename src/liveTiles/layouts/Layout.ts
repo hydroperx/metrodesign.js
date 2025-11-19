@@ -3,6 +3,7 @@ import { gsap } from "gsap/gsap-core";
 
 // local
 import type { BulkChange, Core, CoreGroup, CoreTile } from "../Core";
+import { TileSize, TileSizeMapPair, getWidth, getHeight } from "../TileSize";
 import { SimpleTile } from "../SimpleGroup";
 
 // layout
@@ -60,8 +61,8 @@ export abstract class Layout {
     }
 
     for (const [tileId, tile] of group.tiles) {
-      const pos = group.tilePosition(tileId);
       const simple = group.simple.tiles.get(tileId)!;
+      const pos: { x: number, y: number } = { x: simple.x, y: simple.y };
       const { width, height } = simple;
       const x_rem = pos.x * this.$._size_1x1 + pos.x * this.$._tile_gap;
       const y_rem = pos.y * this.$._size_1x1 + pos.y * this.$._tile_gap;
@@ -73,25 +74,36 @@ export abstract class Layout {
       tile_list_width_rem = Math.max(x_rem + w_rem, tile_list_width_rem);
       tile_list_height_rem = Math.max(y_rem + h_rem, tile_list_height_rem);
 
-      // assign physical X/Y
+      // old X/Y
       const
-        old_x = parseInt(tile.dom?.getAttribute("data-x") ?? pos.x.toString()),
-        old_y = parseInt(tile.dom?.getAttribute("data-y") ?? pos.y.toString());
-      tile.dom?.setAttribute("data-x", pos.x.toString());
-      tile.dom?.setAttribute("data-y", pos.y.toString());
+        old_x = tile.lastRearrange_x,
+        old_y = tile.lastRearrange_y;
 
-      // state change
-      if (!(old_x == pos.x && old_y == pos.y)) {
-        movedTiles.push({ id: tileId, x: pos.x, y: pos.y });
+      //
+      if (tile.lastRearrange_positioned) {
+        if (!(old_x == pos.x && old_y == pos.y)) {
+          movedTiles.push({ id: tileId, x: pos.x, y: pos.y });
+          tile.lastRearrange_x = pos.x;
+          tile.lastRearrange_y = pos.y;
+        }
       }
 
       // affect button
       if (tile.dom) {
+        // set physical size
+        const size: TileSize = (tile.dom!.getAttribute("data-size")! as TileSize) ?? "small";
+        const p = ((this.$._tile_in_rem as any)[size]) as TileSizeMapPair;
+        tile.dom!.style.width = p.width + "rem";
+        tile.dom!.style.height = p.height + "rem";
+
+        // kill previous tween
         if (tile.tween) {
           tile.tween!.kill();
           tile.tween = null;
         }
-        if (old_x == pos.x && old_y == pos.y) {
+
+        // change X/Y immediately.
+        if (!tile.lastRearrange_positioned || (old_x == pos.x && old_y == pos.y)) {
           tile.dom!.style.transform = `translateX(${x_rem}rem) translateY(${y_rem}rem)`;
         // change only Y
         } else if (old_x != pos.x && old_y != pos.y) {
@@ -117,6 +129,12 @@ export abstract class Layout {
           group_tiles_div!.style.overflow = "hidden";
           this.$._tile_tweens.push(tween);
         }
+      }
+
+      if (!tile.lastRearrange_positioned) {
+        tile.lastRearrange_positioned = true;
+        tile.lastRearrange_x = pos.x;
+        tile.lastRearrange_y = pos.y;
       }
     }
 

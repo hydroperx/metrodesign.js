@@ -372,19 +372,6 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     this._tile_in_rem.large.width = this._tile_in_rem.wide.width;
     this._tile_in_rem.large.height = this._tile_in_rem.wide.width;
 
-    // resize tiles
-    for (const group of this._groups) {
-      for (const [tileId, tile] of group.tiles) {
-        if (!tile.dom) {
-          continue;
-        }
-        const size = group.tileSize(tileId)!;
-        const p = (this._tile_in_rem as any)[size] as TileSizeMapPair;
-        tile.dom!.style.width = p.width + "rem";
-        tile.dom!.style.height = p.height + "rem";
-      }
-    }
-
     // rearrange
     this.rearrange();
   }
@@ -418,19 +405,6 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     this._tile_in_rem.wide.height = this._tile_in_rem.medium.width;
     this._tile_in_rem.large.width = this._tile_in_rem.wide.width;
     this._tile_in_rem.large.height = this._tile_in_rem.wide.width;
-
-    // resize tiles
-    for (const group of this._groups) {
-      for (const [tileId, tile] of group.tiles) {
-        if (!tile.dom) {
-          continue;
-        }
-        const size = group.tileSize(tileId)!;
-        const p = (this._tile_in_rem as any)[size] as TileSizeMapPair;
-        tile.dom!.style.width = p.width + "rem";
-        tile.dom!.style.height = p.height + "rem";
-      }
-    }
 
     // rearrange
     this.rearrange();
@@ -689,31 +663,6 @@ export class CoreGroup {
     this.label = params.label;
     this.simple = params.simple;
   }
-
-  /**
-   * Returns a tile's size.
-   */
-  public tileSize(id: string): TileSize {
-    const tile = this.simple.tiles.get(id);
-    assert(!!tile, "Tile '"+id+"' not found.");
-    const w = tile!.width;
-    const h = tile!.height;
-    return (
-      w == 4 ? (
-        h == 2 ? "wide" : "large"
-      ) :
-      w == 2 ? "medium" : "small"
-    );
-  }
-
-  /**
-   * Returns a tile's position.
-   */
-  public tilePosition(id: string): { x: number, y: number } {
-    const tile = this.simple.tiles.get(id);
-    assert(!!tile, "Tile '"+id+"' not found.");
-    return { x: tile!.x, y: tile!.y };
-  }
 }
 
 /**
@@ -729,6 +678,12 @@ export class CoreTile {
 
   // tween
   public tween: null | gsap.core.Tween = null;
+
+  // last rearrange data
+  public lastRearrange_positioned: boolean = false;
+  public lastRearrange_x: number = 0;
+  public lastRearrange_y: number = 0;
+  public lastRearrange_size: TileSize = "small";
 
   //
   public constructor(params: {
