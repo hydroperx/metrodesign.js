@@ -141,7 +141,47 @@ export class DND {
 
   //
   private _tile_drag_move(element: Element, x: number, y:  number, event: Event): void {
-    fixme();
+    // exit if the tile has been removed while dragging.
+    if (!this.tileButton!.parentElement) {
+      return;
+    }
+
+    // track last snap
+    const old_snap = this._snap;
+
+    // try snapping to grid now
+    this._snap = this.$._layout.snap(this.tileDNDDOM!);
+
+    // if snap resolves successfully to an existing area
+    if (!!this._snap && !!this._snap!.group) {
+      let threshold_met = true;
+
+      if (old_snap) {
+        threshold_met =
+          Math.abs(old_snap!.x - this._snap!.x) >= 1 ||
+          Math.abs(old_snap!.y - this._snap!.y) >= 1;
+
+        // revert shifting changes
+        if (threshold_met) {
+          this._restore();
+        }
+      }
+
+      // if threshold is met
+      if (threshold_met) {
+        // look at
+        // https://github.com/hydroperx/tiles.js/blob/master/src/TileDraggableBehavior.ts#L165
+        fixme()
+      }
+    // otherwise restore state
+    } else {
+      this._restore();
+    }
+
+    // trigger Core#dragMove
+    this.$.dispatchEvent(new CustomEvent("dragMove", {
+      detail: { id: this.tileId, dnd: this.tileDNDDOM! },
+    }));
   }
 
   //
