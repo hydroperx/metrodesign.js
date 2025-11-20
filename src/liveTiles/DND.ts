@@ -2,7 +2,7 @@
 import Draggable from "@hydroperx/draggable";
 
 // local
-import type { Core } from "./Core";
+import type { BulkChange, Core } from "./Core";
 import { CoreGroup, CoreTile } from "./CoreGroup";
 import { MAXIMUM_Z_INDEX } from "../utils/Constants";
 import { type SnapResult } from "./layouts/Layout";
@@ -158,6 +158,7 @@ export class DND {
 
       if (old_snap) {
         threshold_met =
+          old_snap.group !== this._snap!.group ||
           Math.abs(old_snap!.x - this._snap!.x) >= 1 ||
           Math.abs(old_snap!.y - this._snap!.y) >= 1;
 
@@ -169,9 +170,31 @@ export class DND {
 
       // if threshold is met
       if (threshold_met) {
-        // look at
-        // https://github.com/hydroperx/tiles.js/blob/master/src/TileDraggableBehavior.ts#L165
-        fixme()
+        const old_group_id = this.tileId;
+        const new_group_id = this._snap!.group;
+        if (old_group_id == new_group_id) {
+          // move tile
+          const bulkChange: BulkChange = {
+            movedTiles: [{ id: this.tileId, x: this._snap!.x, y: this._snap!.y }],
+            groupTransfers: [],
+            groupRemovals: [],
+            groupCreation: null,
+          };
+          this.$.dispatchEvent(new CustomEvent("bulkChange", {
+            detail: bulkChange,
+          }));
+        } else {
+          // group transfer
+          const bulkChange: BulkChange = {
+            movedTiles: [],
+            groupTransfers: [{ group: new_group_id, id: this.tileId, x: this._snap!.x, y: this._snap!.y }],
+            groupRemovals: [],
+            groupCreation: null,
+          };
+          this.$.dispatchEvent(new CustomEvent("bulkChange", {
+            detail: bulkChange,
+          }));
+        }
       }
     // otherwise restore state
     } else {

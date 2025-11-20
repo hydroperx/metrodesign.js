@@ -775,13 +775,11 @@ export type CoreEventMap = {
 export type BulkChange = {
   /**
    * Moved tiles (in response to actions like drag-n-drop or direction change).
+   * 
+   * `x` and `y` may be `-1` to indicate last position
+   * (when a shifting/bounds limit occurs).
    */
   movedTiles: { id: string, x: number, y: number }[],
-  /**
-   * Resized tiles (triggered when the developer specifies a size that
-   * could not fit into the layout).
-   */
-  resizedTiles: { id: string, size: TileSize }[],
   /**
    * Group transfers (tiles moving to other groups,
    * in response to actions like drag-n-drop).

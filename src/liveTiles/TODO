@@ -25,7 +25,7 @@ Trick to use: Draggable needs to drag the tileDND element, not the tile itself. 
   - [x] Assign _original_state (compact, without DOM)
   - [x] Set `dragging=true`
   - [x] Make tileDND's Z-index maximum.
-- [ ] _tile_drag_move
+- [x] _tile_drag_move
 - [ ] _tile_drag_end
   - [ ] If tile was removed, exit.
   - [ ] Set `_original_state=new Map();`

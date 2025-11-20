@@ -38,7 +38,6 @@ export class Detection {
     let any_changes = false;
     let bulk_change: BulkChange = {
       movedTiles: [],
-      resizedTiles: [],
       groupTransfers: [],
       groupRemovals: [],
       groupCreation: null,
@@ -215,8 +214,8 @@ export class Detection {
             bulkChange.movedTiles.push({ id, x: final.x, y: final.y });
           }
         } else {
-          // fail? then move back to previous position.
-          bulkChange.movedTiles.push({ id, x: simple.x, y: simple.y });
+          // fail? then request last position.
+          bulkChange.movedTiles.push({ id, x: -1, y: -1 });
         }
 
         //
@@ -229,9 +228,8 @@ export class Detection {
       // resize?
       if (getWidth(new_size) != simple.width || getHeight(new_size) != simple.height) {
         if (!new_group!.simple.resizeTile(id, getWidth(new_size), getHeight(new_size))) {
-          // fail? then put previous size back.
-          const old_size = sizeNumbersToVariant(simple.width, simple.height);
-          bulkChange.resizedTiles.push({ id, size: old_size });
+          // fail? then request last position.
+          bulkChange.movedTiles.push({ id, x: -1, y: -1 });
         }
 
         //
