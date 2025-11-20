@@ -15,7 +15,7 @@ export class DND {
   public groupDraggable: null | [string, Draggable] = null;
 
   //
-  public constructor() {
+  public constructor(private readonly $: Core) {
     //
   }
 }

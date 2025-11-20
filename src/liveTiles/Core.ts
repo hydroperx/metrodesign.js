@@ -122,7 +122,7 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
   /**
    * @hidden
    */
-  public _dnd: DND = new DND();
+  public _dnd: DND = new DND(this);
 
   /**
    * Tile size in the `rem` unit.
@@ -219,10 +219,8 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
       this._rem = val;
     });
 
-    // outside click handler
-    const click_outside_handler = this._click_outside.bind(this);
-    window.addEventListener("click", click_outside_handler);
-    this._window_handlers.push(["click", click_outside_handler]);
+    // *click outside tiles* handler
+    this._container.addEventListener("click", this._click_outside.bind(this));
 
     // rearrange
     this.rearrange();
@@ -626,7 +624,7 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     this.rearrange();
   }
 
-  // handle click outside
+  // handle click outside tiles (uncheck all)
   private _click_outside(e: MouseEvent): void {
     let outside = true;
     g: for (const [,g] of this._groups) {
