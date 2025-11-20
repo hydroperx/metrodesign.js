@@ -23,10 +23,12 @@ export class TilePointerHandlers {
     node.addEventListener("mouseup", this.mouse_up.bind(this));
     node.addEventListener("mouseout", this.mouse_out.bind(this));
     node.addEventListener("click", this.click.bind(this));
-    node.addEventListener("contextmenu", this.context_menu.bind(this));
 
     // touch handlers
     fixme();
+
+    // context menu handlers
+    node.addEventListener("contextmenu", this.context_menu.bind(this));
   }
 
   //

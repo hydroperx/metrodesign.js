@@ -703,6 +703,11 @@ export type CoreEventMap = {
    */
   contextMenu: CustomEvent<{ tile: string, clientX: number, clientY: number }>,
   /**
+   * Event that dispatches when right click occurs in a group's label.
+   * Default behavior is **not** prevented beforehand.
+   */
+  groupContextMenu: CustomEvent<{ group: string, clientX: number, clientY: number, original: Event }>,
+  /**
    * Bulk change event.
    */
   bulkChange: CustomEvent<BulkChange>,
