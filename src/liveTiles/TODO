@@ -8,7 +8,6 @@ Tiles:
 - *Called on React.js empty-dependencies effect cleanup.*
 - [ ] Attach mouse down/click/touch down/touch end handlers on tile addition for click, check and drag-n-drop events
   - [ ] Trigger click
-  - [ ] Trigger contextMenu
   - [ ] Drag-n-drop only occurs if `Core.dragEnabled=true`
   - [ ] (un-)checking tiles only occurs if `Core.checkEnabled=true`
 

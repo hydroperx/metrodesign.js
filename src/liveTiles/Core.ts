@@ -699,6 +699,7 @@ export type CoreEventMap = {
   click: CustomEvent<{ tile: string, clientX: number, clientY: number }>,
   /**
    * Event that dispatches when right click occurs in a tile.
+   * Default behavior is prevented beforehand.
    */
   contextMenu: CustomEvent<{ tile: string, clientX: number, clientY: number }>,
   /**
