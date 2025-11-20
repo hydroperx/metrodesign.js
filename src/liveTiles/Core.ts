@@ -457,10 +457,90 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
   /**
    * Detects a node (tile or group) and checks
    * if it has changed, re-positioning and
-   * rearranging things up.
+   * rearranging things up, transferring group
+   * or removing item.
    */
   public detect(node: HTMLElement): void {
     this._detection.detect(node);
+  }
+
+  /**
+   * Sets whether a tile is checked or not.
+   */
+  public checked(tileId: string, value: boolean): void {
+    const current: string[] = [];
+    let changed = false;
+    for (const [, g] of this._groups) {
+      for (const [tileId2, tile] of g.tiles) {
+        if (tileId == tileId2) {
+          if (value) {
+            if (tile.dom) {
+              if (tile.dom!.getAttribute("data-checked") !== "true") {
+                changed = true;
+              }
+              tile.dom!.setAttribute("data-checked", "true");
+              current.push(tileId);
+            }
+          } else {
+            if (tile.dom?.getAttribute("data-checked") === "true") {
+              changed = true;
+            }
+            tile.dom?.removeAttribute("data-checked");
+          }
+        } else if (tile.dom?.getAttribute("data-checked") === "true") {
+          current.push(tileId2);
+        }
+      }
+    }
+    if (changed) {
+      this.dispatchEvent(new CustomEvent("checkedChange", {
+        detail: { tiles: current },
+      }));
+    }
+  }
+
+  /**
+   * Checks all tiles.
+   */
+  public checkAll(): void {
+    const current: string[] = [];
+    let changed = false;
+    for (const [, g] of this._groups) {
+      for (const [tileId, tile] of g.tiles) {
+        if (tile.dom?.getAttribute("data-checked") !== "true") {
+          changed = true;
+        }
+        if (tile.dom) {
+          tile.dom!.setAttribute("data-checked", "true");
+          current.push(tileId);
+        }
+      }
+    }
+    if (changed) {
+      this.dispatchEvent(new CustomEvent("checkedChange", {
+        detail: { tiles: current },
+      }));
+    }
+  }
+
+  /**
+   * Unchecks all tiles.
+   */
+  public uncheckAll(): void {
+    let changed = false;
+    for (const [, g] of this._groups) {
+      for (const [tileId, tile] of g.tiles) {
+        if (tile.dom?.getAttribute("data-checked") === "true") {
+          changed = true;
+        }
+        tile.dom?.removeAttribute("data-checked");
+      }
+    }
+    if (changed) {
+      this.dispatchEvent(new CustomEvent("checkedChange", {
+        detail: { tiles: [] },
+      }));
+    }
   }
 
   /**

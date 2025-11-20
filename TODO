@@ -35,6 +35,7 @@
   - [ ] Icon/logo size should be more based in percentage
     - [ ] Icon size = percent inside 57x57 logical pixels.
     - [ ] Logo size = percent inside horizontal 172 logical pixels.
+  - [ ] Optional `TileChecker` controller with `.checked()`, `.checkAll()` and `.uncheckAll()` methods
 - [ ] Transparent tiles should have a drop shadow
 
 # Page

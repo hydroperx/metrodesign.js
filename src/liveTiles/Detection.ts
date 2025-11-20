@@ -2,6 +2,8 @@
 import assert from "assert";
 
 // local
+import { TilePointerHandlers } from "./TilePointerHandlers";
+import { GroupPointerHandlers } from "./GroupPointerHandlers";
 import type { Core, BulkChange } from "./Core";
 import { CoreGroup, CoreTile } from "./CoreGroup";
 import { SimpleGroup } from "./SimpleGroup";
@@ -129,7 +131,7 @@ export class Detection {
       //
       // `CoreTile.attachedHandlers` (compare element)
       if (tile ? tile.attachedHandlers !== node : true) {
-        fixme();
+        new TilePointerHandlers(this.$).attach(node);
       }
 
       // initialize tile
@@ -331,7 +333,10 @@ export class Detection {
     // attach pointer handlers (if not already attached)
     //
     // `CoreGroup.attachedHandlers` (compare element)
-    fixme();
+    if (group.attachedHandlers !== group_dom) {
+      new GroupPointerHandlers(this.$).attach(group_dom);
+      group.attachedHandlers = group_dom;
+    }
 
     // return
     return changed;

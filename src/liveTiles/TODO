@@ -1,5 +1,8 @@
 # Core tiles
 
+- [ ] Uncheck all tiles if clicking outside all of them
+  - [ ] trigger `checkedChange` if any tile was unchecked
+
 ## Core.detect()
 
 Tiles:
