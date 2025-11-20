@@ -5,6 +5,7 @@ import Draggable from "@hydroperx/draggable";
 import type { Core } from "./Core";
 import { CoreGroup, CoreTile } from "./CoreGroup";
 import { MAXIMUM_Z_INDEX } from "../utils/Constants";
+import { type SnapResult } from "./layouts/Layout";
 
 /**
  * Drag-n-drop implementation.
@@ -21,6 +22,9 @@ export class DND {
 
   // original state (in compact form (no DOM, no group labels))
   private _original_state: Map<number, CoreGroup> = new Map();
+
+  //
+  private _snap: null | SnapResult = null;
 
   //
   public tileButton: null | HTMLButtonElement = null;
@@ -103,6 +107,9 @@ export class DND {
   // for groups: this should restore state, remove dead dragging group if the case,
   // re-add any new groups, and re-arrange later.
   //
+  // this will also update the `_original_state` variable
+  // with the current changes.
+  //
   // this might trigger some events.
   private _restore(): void {
     fixme();
@@ -123,7 +130,13 @@ export class DND {
     //
     this.tileDNDDOM!.style.zIndex = MAXIMUM_Z_INDEX;
 
-    fixme();
+    // reset snap cache
+    this._snap = null;
+
+    // Core#dragStart
+    this.$.dispatchEvent(new CustomEvent("dragStart", {
+      detail: { id: this.tileId, dnd: this.tileDNDDOM! },
+    }));
   }
 
   //
