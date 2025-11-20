@@ -63,10 +63,15 @@ export class TilePointerHandlers {
     e.preventDefault();
     this.$.dispatchEvent(new CustomEvent("contextMenu", {
       detail: {
-        tile: this.node.getAttribute("data-id") ?? "",
+        tile: this.id,
         clientX: e.clientX,
         clientY: e.clientY,
       },
     }));
+  }
+
+  //
+  private get id(): string {
+    return this.node.getAttribute("data-id") ?? "";
   }
 }
