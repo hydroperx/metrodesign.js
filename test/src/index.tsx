@@ -62,7 +62,7 @@ function App() {
                     <Label>Camera</Label>
                   </TilePage>
                 </Tile>
-                <Tile id="bing" size="small" background="#d9c900" foreground="white">
+                <Tile id="bing" size="small" background="#f9c000" foreground="white">
                   <TilePage variant="iconLabel">
                     <Group><Icon native="bing"/></Group>
                     <Label>Bing</Label>

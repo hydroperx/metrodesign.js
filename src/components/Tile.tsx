@@ -289,6 +289,7 @@ const Tile_button = styled.button<{
 }> `
   && {
     border: none;
+    border-radius: 0;
     background: none;
     outline: none;
     padding: 0;
@@ -309,6 +310,7 @@ const Tile_button = styled.button<{
 
   &&:hover > .Tile-content {
     background: linear-gradient(90deg, ${$ => Color($.$background).lighten(0.15).hex().toString()} 0%, ${$ => Color($.$background).lighten(0.23).hex().toString()} 100%);
+    outline: 0.13rem solid ${$ => Color($.$foreground).alpha(0.2).hexa().toString()};
   }
 
   &&.transparent > .Tile-content {
@@ -391,6 +393,11 @@ const Tile_button = styled.button<{
       bottom: 0.3rem;
       overflow-wrap: anywhere;
       max-height: 2.5rem;
+      font-size: 0.78rem;
+    }
+
+    &&.medium > .Tile-content > .TilePage[data-variant="iconLabel"] > .Label {
+      max-height: 1.1rem;
     }
 
     &&.small > .Tile-content > .TilePage[data-variant="iconLabel"] > .Label {
