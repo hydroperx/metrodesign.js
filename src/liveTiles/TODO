@@ -20,27 +20,14 @@ Groups:
 
 Trick to use: Draggable needs to drag the tileDND element, not the tile itself. For this, simply dispatch virtual `mousedown` and `touchdown` events with corresponding data.
 
-- [x] _tile_drag_start
-  - [x] Make tileDND visible and tileButton hidden
-  - [x] Assign _original_state (compact, without DOM)
-  - [x] Set `dragging=true`
-  - [x] Make tileDND's Z-index maximum.
-- [x] _tile_drag_move
-- [x] _tile_drag_end
-  - [x] If tile was removed, exit.
-  - [x] Set `dragging=false`
-  - [x] Set `tileId=""`
-  - [x] Make tileDND hidden back and tileButton visible back
-  - [x] Set `_original_state=new Map();`
-
-More:
-
-- [ ] Note that the tile may be removed while dragging
-
-## Group drag-n-drop
+## Groups
 
 Group drag-n-drop mimmicks tiles a bit in how the Draggable instance is created, with some subtle differences.
 
+- [ ] Label
+  - [ ] Click outside label input (in `Core`) should stop editing label and emit final `renameGroup` event.
+  - [ ] Pressing Escape should cancel editing label.
+  - [ ] Pressing Enter should stop editing label and emit final `renameGroup` event.
 - [ ] Label > touch start
   - [ ] Edit
   - [ ] Trigger drag-n-drop (long-held)
@@ -49,6 +36,8 @@ Group drag-n-drop mimmicks tiles a bit in how the Draggable instance is created,
   - [ ] Edit
   - [ ] Trigger drag-n-drop (after short-delta)
     - [ ] Trigger events
+
+Drag-n-drop handlers (DND.ts):
 
 - [ ] _group_drag_start
   - [ ] `groupDraggable=[groupId,draggable]`
