@@ -1,2 +1,6 @@
-export { type BulkChange } from "./Core";
+export {
+  Core,
+  type CoreDirection,
+  type BulkChange
+} from "./Core";
 export { type TileSize } from "./TileSize";

@@ -266,6 +266,10 @@ export class GroupPointerHandlers {
 
   //
   private enter_label_input(): void {
+    if (!this.$._renaming_groups_enabled) {
+      return;
+    }
+
     // find group
     const group = this.$._groups.values().find(g => g.id == this.id);
     if (!group) {

@@ -1,0 +1,450 @@
+// third-party
+import React from "react";
+import { styled } from "styled-components";
+import { Color } from "@hydroperx/color";
+import { TypedEventTarget } from "@hydroperx/event";
+import { gsap } from "gsap";
+
+// local
+import { Core, CoreDirection, BulkChange } from "../liveTiles/Core";
+import { TileSize } from "../liveTiles/TileSize";
+import { RTLContext } from "../layout/RTL";
+import { ThemeContext, Theme } from "../theme/Theme";
+import * as ColorUtils from "../utils/ColorUtils";
+import { REMObserver } from "../utils/REMObserver";
+import { LIVE_TILES_OPENING_OR_CLOSING } from "../utils/Constants";
+
+/**
+ * A live tiles container consisting mainly of `TileGroup`s.
+ * 
+ * Using `direction="horizontal"` is recommended for
+ * landscape orientations (like start screens),
+ * and `direction="vertical"` for
+ * portrait orientations or smaller regions
+ * (like desktop start menus).
+ */
+export function Tiles(params: {
+  className?: string,
+  id?: string,
+  style?: React.CSSProperties,
+  children?: React.ReactNode,
+  ref?: React.Ref<null | HTMLDivElement>,
+
+  /**
+   * Whether to display open or close transition.
+   *
+   * A `Tiles` component displays a `LIVE_TILES_OPENING_OR_CLOSING` milliseconds
+   * scale/opacity transition when visibility changes;
+   * this property indicates whether the container is open or closed.
+   *
+   * @default true
+   */
+  open?: boolean;
+
+  /**
+   * The direction of the live tile layout.
+   */
+  direction: CoreDirection,
+
+  /**
+   * Whether drag-n-drop is enabled.
+   */
+  dragEnabled: boolean,
+
+  /**
+   * Whether checking tiles is enabled.
+   */
+  checkEnabled: boolean,
+
+  /**
+   * Whether renaming groups is enabled.
+   */
+  renamingGroupsEnabled: boolean,
+
+  /**
+   * Group width in 1x1 tiles, effective only
+   * in a vertical layout (must be `>= 4`).
+   * @default 6
+   */
+  groupWidth?: number,
+
+  /**
+   * Height in 1x1 tiles, effective only
+   * in a horizontal layout (must be `>= 4`).
+   * @default 6
+   */
+  groupHeight?: number,
+
+  /**
+   * Number of inline groups, effective only
+   * in a vertical layout (must be `>= 1`).
+   * @default 1
+   */
+  inlineGroups?: number,
+
+  /**
+   * Event triggered for a bulk change.
+   */
+  bulkChange: (event: BulkChange) => void,
+
+  /**
+   * Event triggered for re-ordering groups.
+   */
+  reorderGroups: (event: Map<number, string>) => void,
+
+  /**
+   * Event triggered for renaming a group.
+   */
+  renameGroup: (event: { id: string, label: string }) => void,
+
+  /**
+   * Event triggered for a drag start on a tile.
+   */
+  dragStart?: (event: { id: string, dnd: HTMLElement }) => void,
+
+  /**
+   * Event triggered for a drag move on a tile.
+   */
+  dragMove?: (event: { id: string, dnd: HTMLElement }) => void,
+
+  /**
+   * Event triggered for a drag end on a tile.
+   */
+  dragEnd?: (event: { id: string, dnd: HTMLElement }) => void,
+
+  /**
+   * Event triggered for a drag start on a group.
+  */
+  groupDragStart?: (event: { id: string, element: HTMLDivElement }) => void,
+
+  /**
+   * Event triggered for a drag move on a group.
+  */
+  groupDragMove?: (event: { id: string, element: HTMLDivElement }) => void,
+
+  /**
+   * Event triggered for a drag end on a group.
+  */
+  groupDragEnd?: (event: { id: string, element: HTMLDivElement }) => void,
+
+  /**
+   * Event triggered for a change on which tiles are currently checked.
+   */
+  checkedChange?: (event: { tiles: string[] }) => void,
+
+}): React.ReactNode {
+
+  // event handlers
+  const handlers = React.useRef<TilesHandlers>({
+    bulk_change: params.bulkChange,
+    reorder_groups: params.reorderGroups,
+    rename_group: params.renameGroup,
+    drag_start: params.dragStart,
+    drag_move: params.dragMove,
+    drag_end: params.dragEnd,
+    group_drag_start: params.groupDragStart,
+    group_drag_move: params.groupDragMove,
+    group_drag_end: params.groupDragEnd,
+    checked_change: params.checkedChange,
+  });
+
+  // 
+  const super_div_ref = React.useRef<null | HTMLDivElement>(null);
+  const div_ref = React.useRef<null | HTMLDivElement>(null);
+
+  //
+  const core = React.useRef<null | Core>(null);
+
+  // ?rtl
+  const rtl = React.useContext(RTLContext);
+
+  // ?theme
+  const theme = React.useContext(ThemeContext);
+
+  // opening/closing transition stuff
+  const open_close_tween = React.useRef<null | gsap.core.Tween>(null);
+  const initial_open_close = React.useRef(true);
+  const min_aborter = React.useRef<null | AbortController>(null);
+
+  // initialization
+  React.useEffect(() => {
+
+    core.current = new Core({
+      container: div_ref.current!,
+      direction: params.direction,
+      classNames: {
+        group: "TileGroup",
+        groupLabel: "TileGroup-label",
+        groupLabelText: "TileGroup-label-text",
+        groupLabelInput: "TileGroup-label-input",
+        groupTiles: "TileGroup-tiles",
+        tile: "Tile",
+        tileContent: "Tile-content",
+        tileDND: "TileDND",
+      },
+      dragEnabled: params.dragEnabled,
+      checkEnabled: params.checkEnabled,
+      renamingGroupsEnabled: params.renamingGroupsEnabled,
+      size1x1: 0,
+      tileGap: 0,
+      groupGap: 0,
+      labelHeight: 0,
+    });
+
+    // bulkChange
+    core.current!.addEventListener("bulkChange", e => {
+      handlers.current.bulk_change(e.detail);
+    });
+
+    // reorderGroups
+    core.current!.addEventListener("reorderGroups", e => {
+      handlers.current.reorder_groups(e.detail);
+    });
+
+    // renameGroup
+    core.current!.addEventListener("renameGroup", e => {
+      handlers.current.rename_group(e.detail);
+    });
+
+    // dragStart (tile)
+    core.current!.addEventListener("dragStart", e => {
+      handlers.current.drag_start?.(e.detail);
+    });
+
+    // dragMove (tile)
+    core.current!.addEventListener("dragMove", e => {
+      handlers.current.drag_move?.(e.detail);
+    });
+
+    // dragEnd (tile)
+    core.current!.addEventListener("dragEnd", e => {
+      handlers.current.drag_end?.(e.detail);
+    });
+
+    // groupDragStart (group)
+    core.current!.addEventListener("groupDragStart", e => {
+      handlers.current.group_drag_start?.(e.detail);
+    });
+
+    // groupDragMove (group)
+    core.current!.addEventListener("groupDragMove", e => {
+      handlers.current.group_drag_move?.(e.detail);
+    });
+
+    // groupDragEnd (group)
+    core.current!.addEventListener("groupDragEnd", e => {
+      handlers.current.group_drag_end?.(e.detail);
+    });
+
+    // checkedChange
+    core.current!.addEventListener("checkedChange", e => {
+      handlers.current.checked_change?.(e.detail);
+    });
+
+  }, []);
+
+  // update metrics in response to change
+  // in various parameters.
+  React.useEffect(() => {
+
+    update_metrics();
+
+  }, [
+    params.direction,
+    params.groupWidth,
+    params.groupHeight,
+    params.inlineGroups,
+    rtl
+  ]);
+
+  // sync handlers
+  React.useEffect(() => {
+
+    handlers.current = {
+      bulk_change: params.bulkChange,
+      reorder_groups: params.reorderGroups,
+      rename_group: params.renameGroup,
+      drag_start: params.dragStart,
+      drag_move: params.dragMove,
+      drag_end: params.dragEnd,
+      group_drag_start: params.groupDragStart,
+      group_drag_move: params.groupDragMove,
+      group_drag_end: params.groupDragEnd,
+      checked_change: params.checkedChange,
+    };
+  }, [
+    params.bulkChange,
+    params.reorderGroups,
+    params.renameGroup,
+    params.dragStart,
+    params.dragMove,
+    params.dragEnd,
+    params.groupDragStart,
+    params.groupDragMove,
+    params.groupDragEnd,
+    params.checkedChange,
+  ]);
+
+  // opening/closing transition
+  React.useEffect(() => {
+
+    const open = params.open ?? true;
+
+    if (open_close_tween.current) {
+      open_close_tween.current!.kill();
+      open_close_tween.current = null;
+    }
+    if (min_aborter.current) {
+      min_aborter.current!.abort();
+      min_aborter.current = null;
+    }
+    if (open) {
+      super_div_ref.current!.style.opacity = "";
+      if (initial_open_close) {
+        open_close_tween.current = gsap.fromTo(
+          super_div_ref.current!,
+          { scale: 0 },
+          { scale: 1, ease: "power1.out", duration: LIVE_TILES_OPENING_OR_CLOSING / 1_000 },
+        );
+      } else {
+        open_close_tween.current = gsap.to(
+          super_div_ref.current!,
+          { scale: 1, ease: "power1.out", duration: LIVE_TILES_OPENING_OR_CLOSING / 1_000 },
+        );
+      }
+      min_aborter.current = core.current!.rearrangeMin();
+    } else {
+      if (initial_open_close) {
+        super_div_ref.current!.style.opacity = "0";
+        super_div_ref.current!.style.transform = "scale(0)";
+      } else {
+        const tween = gsap.to(
+          super_div_ref.current!,
+          { scale: 0, ease: "power1.out", duration: LIVE_TILES_OPENING_OR_CLOSING / 1_000 },
+        );
+        tween.then(() => {
+          super_div_ref.current!.style.opacity = "0";
+        });
+        open_close_tween.current = tween;
+      }
+    }
+    initial_open_close.current = false;
+
+  }, [params.open ?? true]);
+
+  // update several metrics like a 1x1 size and gaps.
+  // (MUST ONLY be called directly from a React.js effect.)
+  function update_metrics(): void {
+    core.current!.rtl = rtl;
+    core.current!.groupWidth = params.groupWidth ?? 6;
+    core.current!.groupHeight = params.groupHeight ?? 6;
+    core.current!.inlineGroups = params.inlineGroups ?? 1;
+
+    core.current!.direction = params.direction;
+
+    if (params.direction == "horizontal") {
+      core.current!.size1x1 = 42;
+      core.current!.tileGap = 10;
+      core.current!.groupGap = 144;
+      core.current!.labelHeight = 30.4;
+    } else {
+      core.current!.size1x1 = 39;
+      core.current!.tileGap = 7;
+      core.current!.groupGap = 32;
+      core.current!.labelHeight = 28;
+    }
+  }
+
+  return (
+    <Tiles_div
+      className={[
+        "Tiles",
+        ...(params.className ?? "").split(" ").filter(c => c != "")
+      ].join(" ")}
+      data-direction={params.direction.toString()}
+      style={params.style}
+      id={params.id}
+      ref={obj => {
+        super_div_ref.current = obj;
+        if (typeof params.ref == "function") {
+          params.ref(obj);
+        } else if (params.ref) {
+          params.ref!.current = obj;
+        }
+      }}
+      $foreground={theme.colors.foreground}>
+      <div className="Tiles-sub" ref={div_ref}>
+        {params.children}
+      </div>
+    </Tiles_div>
+  );
+}
+
+// handler references
+type TilesHandlers = {
+  bulk_change: (event: BulkChange) => void,
+  reorder_groups: (event: Map<number, string>) => void,
+  rename_group: (event: { id: string, label: string }) => void,
+  drag_start: undefined | ((event: { id: string, dnd: HTMLElement }) => void),
+  drag_move: undefined | ((event: { id: string, dnd: HTMLElement }) => void),
+  drag_end: undefined | ((event: { id: string, dnd: HTMLElement }) => void),
+  group_drag_start: undefined | ((event: { id: string, element: HTMLDivElement }) => void),
+  group_drag_move: undefined | ((event: { id: string, element: HTMLDivElement }) => void),
+  group_drag_end: undefined | ((event: { id: string, element: HTMLDivElement }) => void),
+  checked_change: undefined | ((event: { tiles: string[] }) => void),
+};
+
+// style sheet
+const Tiles_div = styled.div<{
+  $foreground: string,
+}> `
+  && {
+    color: ${$ => $.$foreground};
+    padding: 0.5rem 1.5rem;
+    width: 100%;
+    height: 100%;
+  }
+
+  &&[data-direction="horizontal"] {
+  }
+
+  &&[data-direction="vertical"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  && .TileGroup-label {
+    overflow: hidden;
+  }
+
+  &&[data-direction="horizontal"] .TileGroup-label {
+    overflow: hidden;
+    font-size: 1.2rem;
+    font-weight: lighter;
+  }
+
+  &&[data-direction="vertical"] .TileGroup-label {
+    overflow: hidden;
+    font-size: 1rem;
+    font-weight: normal;
+  }
+
+  && .TileGroup-label:hover {
+    background: ${$ => Color($.$foreground).alpha(0.1).toString()};
+  }
+
+  && .TileGroup-label-input {
+    background: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    word-break: none;
+    color: ${$ => $.$foreground};
+    font-size: 1.2em;
+    font-weight: lighter;
+  }
+`;

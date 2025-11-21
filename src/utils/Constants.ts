@@ -16,12 +16,12 @@ export const BUTTON_NAVIGABLE = "button-navigable";
 export const ESCAPABLE = "escapable";
 
 /**
- * Most common transition duration.
+ * Most common transition duration in milliseconds.
  */
 export const COMMON_DELAY = 200;
 
 /**
- * Transition duration when opening or closing
+ * Transition duration, in milliseconds, when opening or closing
  * a live tiles container.
  */
-export const TILES_OPEN_DELAY = 200;
+export const LIVE_TILES_OPENING_OR_CLOSING = 200;

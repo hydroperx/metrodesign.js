@@ -21,6 +21,9 @@
 # Live tiles
 
 - [ ] Done
+  - [ ] Propagate tile click event to right child
+  - [ ] Propagate tile context menu event to right child
+  - [ ] Propagate group-label right click event to right child
   - [ ] Group/tile components do refresh the parent live tiles component on initialization.
   - [ ] Group/tile components must signal the parent live tiles component when certain properties change (like x, y, size... group index)
   - [ ] Icon+label tiles should be displayed like that: (note that icon may be a logo as a rectangle)
@@ -35,7 +38,7 @@
   - [ ] Icon/logo size should be more based in percentage
     - [ ] Icon size = percent inside 57x57 logical pixels.
     - [ ] Logo size = percent inside horizontal 172 logical pixels.
-  - [ ] Optional `TileChecker` controller with `.checked()`, `.checkAll()` and `.uncheckAll()` methods
+  - [ ] Optional `TileController` controller with `.checked()`, `.checkAll()`, `.uncheckAll()` and `.inlineGroupsAvailable()` methods
 - [ ] Transparent tiles should have a drop shadow
 
 # Page

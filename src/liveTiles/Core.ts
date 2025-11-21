@@ -108,6 +108,10 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
    * @hidden
    */
   public _check_enabled: boolean = true;
+  /**
+   * @hidden
+   */
+  public _renaming_groups_enabled: boolean = true;
 
   /**
    * @hidden
@@ -167,6 +171,11 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
      */
     checkEnabled?: boolean,
     /**
+     * Whether renaming groups is enabled.
+     * @default true
+     */
+    renamingGroupsEnabled?: boolean,
+    /**
      * The size of a 1x1 tile in logical pixels.
      */
     size1x1: number,
@@ -219,6 +228,7 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     this.groupGap = params.groupGap;
     this.dragEnabled = params.dragEnabled ?? true;
     this.checkEnabled = params.checkEnabled ?? true;
+    this.renamingGroupsEnabled = params.renamingGroupsEnabled ?? true;
 
     this.groupWidth = params.groupWidth ?? 6;
     this.groupHeight = params.groupHeight ?? 6;
@@ -333,6 +343,9 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
   }
   public set groupWidth(val) {
     assert(val >= 4, "Core.groupWidth must be >= 4.");
+    if (this._group_width == val) {
+      return;
+    }
     this._group_width = val;
 
     if (this._dir == "vertical") {
@@ -349,6 +362,9 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
   }
   public set groupHeight(val) {
     assert(val >= 4, "Core.groupHeight must be >= 4.");
+    if (this._group_height == val) {
+      return;
+    }
     this._group_height = val;
 
     if (this._dir == "horizontal") {
@@ -365,6 +381,9 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
   }
   public set inlineGroups(val) {
     assert(this._inline_groups >= 1, "Core.inlineGroups must be >= 1.");
+    if (this._inline_groups == val) {
+      return;
+    }
     this._inline_groups = val;
     this.rearrange();
   }
@@ -403,7 +422,11 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     return REMConvert.rem.pixels(this._size_1x1);
   }
   public set size1x1(val) {
+    const k = this._size_1x1;
     this._size_1x1 = REMConvert.pixels.rem(val);
+    if (this._size_1x1 == k) {
+      return;
+    }
 
     // reset known tile sizes in rem
     this._tile_in_rem.small.width = this._size_1x1;
@@ -426,8 +449,11 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     return REMConvert.rem.pixels(this._label_height);
   }
   public set labelHeight(val) {
+    const k = this._label_height;
     this._label_height = REMConvert.pixels.rem(val);
-    this.rearrange();
+    if (k != this._label_height) {
+      this.rearrange();
+    }
   }
 
   /**
@@ -437,7 +463,11 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     return REMConvert.rem.pixels(this._tile_gap);
   }
   public set tileGap(val) {
+    const k = this._tile_gap;
     this._tile_gap = REMConvert.pixels.rem(val);
+    if (k == this._tile_gap) {
+      return;
+    }
 
     // reset known tile sizes in rem
     this._tile_in_rem.small.width = this._size_1x1;
@@ -460,8 +490,11 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     return REMConvert.rem.pixels(this._group_gap);
   }
   public set groupGap(val) {
+    const k = this._group_gap;
     this._group_gap = REMConvert.pixels.rem(val);
-    this.rearrange();
+    if (k != this._group_gap) {
+      this.rearrange();
+    }
   }
 
   /**
@@ -495,6 +528,16 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
         }
       }
     }
+  }
+
+  /**
+   * Whether renaming groups is enabled.
+   */
+  public get renamingGroupsEnabled(): boolean {
+    return this._renaming_groups_enabled;
+  }
+  public set renamingGroupsEnabled(val) {
+    this._renaming_groups_enabled = val;
   }
 
   /**
