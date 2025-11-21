@@ -334,6 +334,7 @@ const Tile_button = styled.button<{
     left: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   /* checked rect */
@@ -414,9 +415,18 @@ const Tile_button = styled.button<{
     }
 `;
 
+// size prevalence
+const size_prevalence: Record<TileSize, number> = {
+  small: 0,
+  medium: 1,
+  wide: 2,
+  large: 3,
+};
+
 // page roll animation
 class PageRoll {
   private mutation_observer: MutationObserver;
+  private tween: null | gsap.core.Tween = null;
 
   //
   public constructor(private button: HTMLButtonElement) {
@@ -441,6 +451,58 @@ class PageRoll {
 
   //
   public reset(): void {
+    // tile size
+    const size = ((size_prevalence as any)[this.button.getAttribute("data-size") ?? "small"]!) as number;
+
+    // matching pages
+    const all_pages = Array.from(this.button.getElementsByClassName("TilePage")) as HTMLElement[];
+    const pages = all_pages
+      .filter(page => {
+        if (!page.hasAttribute("data-size")) {
+          return true;
+        }
+        const test = page.getAttribute("data-size")!.replace(/\s/g, "");
+        if (test.startsWith("<")) {
+          if (test.charCodeAt(1) == 0x3D) {
+            const val = ((size_prevalence as any)[test.slice(2)] as number);
+            return size <= val;
+          }
+          const val = ((size_prevalence as any)[test.slice(1)] as number);
+          return size < val;
+        }
+        if (test.startsWith(">")) {
+          if (test.charCodeAt(1) == 0x3D) {
+            const val = ((size_prevalence as any)[test.slice(2)] as number);
+            return size >= val;
+          }
+          const val = ((size_prevalence as any)[test.slice(1)] as number);
+          return size > val;
+        }
+        if (test.startsWith("=")) {
+          const val = ((size_prevalence as any)[test.slice(1)] as number);
+          return size == val;
+        }
+        const val = ((size_prevalence as any)[test] as number);
+        return size == val;
+      });
+    
+    // kill previous tween
+    if (this.tween) {
+      this.tween!.kill();
+      this.tween = null;
+    }
+
+    // visibility changes
+    for (const page of all_pages) {
+      if (pages.includes(page)) {
+        page.style.visibility = "visible";
+        page.style.top = "100%";
+      } else {
+        page.style.visibility = "hidden";
+      }
+    }
+
+    //
     fixme();
   }
 }

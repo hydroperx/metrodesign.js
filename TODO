@@ -21,17 +21,7 @@
 # Live tiles
 
 - [ ] Done
-  - [ ] Animate page roll (use a `MutationObserver` to dynamically respond to new pages being added and pages being removed)
-    - [ ] Look only for `.TilePage`s (ignore checked rect)
-    - [ ] Look only for pages without size condition or matching size condition
-      - conditions
-        - [ ] `=` (optional prefix)
-        - [ ] `<`
-        - [ ] `>`
-        - [ ] `<=`
-        - [ ] `>=`
-    - [ ] Make visible pages matching size
-    - [ ] Make invisible pages matching size
+  - [ ] Animate page roll
 
 # Page
 

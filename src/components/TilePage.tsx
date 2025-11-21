@@ -27,13 +27,15 @@ export function TilePage(params: {
   variant?: TilePageVariant,
 
   /**
-   * Size condition.
+   * Size condition. Supports prefixes `=`,
+   * `<`, `>`, `<=` and `>=`. Allows whitespace.
+   *
    * @example
    * ```
    * size="small" // equals
    * size="=small" // equals
-   * size=">=wide" // greater-than-or-equals
-   * size="<wide" // less-than
+   * size=">=wide"
+   * size="<wide"
    * ```
    */
   size?: string,
