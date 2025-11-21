@@ -57,6 +57,7 @@ export class DND {
     }
     // destroy previous Draggable
     this.tileDNDDraggable?.destroy();
+    this.tileDNDDraggable = null;
 
     // find DND element and build Draggable up
     const dnd_dom_list = this.$._container.getElementsByClassName(this.$._class_names.tileDND);

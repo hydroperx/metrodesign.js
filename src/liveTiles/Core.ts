@@ -233,6 +233,11 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     // *click outside tiles* handler
     this._container.addEventListener("click", this._click_outside.bind(this));
 
+    // handle key presses
+    const key_down_handler = this._key_down.bind(this);
+    window.addEventListener("keydown", key_down_handler);
+    this._window_handlers.push(["keydown", key_down_handler]);
+
     // rearrange
     this.rearrange();
   }
@@ -278,6 +283,7 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     for (const [type, fn] of this._window_handlers) {
       window.removeEventListener(type, fn as any);
     }
+    this._window_handlers.length = 0;
 
     // discard tile tweens
     for (const tween of this._tile_tweens) {
@@ -652,6 +658,25 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
   private _click_outside(e: MouseEvent): void {
     let outside = true;
     g: for (const [,g] of this._groups) {
+      // if label is being actively edited and
+      // the user clicks out, submit it.
+      const inputs = g.dom?.getElementsByClassName(this._class_names.groupLabelInput);
+      const input = !!inputs && inputs!.length !== 0 ? inputs![0] : null;
+      if (input) {
+        const r = input!.getBoundingClientRect();
+        if (!(
+          e.clientX >= r.left && e.clientX < r.right &&
+          e.clientY >= r.top && e.clientY < r.bottom
+        )) {
+          const new_label = (input as HTMLInputElement).value;
+          input!.remove();
+          this.dispatchEvent(new CustomEvent("renameGroup", {
+            detail: { id: g.id, label: new_label },
+          }));
+        }
+      }
+
+      // iterate tiles
       for (const [,tile] of g.tiles) {
         if (tile.dom) {
           const r = tile.dom!.getBoundingClientRect();
@@ -668,6 +693,37 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
       }
     }
     if (outside) this.uncheckAll();
+  }
+
+  // handle Escape and Enter for label inputs
+  private _key_down(e: KeyboardEvent): void {
+    let key = e.key.toLowerCase();
+    if (key == "esc") {
+      key = "escape";
+    }
+    if (!["escape", "enter"].includes(key)) {
+      return;
+    }
+    for (const [,g] of this._groups) {
+      // if label is being actively edited and
+      // the user clicks out, submit it.
+      const inputs = g.dom?.getElementsByClassName(this._class_names.groupLabel)[0].getElementsByClassName(this._class_names.groupLabelInput);
+      const input = !!inputs && inputs!.length !== 0 ? inputs![0] : null;
+      if (input) {
+        if (key == "enter") {
+          // submit
+          const new_label = (input as HTMLInputElement).value;
+          input!.remove();
+          this.dispatchEvent(new CustomEvent("renameGroup", {
+            detail: { id: g.id, label: new_label },
+          }));
+        } else {
+          // escape
+          input!.remove();
+        }
+        break;
+      }
+    }
   }
 
   /**

@@ -363,6 +363,7 @@ export class Detection {
 
     // group label <div> style settings
     const group_label_div = group_dom.getElementsByClassName(this.$._class_names.groupLabel)[0] as HTMLElement;
+    group_label_div.style.position = "relative";
     group_label_div.style.boxSizing = "border-box";
     group_label_div.style.overflow = "hidden";
 

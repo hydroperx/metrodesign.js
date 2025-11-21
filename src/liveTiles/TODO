@@ -24,18 +24,14 @@ Trick to use: Draggable needs to drag the tileDND element, not the tile itself. 
 
 Group drag-n-drop mimmicks tiles a bit in how the Draggable instance is created, with some subtle differences.
 
-- [ ] Label
-  - [ ] RTL label input (depends on `Core._rtl`)
-  - [ ] Click outside label input (in `Core`) should stop editing label and emit final `renameGroup` event.
-  - [ ] Pressing Escape should cancel editing label.
-  - [ ] Pressing Enter should stop editing label and emit final `renameGroup` event.
-- [ ] Label > touch start
-  - [ ] Edit
-  - [ ] Trigger drag-n-drop (long-held)
+- [x] Label
+- [x] Label > touch start
+  - [x] Edit (short-touch)
+  - [x] Trigger drag-n-drop (long-held)
     - [ ] Trigger events
-- [ ] Label > mouse down
-  - [ ] Edit
-  - [ ] Trigger drag-n-drop (after short-delta)
+- [x] Label > mouse down
+  - [x] Edit (short click)
+  - [x] Trigger drag-n-drop (after short-delta)
     - [ ] Trigger events
 
 Drag-n-drop handlers (DND.ts):

@@ -61,7 +61,7 @@ export abstract class Layout {
       label.style.height = this.$._label_height + "rem";
       label.style.position = "relative";
 
-      const label_text = group.dom!.getElementsByClassName(this.$._class_names.groupLabelText)[0] as HTMLElement;
+      const label_text = label.getElementsByClassName(this.$._class_names.groupLabelText)[0] as HTMLElement;
       label_text.innerText = group.label;
     }
 
