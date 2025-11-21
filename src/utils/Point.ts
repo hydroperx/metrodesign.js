@@ -19,7 +19,7 @@ export class Point {
    * For `MouseEvent` and `Touch`, reuses the client X/Y coordinates.
    */
   public static from(arg: MouseEvent | Touch): Point {
-    if (arg instanceof MouseEvent) {
+    if (typeof MouseEvent !== "undefined" && arg instanceof MouseEvent) {
       return new Point(arg.clientX, arg.clientY);
     } else {
       return new Point(arg.clientX, arg.clientY);

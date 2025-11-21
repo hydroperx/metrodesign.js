@@ -22,7 +22,7 @@
 
 ## Group attributes
 
-- `data-id` - Read-only group ID.
+- `data-id` - Read-only group ID. MUST BE unique.
 - `data-index` - Group index.
 - `data-label` - Group label.
 - `data-dragging` - *(Set by this library only.)* Indicates whether a pointer is actively dragging a group. (`true` or `false`)

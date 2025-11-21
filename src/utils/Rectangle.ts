@@ -22,26 +22,30 @@ export class Rectangle {
    * Converts from a different data type to a `Rectangle` instance.
    */
   public static from(arg: DOMRect | OffsetType): Rectangle {
-    if (arg instanceof DOMRect) {
+    if (typeof DOMRect !== "undefined" && arg instanceof DOMRect) {
       return new Rectangle(arg.x, arg.y, arg.width, arg.height);
     } else {
       return new Rectangle(arg.x, arg.y, arg.width, arg.height);
     }
   }
 
-  public get left() {
+  public get area(): number {
+    return this.width * this.height;
+  }
+
+  public get left(): number {
     return this.x;
   }
 
-  public get top() {
+  public get top(): number {
     return this.y;
   }
 
-  public get right() {
+  public get right(): number {
     return this.x + this.width;
   }
 
-  public get bottom() {
+  public get bottom(): number {
     return this.y + this.height;
   }
 

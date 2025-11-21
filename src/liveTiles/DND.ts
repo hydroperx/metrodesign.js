@@ -345,7 +345,38 @@ export class DND {
 
     // check the nearest intersection
     const this_rect = Rectangle.from(getOffset(element as HTMLElement, this.$._container)!);
+    let match_index = -1;
+    let greater_intersection: null | Rectangle = null;
+    for (const [idx,g] of this.$._groups) {
+      if (g.id == this.groupDraggable![0] || !g.dom) {
+        continue;
+      }
+      const g_rect = Rectangle.from(getOffset(g.dom!, this.$._container)!);
+      const intersection = this_rect.intersection(g_rect);
+      if (intersection && (!greater_intersection || intersection.area > greater_intersection!.area)) {
+        match_index = idx;
+        greater_intersection = intersection;
+      }
+    }
 
-    fixme();
+    // schedule for moving group
+    // (although in this case we need to manually
+    // reorder groups to act like a splice,
+    // later emitting a `reorderGroups` event.)
+    if (match_index !== -1) {
+      if (this._movement_timeout != -1) {
+        window.clearTimeout(this._movement_timeout);
+        this._movement_timeout = -1;
+      }
+
+      this._movement_timeout = window.setTimeout(() => {
+        fixme();
+      }, 1000);
+    }
+
+    // Core#groupDragMove
+    this.$.dispatchEvent(new CustomEvent("groupDragMove", {
+      detail: { id: this.groupDraggable![0], element: element as HTMLDivElement },
+    }));
   }
 }
