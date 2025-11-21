@@ -24,3 +24,7 @@ export * from "./HSlider";
 export * from "./VSlider";
 export * from "./SliderStop";
 export * from "./BlackoutModal";
+export * from "./Tiles";
+export * from "./TileGroup";
+export * from "./Tile";
+export * from "./TilePage";
