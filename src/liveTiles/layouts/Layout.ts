@@ -56,12 +56,13 @@ export abstract class Layout {
     const group_tiles_div = group.dom ? group.dom!.getElementsByClassName(this.$._class_names.groupTiles)[0] as HTMLElement : null;
 
     // re-assign group label, its height and `position`
+    let label_div: null | HTMLElement = null;
     if (group.dom) {
-      const label = group.dom!.getElementsByClassName(this.$._class_names.groupLabel)[0] as HTMLElement;
-      label.style.height = this.$._label_height + "rem";
-      label.style.position = "relative";
+      label_div = group.dom!.getElementsByClassName(this.$._class_names.groupLabel)[0] as HTMLElement;
+      label_div.style.height = this.$._label_height + "rem";
+      label_div.style.position = "relative";
 
-      const label_text = label.getElementsByClassName(this.$._class_names.groupLabelText)[0] as HTMLElement;
+      const label_text = label_div.getElementsByClassName(this.$._class_names.groupLabelText)[0] as HTMLElement;
       label_text.innerText = group.label;
     }
 
@@ -178,6 +179,11 @@ export abstract class Layout {
       group_tiles_div!.style.position = "relative";
       group_tiles_div!.style.width = Math.max(min_w, tile_list_width_rem) + "rem";
       group_tiles_div!.style.height = tile_list_height_rem + "rem";
+    }
+
+    // label width
+    if (label_div) {
+      label_div!.style.width = group_tiles_div!.style.width;
     }
 
     // bulkChange event (moved tiles only)
