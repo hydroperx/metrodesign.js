@@ -424,9 +424,14 @@ const size_prevalence: Record<TileSize, number> = {
 };
 
 // page roll animation
+const PAGE_DURATION = 5_000;
 class PageRoll {
   private mutation_observer: MutationObserver;
-  private tween: null | gsap.core.Tween = null;
+  private tween_1: null | gsap.core.Tween = null;
+  private tween_2: null | gsap.core.Tween = null;
+  private pages: HTMLElement[] = [];
+  private pageIndex: number = 0;
+  private timeout: number = -1;
 
   //
   public constructor(private button: HTMLButtonElement) {
@@ -446,6 +451,16 @@ class PageRoll {
 
   //
   public destroy(): void {
+    if (this.timeout != -1) {
+      window.clearTimeout(this.timeout);
+    }
+    if (this.tween_1) {
+      this.tween_1.kill();
+    }
+    if (this.tween_2) {
+      this.tween_2.kill();
+    }
+    this.pages.length = 0;
     this.mutation_observer.disconnect();
   }
 
@@ -487,9 +502,18 @@ class PageRoll {
       });
     
     // kill previous tween
-    if (this.tween) {
-      this.tween!.kill();
-      this.tween = null;
+    if (this.tween_1) {
+      this.tween_1!.kill();
+      this.tween_1 = null;
+    }
+    if (this.tween_2) {
+      this.tween_2!.kill();
+      this.tween_2 = null;
+    }
+
+    if (this.timeout != -1) {
+      window.clearTimeout(this.timeout);
+      this.timeout = -1;
     }
 
     // visibility changes
@@ -502,7 +526,48 @@ class PageRoll {
       }
     }
 
+    // no page? do nothing.
+    if (pages.length == 0) {
+      return;
+    }
+
+    // position initial page
+    pages[0].style.top = "0";
+
+    // one page? no animation then.
+    if (pages.length == 1) {
+      return;
+    }
+
     //
-    fixme();
+    this.pageIndex = 0;
+
+    //
+    this.timeout = window.setTimeout(() => {
+      this.next_page();
+    }, PAGE_DURATION);
+  }
+
+  //
+  private next_page(): void {
+    const current_page = this.pages[this.pageIndex];
+    const next_page = this.pages[(this.pageIndex + 1) % this.pages.length]!;
+    this.pageIndex++;
+    this.pageIndex %= this.pages.length;
+    this.tween_1 = gsap.to(
+      current_page,
+      { top: "-100%", duration: 0.7, ease: "bounce.out" },
+    );
+    this.tween_2 = gsap.fromTo(
+      next_page,
+      { top: "100%" },
+      { top: "0", duration: 0.7, ease: "bounce.out" },
+    );
+    this.tween_2.then(() => {
+      //
+      this.timeout = window.setTimeout(() => {
+        this.next_page();
+      }, PAGE_DURATION);
+    });
   }
 }

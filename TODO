@@ -20,11 +20,9 @@
 
 # Live tiles
 
-- [ ] Done
-  - [ ] Animate page roll
-
-# Page
-
-Way contextual; skinning and behavior relies on surrounding container. It is basically used within live tiles.
-
-- [ ] Done
+- [x] Done
+- [ ] Test it
+  - [ ] Checking tiles
+  - [ ] Tile drag-n-drop
+  - [ ] Group drag-n-drop
+  - [ ] Label editing
