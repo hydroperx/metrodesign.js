@@ -443,7 +443,7 @@ class PageRoll {
         }
       }
     });
-    this.mutation_observer.observe(button);
+    this.mutation_observer.observe(button, { childList: true });
 
     // initial reset
     this.reset();

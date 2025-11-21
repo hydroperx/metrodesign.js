@@ -43,17 +43,17 @@ function App() {
             wheelHorizontal>
             <Tiles
               direction="horizontal"
-              dragEnabled
-              checkEnabled
-              renamingGroupsEnabled
+              dragEnabled={false}
+              checkEnabled={false}
+              renamingGroupsEnabled={false}
               bulkChange={e => {
-                fixme();
+                //fixme();
               }}
               reorderGroups={e => {
-                fixme();
+                //fixme();
               }}
               renameGroup={e => {
-                fixme();
+                //fixme();
               }}>
               <TileGroup id="group1" index={0}>
                 <Tile id="camera" size="medium" background="#937" foreground="white">
@@ -62,7 +62,7 @@ function App() {
                     <Label>Camera</Label>
                   </TilePage>
                 </Tile>
-                <Tile id="bing" size="small" background="#e9e900" foreground="white">
+                <Tile id="bing" size="small" background="#d9c900" foreground="white">
                   <TilePage variant="iconLabel">
                     <Group><Icon native="bing"/></Group>
                     <Label>Bing</Label>

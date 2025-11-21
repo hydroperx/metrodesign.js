@@ -380,7 +380,7 @@ export class Core extends (EventTarget as TypedEventTarget<CoreEventMap>) {
     return this._inline_groups;
   }
   public set inlineGroups(val) {
-    assert(this._inline_groups >= 1, "Core.inlineGroups must be >= 1.");
+    assert(val >= 1, "Core.inlineGroups must be >= 1.");
     if (this._inline_groups == val) {
       return;
     }
