@@ -26,6 +26,18 @@ export function TilePage(params: {
    */
   variant?: TilePageVariant,
 
+  /**
+   * Size condition.
+   * @example
+   * ```
+   * size="small" // equals
+   * size="=small" // equals
+   * size=">=wide" // greater-than-or-equals
+   * size="<wide" // less-than
+   * ```
+   */
+  size?: string,
+
 }): React.ReactNode {
 
   return (
@@ -37,7 +49,8 @@ export function TilePage(params: {
       id={params.id}
       style={params.style}
       ref={params.ref}
-      data-variant={(params.variant || "custom").toString()}>
+      data-variant={(params.variant || "custom").toString()}
+      data-size={params.size}>
 
       {params.children}
     </div>

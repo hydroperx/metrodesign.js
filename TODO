@@ -22,12 +22,18 @@
 
 - [ ] Done
   - [ ] Animate page roll (use a `MutationObserver` to dynamically respond to new pages being added and pages being removed)
-    - [ ] Look only for pages without size condition or matching size condition
     - [ ] Look only for `.TilePage`s (ignore checked rect)
+    - [ ] Look only for pages without size condition or matching size condition
+      - conditions
+        - [ ] `=` (optional prefix)
+        - [ ] `<`
+        - [ ] `>`
+        - [ ] `<=`
+        - [ ] `>=`
+    - [ ] Make visible pages matching size
+    - [ ] Make invisible pages matching size
     - [ ] Reset page roll animation in case tile size changes
     - [ ] Reset page roll animation in case page size conditions change
-  - [ ] Support size-conditional live content pages
-    - [ ] One page can target multiple sizes (e.g. support attributes like `size="< wide"` (less-than), greater-than and exact (`=` prefix optional); the page's `size` attribute will result in multiple class names like `.medium` and `.wide`)
 
 # Page
 
