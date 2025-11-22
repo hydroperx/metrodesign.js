@@ -231,6 +231,7 @@ function App() {
               overflowX: "auto",
             }}
             wheelHorizontal>
+
             <Tiles
               direction="horizontal"
               dragEnabled
@@ -241,11 +242,15 @@ function App() {
               renameGroup={rename_group}
               dragStart={drag_start}
               dragEnd={drag_end}>
+
               {render_groups()}
+
               <TileDND>
                 {tile_dragging ? render_tile(tile_dragging!.id, tile_dragging!.tile) : undefined}
               </TileDND>
+
             </Tiles>
+
           </Root>
         </Primary>
       </RTLProvider>

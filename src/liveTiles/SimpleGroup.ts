@@ -24,6 +24,9 @@ export type { IntersectionSide };
  * - If `height` is given in the constructor, maximum Y = `height`.
  */
 export class SimpleGroup {
+  // used for internal debugging
+  private conflict_counter: number = 0;
+
   /**
    * Tile data.
    */
@@ -133,7 +136,7 @@ export class SimpleGroup {
       [horizontal_hole, vertical_hole] = this.findHoles(x!, y!, width, height);
       tile.x -= horizontal_hole;
       tile.y -= vertical_hole;
-
+      this.conflict_counter = 0;
       if (this.resolveConflicts(id)) {
         return true;
       }
@@ -183,6 +186,7 @@ export class SimpleGroup {
     tile.x -= horizontal_hole;
     tile.y -= vertical_hole;
 
+    this.conflict_counter = 0;
     if (this.resolveConflicts(id)) {
       return true;
     }
@@ -206,6 +210,7 @@ export class SimpleGroup {
     }
     tile!.width = width;
     tile!.height = height;
+    this.conflict_counter = 0;
     if (this.resolveConflicts(id)) {
       return true;
     }
@@ -552,6 +557,7 @@ export class SimpleGroup {
               this.restoreSnapshot(before_conflict_snapshot);
               target_tile.x = conflicting_tile.x;
               target_tile.y = conflicting_tile.y;
+              this.conflict_counter++;
               if (this.resolveConflicts(target_id, "downward")) {
                 return true;
               }
@@ -572,6 +578,7 @@ export class SimpleGroup {
                 this.restoreSnapshot(before_conflict_snapshot);
                 target_tile.x = conflicting_tile.x;
                 target_tile.y = conflicting_tile.y;
+                this.conflict_counter++;
                 if (this.resolveConflicts(target_id, "downward")) {
                   return true;
                 }
@@ -608,6 +615,7 @@ export class SimpleGroup {
               this.restoreSnapshot(before_conflict_snapshot);
               target_tile.x = conflicting_tile.x;
               target_tile.y = conflicting_tile.y;
+              this.conflict_counter++;
               if (this.resolveConflicts(target_id, "rightward")) {
                 return true;
               }
@@ -628,6 +636,7 @@ export class SimpleGroup {
                 this.restoreSnapshot(before_conflict_snapshot);
                 target_tile.x = conflicting_tile.x;
                 target_tile.y = conflicting_tile.y;
+                this.conflict_counter++;
                 if (this.resolveConflicts(target_id, "rightward")) {
                   return true;
                 }
@@ -655,11 +664,13 @@ export class SimpleGroup {
       }
 
       // shift other conflicting tiles like a snail.
+      this.conflict_counter++;
       if (!this.resolveConflicts(conflicting_id, shiftDirection!)) {
         // if failed and at basemost target tile,
         // try opposite direction
         if (tryOpposite) {
           this.restoreSnapshot(before_conflict_snapshot);
+          this.conflict_counter++;
           return this.resolveConflicts(
             target_id,
             shiftDirection! == "upward" ?
