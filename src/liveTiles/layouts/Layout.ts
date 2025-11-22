@@ -73,11 +73,6 @@ export abstract class Layout {
       const { width, height } = simple;
       const x_rem = pos.x * this.$._size_1x1 + pos.x * this.$._tile_gap;
       const y_rem = pos.y * this.$._size_1x1 + pos.y * this.$._tile_gap;
-      /*
-      if (tileId == "terminal" && pos.x == 2) {
-        console.log(x_rem);
-      }
-      */
 
       const w_rem = width*this.$._size_1x1 + (width-1)*this.$._tile_gap;
       const h_rem = height*this.$._size_1x1 + (height-1)*this.$._tile_gap;

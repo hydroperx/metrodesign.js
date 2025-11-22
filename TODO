@@ -21,6 +21,4 @@
 # Live tiles
 
 - [x] Done
-  - [ ] Fix group drag-n-drop
   - [ ] Fix group transfer
-- [ ] Test vertical layout

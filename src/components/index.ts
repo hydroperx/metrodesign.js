@@ -30,3 +30,5 @@ export * from "./TileGroup";
 export * from "./Tile";
 export * from "./TilePage";
 export * from "./TileDND";
+export * from "./TilePageVariant";
+export * from "./TilePlus";
