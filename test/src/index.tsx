@@ -49,7 +49,7 @@ function App() {
       id: "group1",
       label: "Group 1",
       tiles: new Map([
-        ["terminal", { size: "wide", x: -1, y: -1 }],
+        ["terminal", { size: "medium", x: -1, y: -1 }],
         ["camera", { size: "medium", x: -1, y: -1 }],
         ["bing", { size: "small", x: -1, y: -1 }],
       ]),
@@ -104,9 +104,15 @@ function App() {
       case "terminal": {
         return (
           <Tile key={id} id={id} size={tile.size} x={tile.x} y={tile.y} background="#04bed6" foreground="white">
-            <TilePage variant="iconLabel">
+            <TilePage variant="iconLabel" size="small">
               <Group><Icon native="terminal"/></Group>
               <Label>Terminal</Label>
+            </TilePage>
+            <TilePage size="medium">
+              <VGroup padding={10} gap={10}>
+                <Icon native="terminal" size={27}/>
+                <Label variant="heading" style={{fontSize: "1.2rem", margin: "0"}}>Run some Bash</Label>
+              </VGroup>
             </TilePage>
             <TilePage size=">= wide">
               <VGroup padding={10} gap={10}>

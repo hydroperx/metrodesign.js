@@ -343,6 +343,10 @@ const Tile_button = styled.button<{
     overflow: hidden;
   }
 
+  && > .Tile-content > .TilePage .Label {
+    overflow-wrap: anywhere;
+  }
+
   /* checked rect */
 
     && > .Tile-content > .Tile-checked-rect {

@@ -431,6 +431,10 @@ export class DND {
         let groups = group_pairs.map(p => p[1]);
         const old_index = groups.findIndex(g => g.id == this.groupDraggable![0]);
         const this_group = groups[old_index];
+        console.log("group drag move =")
+        console.log("  id =", this.groupDraggable![0]);
+        console.log("  old_index =", old_index);
+        console.log("  new_index =", new_index);
         groups.splice(new_index, 0, this_group);
         groups.splice(old_index + (new_index <= old_index ? 1 : 0), 1);
         this.$._groups.clear();

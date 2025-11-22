@@ -495,7 +495,7 @@ export function Tiles(params: {
       core.current!.groupGap = 144;
       core.current!.labelHeight = 30.4;
     } else {
-      core.current!.size1x1 = 53;
+      core.current!.size1x1 = 55;
       core.current!.tileGap = 7;
       core.current!.groupGap = 32;
       core.current!.labelHeight = 28;
