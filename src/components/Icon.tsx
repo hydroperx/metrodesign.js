@@ -83,6 +83,8 @@ import outline_star_white from "../icons/outline-star-white.png";
 import outline_star_black from "../icons/outline-star-black.png";
 import filled_star_white from "../icons/filled-star-white.png";
 import filled_star_black from "../icons/filled-star-black.png";
+import terminal_white from "../icons/terminal-white.png";
+import terminal_black from "../icons/terminal-black.png";
 
 // third-party
 import { Color, ColorObserver } from "@hydroperx/color";
@@ -197,7 +199,8 @@ export type NativeIcon =
   | "notificationEnvelope"
   | "markAsUnread"
   | "starOutline"
-  | "starFill";
+  | "starFill"
+  | "terminal";
 
 /**
  * Used for type inference for a `NativeIcon` identity
@@ -277,6 +280,8 @@ IconMap.registerMap(new Map([
 
   [TypedNativeIcon("starOutline"), { black: outline_star_black, white: outline_star_white }],
   [TypedNativeIcon("starFill"), { black: filled_star_black, white: filled_star_white }],
+
+  [TypedNativeIcon("terminal"), { black: terminal_black, white: terminal_white }],
 ]));
 
 const Img = styled.img<{
