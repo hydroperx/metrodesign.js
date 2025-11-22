@@ -294,6 +294,7 @@ const Tile_button = styled.button<{
     outline: none;
     padding: 0;
     margin: 0;
+    position: absolute;
   }
 
   &&:disabled {
@@ -306,6 +307,9 @@ const Tile_button = styled.button<{
     transition: opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out;
     background: linear-gradient(90deg, ${$ => $.$background} 0%, ${$ => Color($.$background).lighten(0.15).hex().toString()} 100%);
     position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
 
   &&:hover > .Tile-content {
