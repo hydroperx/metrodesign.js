@@ -24,3 +24,5 @@ These icons can then be used in for example the `Icon` and `CircleButton` compon
 ## Logo
 
 Similiarly, for logos, you can use the `Logo` component or `LogoMap`.
+
+Note that `Logo`s use a width and height instead of a square `size` (both are in logical pixels).
