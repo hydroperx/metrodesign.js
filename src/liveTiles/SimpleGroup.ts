@@ -231,14 +231,14 @@ export class SimpleGroup {
       let found = false;
       for (const [, other] of this.tiles) {
         let [horizontal_hole, vertical_hole] = this.findHoles(other.x, other.y, other.width, other.height);
-        tile.x -= horizontal_hole;
-        tile.y -= vertical_hole;
+        other.x -= horizontal_hole;
+        other.y -= vertical_hole;
         if (horizontal_hole > 0 || vertical_hole > 0) {
           found = true;
         }
         [horizontal_hole, vertical_hole] = this.findHoles(other.x, other.y, other.width, other.height);
-        tile.x -= horizontal_hole;
-        tile.y -= vertical_hole;
+        other.x -= horizontal_hole;
+        other.y -= vertical_hole;
         if (horizontal_hole > 0 || vertical_hole > 0) {
           found = true;
         }
