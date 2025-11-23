@@ -143,7 +143,6 @@ export class TilePointerHandlers {
       window.clearTimeout(this.toggle_timeout);
       this.toggle_timeout = -1;
     }
-
     this.discard_window_handlers();
   }
 
@@ -157,6 +156,7 @@ export class TilePointerHandlers {
       this.$._dnd.cancel();
     }
     this.just_held_long = false;
+    this.mouse_started = false;
   }
 
   //
@@ -165,6 +165,7 @@ export class TilePointerHandlers {
 
     if (!this.mouse_started || this.dragged) {
       this.$._dnd.cancel();
+      this.mouse_started = false;
 
       // cancel check-toggle timeout
       if (this.toggle_timeout != -1) {
@@ -183,7 +184,9 @@ export class TilePointerHandlers {
       this.toggle_timeout = -1;
     }
 
-    this.short_click(e);
+    if (this.toggle_timestamp < Date.now() - 100) {
+      this.short_click(e);
+    }
   }
 
   //
@@ -339,7 +342,10 @@ export class TilePointerHandlers {
         this.toggle_timeout = -1;
       }
 
-      this.short_click(e);
+      //
+      if (this.toggle_timestamp < Date.now() - 100) {
+        this.short_click(e);
+      }
     }
   }
 
@@ -402,27 +408,25 @@ export class TilePointerHandlers {
       return;
     }
 
-    // a click in a tile
-    if (this.toggle_timestamp === -1 || this.toggle_timestamp < Date.now() - 100) {
-      // during selection mode a click is a check toggle
+    // during selection mode a click is a check toggle
 
-      const tile_buttons = this.$._groups.values()
-        .map(g =>
-          Array.from(g.tiles.values().map(t => t.dom).filter(btn => !!btn))
-        ).reduce((a, b) => a.concat(b), []);
+    const tile_buttons = this.$._groups.values()
+      .map(g =>
+        Array.from(g.tiles.values().map(t => t.dom).filter(btn => !!btn))
+      ).reduce((a, b) => a.concat(b), []);
 
-      const selection_mode = tile_buttons.some(btn => btn.getAttribute("data-checked") === "true");
-      if (selection_mode) {
-        this.toggle_check();
-      } else {
-        // click
-        this.$.dispatchEvent(new CustomEvent("click", {
-          detail: { tile: this.id }
-        }));
-      }
-
-      this.toggle_timestamp = -1;
+    const selection_mode = tile_buttons.some(btn => btn.getAttribute("data-checked") === "true");
+    if (selection_mode) {
+      this.toggle_check();
+    } else {
+      // click
+      this.$.dispatchEvent(new CustomEvent("click", {
+        detail: { tile: this.id }
+      }));
     }
+
+    //
+    this.toggle_timestamp = 0;
   }
 
   //
