@@ -191,7 +191,7 @@ gray.colors.anchor = "#bebebe";
 
 // graylight
 const gray_light = structuredClone(light);
-gray_light.colors.background = "#a5a5a5";
+gray_light.colors.background = "#999";
 
 // red
 const red = structuredClone(dark);
