@@ -292,6 +292,7 @@ function App() {
             style={{
               overflowX: "auto",
             }}
+            padding={tiles_direction == "horizontal" ? 10 : 1 }
             wheelHorizontal={tiles_direction == "horizontal"}
             wheelVertical={tiles_direction == "vertical"}>
 

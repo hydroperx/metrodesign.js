@@ -130,7 +130,7 @@ export class GroupPointerHandlers {
 
   //
   private touch_start(e: TouchEvent): void {
-    if (this.$._dnd.dragging || this.mouse_started) {
+    if (this.$._dnd.dragging || this.mouse_started || this.touch_start_id != -1) {
       return;
     }
     e.preventDefault();

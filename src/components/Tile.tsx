@@ -261,6 +261,7 @@ export function Tile(params: {
         params.size,
         ...(mode.checking ? ["checking-mode"] : []),
         ...(mode.dnd ? ["dnd-mode"] : []),
+        ...(mode.horizontal ? ["horizontal-mode"] : []),
         ...(params.background ? [] : ["transparent"]),
         ...(params.className ?? "").split(" ").filter(c => c != "")
       ].join(" ")}
@@ -407,6 +408,11 @@ const Tile_button = styled.button<{
     }
 
     &&.small > .Tile-content > .TilePage[data-variant="iconLabel"] > .Group {
+      width: ${$ => REMConvert.pixels.rem($.$icon_size - 26)}rem;
+      height: ${$ => REMConvert.pixels.rem($.$icon_size - 26)}rem;
+    }
+
+    &&.small.horizontal-mode > .Tile-content > .TilePage[data-variant="iconLabel"] > .Group {
       width: ${$ => REMConvert.pixels.rem($.$icon_size - 20)}rem;
       height: ${$ => REMConvert.pixels.rem($.$icon_size - 20)}rem;
     }
@@ -455,6 +461,11 @@ const Tile_button = styled.button<{
     }
 
     && > .Tile-content > .TilePage[data-variant="labelIcon"] > .Group {
+      width: ${$ => REMConvert.pixels.rem($.$icon_size - 26)}rem;
+      height: ${$ => REMConvert.pixels.rem($.$icon_size - 26)}rem;
+    }
+
+    &&.horizontal-mode > .Tile-content > .TilePage[data-variant="labelIcon"] > .Group {
       width: ${$ => REMConvert.pixels.rem($.$icon_size - 20)}rem;
       height: ${$ => REMConvert.pixels.rem($.$icon_size - 20)}rem;
     }

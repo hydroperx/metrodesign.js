@@ -171,6 +171,7 @@ export function Tiles(params: {
   const [mode, set_mode] = React.useState<TileMode>({
     checking: false,
     dnd: false,
+    horizontal: params.direction == "horizontal",
   });
   const mode_sync = React.useRef(mode);
 
@@ -274,6 +275,7 @@ export function Tiles(params: {
       set_mode({
         checking: mode_sync.current.checking,
         dnd: true,
+        horizontal: mode_sync.current.horizontal,
       });
       handlers.current.drag_start?.(e.detail);
     });
@@ -288,6 +290,7 @@ export function Tiles(params: {
       set_mode({
         checking: mode_sync.current.checking,
         dnd: false,
+        horizontal: mode_sync.current.horizontal,
       });
       handlers.current.drag_end?.(e.detail);
     });
@@ -312,6 +315,7 @@ export function Tiles(params: {
       set_mode({
         checking: e.detail.tiles.length != 0,
         dnd: mode_sync.current.dnd,
+        horizontal: mode_sync.current.horizontal,
       });
       handlers.current.checked_change?.(e.detail);
     });
@@ -488,6 +492,13 @@ export function Tiles(params: {
     core.current!.groupHeight = params.groupHeight ?? 6;
     core.current!.inlineGroups = params.inlineGroups ?? 1;
 
+    if (params.direction == "horizontal" ? !mode.horizontal : !!mode.horizontal) {
+      set_mode({
+        checking: mode_sync.current.checking,
+        dnd: mode_sync.current.dnd,
+        horizontal: params.direction == "horizontal",
+      });
+    }
     core.current!.direction = params.direction;
 
     if (params.direction == "horizontal") {
@@ -496,7 +507,7 @@ export function Tiles(params: {
       core.current!.groupGap = 144;
       core.current!.labelHeight = 30.4;
     } else {
-      core.current!.size1x1 = 55;
+      core.current!.size1x1 = 51;
       core.current!.tileGap = 7;
       core.current!.groupGap = 32;
       core.current!.labelHeight = 28;
@@ -554,7 +565,6 @@ const Tiles_div = styled.div<{
 }> `
   && {
     color: ${$ => $.$foreground};
-    padding: 0.5rem 1.5rem;
     width: 100%;
     height: 100%;
   }
