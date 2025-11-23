@@ -8,7 +8,7 @@ import { TileSize, TileSizeMapPair } from "./TileSize";
 import { SimpleGroup } from "./SimpleGroup";
 import * as MathUtils from "../utils/MathUtils";
 import * as OffsetUtils from "../utils/OffsetUtils";
-import { TouchScroller } from "../utils/ScrollUtils";
+import { TouchScroller } from "../utils/TouchScroller";
 
 //
 export class TilePointerHandlers {
@@ -204,7 +204,7 @@ export class TilePointerHandlers {
     if (this.$._dnd.dragging || this.mouse_started) {
       return;
     }
-    // e.preventDefault();
+    e.preventDefault();
     this.touch_scroller = new TouchScroller(
       this.$._container,
       this.$._dir

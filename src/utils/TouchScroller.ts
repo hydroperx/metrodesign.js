@@ -9,26 +9,6 @@ import * as MathUtils from "./MathUtils";
 gsap.registerPlugin(ScrollToPlugin);
 
 /**
- * Finds nearest scroll container.
- */
-export function getScrollTarget(el: HTMLElement): HTMLElement {
-  let node: HTMLElement | null = el;
-
-  while (node && node !== document.body) {
-    const style = getComputedStyle(node);
-    if (
-      /(auto|scroll|overlay)/.test(style.overflowY) &&
-      node.scrollHeight > node.clientHeight
-    ) {
-      return node;
-    }
-    node = node.parentElement;
-  }
-
-  return document.scrollingElement as HTMLElement;
-}
-
-/**
  * A cancelable scroller for the touchscreen.
  * Must be discarded/created on touch start.
  */
@@ -112,3 +92,23 @@ export class TouchScroller {
 }
 
 type ScrollOrientation = "horizontal" | "vertical";
+
+/**
+ * Finds nearest scroll container.
+ */
+function getScrollTarget(el: HTMLElement): HTMLElement {
+  let node: HTMLElement | null = el;
+
+  while (node && node !== document.body) {
+    const style = getComputedStyle(node);
+    if (
+      /(auto|scroll|overlay)/.test(style.overflowY) &&
+      node.scrollHeight > node.clientHeight
+    ) {
+      return node;
+    }
+    node = node.parentElement;
+  }
+
+  return document.scrollingElement as HTMLElement;
+}

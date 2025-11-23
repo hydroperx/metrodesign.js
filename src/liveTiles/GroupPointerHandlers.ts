@@ -3,6 +3,7 @@ import type { Core, BulkChange } from "./Core";
 import { CoreGroup, CoreTile } from "./CoreGroup";
 import { SimpleGroup } from "./SimpleGroup";
 import * as MathUtils from "../utils/MathUtils";
+import { TouchScroller } from "../utils/TouchScroller";
 
 //
 export class GroupPointerHandlers {
@@ -21,6 +22,9 @@ export class GroupPointerHandlers {
   private allow_dnd_timeout: number = -1;
   private enable_touch_dnd: boolean = false;
   private touch_start_event: null | TouchEvent = null;
+
+  // touch scroll stuff
+  private touch_scroller: null | TouchScroller = null;
 
   //
   private bound_window_mouse_move_handler: null | Function = null;
@@ -134,6 +138,10 @@ export class GroupPointerHandlers {
       return;
     }
     e.preventDefault();
+    this.touch_scroller = new TouchScroller(
+      this.$._container,
+      this.$._dir
+    );
     this.touch_start_id = e.touches[0].identifier;
     this.enable_touch_dnd = false;
     this.dragged = false;
@@ -144,12 +152,22 @@ export class GroupPointerHandlers {
     // timeout to enable drag-n-drop
     this.allow_dnd_timeout = window.setTimeout(() => {
       this.allow_dnd_timeout = -1;
+      if (this.touch_scroller?.scrolled) {
+        return;
+      }
       this.enable_touch_dnd = true;
     }, 700);
   }
 
   //
   private touch_move(e: TouchEvent): void {
+    if (this.enable_touch_dnd) {
+      this.touch_scroller?.destroy();
+      this.touch_scroller = null;
+    } else {
+      // scroll
+      this.touch_scroller!.move(e);
+    }
     if (this.touch_start_id == -1) {
       return;
     }
@@ -278,6 +296,11 @@ export class GroupPointerHandlers {
   private short_click(e: Event): void {
     // removed? do nothing.
     if (!this.node.parentElement) {
+      return;
+    }
+
+    // touch-scrolled? do nothing.
+    if (this.touch_scroller?.scrolled) {
       return;
     }
 
