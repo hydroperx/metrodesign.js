@@ -30,17 +30,24 @@ export function getScrollTarget(el: HTMLElement): HTMLElement {
 
 /**
  * A cancelable scroller for the touchscreen.
+ * Must be discarded/created on touch start.
  */
 export class TouchScroller {
   private _scroll_node: HTMLElement;
   private _orientation: ScrollOrientation;
   private _last_position: number = 0;
   private _tween: null | gsap.core.Tween = null;
+  private _scrolled: boolean = false;
 
   //
   public constructor(node: HTMLElement, orientation: ScrollOrientation) {
     this._scroll_node = getScrollTarget(node);
     this._orientation = orientation;
+  }
+
+  //
+  public get scrolled(): boolean {
+    return this._scrolled;
   }
 
   //
@@ -58,13 +65,13 @@ export class TouchScroller {
     const current_position = this._orientation == "horizontal" ? touch.clientX : touch.clientY;
     const delta = this._last_position - current_position;
 
-    this._last_position = current_position;
-
-    let target_scroll = (
+    const old_scroll = (
       this._orientation == "horizontal" ?
-        this._scroll_node!.scrollLeft :
-        this._scroll_node!.scrollTop
-    ) + delta;
+        this._scroll_node.scrollLeft :
+        this._scroll_node.scrollTop
+    );
+
+    let target_scroll = old_scroll + delta;
 
     const max_scroll = (
       this._orientation === "horizontal"
@@ -73,6 +80,19 @@ export class TouchScroller {
     );
 
     target_scroll = MathUtils.clamp(target_scroll, 0, max_scroll);
+
+    if (Math.abs(target_scroll - old_scroll) > 3) {
+      this._scrolled = true;
+    }
+
+    if (this._orientation === "horizontal") {
+      this._scroll_node.scrollLeft = target_scroll;
+    } else {
+      this._scroll_node.scrollTop = target_scroll;
+    }
+
+    this._last_position = current_position;
+    /*
     this._tween = gsap.to(this._scroll_node, {
       scrollLeft: target_scroll,
       duration: 0.3,
@@ -81,6 +101,7 @@ export class TouchScroller {
     this._tween!.then(() => {
       this._tween = null;
     });
+    */
   }
 
   //

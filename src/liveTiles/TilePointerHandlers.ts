@@ -220,6 +220,9 @@ export class TilePointerHandlers {
     // timeout to enable drag-n-drop
     this.allow_dnd_timeout = window.setTimeout(() => {
       this.allow_dnd_timeout = -1;
+      if (this.touch_scroller?.scrolled) {
+        return;
+      }
       this.enable_touch_dnd = true;
 
       this.toggle_timeout = window.setTimeout(() => {
