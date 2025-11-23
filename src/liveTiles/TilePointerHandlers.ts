@@ -64,7 +64,9 @@ export class TilePointerHandlers {
     this.draggable_ready = false;
     this.mouse_started = true;
     this.dragged = false;
+    this.just_held_long = false;
     this.toggle_timeout = window.setTimeout(() => {
+      this.toggle_timeout = -1;
       // holding long on a tile will check it
       if (this.dragged) return;
       this.toggle_check();
@@ -204,6 +206,7 @@ export class TilePointerHandlers {
       this.enable_touch_dnd = true;
 
       this.toggle_timeout = window.setTimeout(() => {
+        this.toggle_timeout = -1;
         // holding long on a tile will check it
         if (this.dragged) return;
         this.toggle_check();

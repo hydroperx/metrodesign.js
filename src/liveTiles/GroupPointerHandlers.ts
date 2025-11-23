@@ -189,7 +189,9 @@ export class GroupPointerHandlers {
     //
     if (this.dragged) {
       // group#touchmove
-      this.node.dispatchEvent(e);
+      window.setTimeout(() => {
+        this.node.dispatchEvent(e);
+      }, 0);
     }
   }
 
@@ -209,7 +211,9 @@ export class GroupPointerHandlers {
     this.touch_start_id  = -1;
     if (this.dragged) {
       // group#touchend
-      this.node.dispatchEvent(e);
+      window.setTimeout(() => {
+        this.node.dispatchEvent(e);
+      }, 0);
 
       // cancel drag-n-drop timeout
       if (this.allow_dnd_timeout != -1) {
@@ -250,7 +254,9 @@ export class GroupPointerHandlers {
     this.touch_start_id  = -1;
     if (this.dragged) {
       // group#touchcancel
-      this.node.dispatchEvent(e);
+      window.setTimeout(() => {
+        this.node.dispatchEvent(e);
+      }, 0);
 
       // cancel drag-n-drop timeout
       if (this.allow_dnd_timeout != -1) {
