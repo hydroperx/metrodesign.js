@@ -103,7 +103,7 @@ function App() {
   // render groups.
   function render_groups(): React.ReactNode[] {
     let group_nodes: React.ReactNode[] = [];
-    for (let [i, group] of groups_sync.current.entries()) {
+    for (let [i, group] of groups.entries()) {
       const tile_nodes: React.ReactNode[] = [];
       for (const [id, tile] of group.tiles) {
         const node = render_tile(id, tile);
@@ -198,7 +198,7 @@ function App() {
 
   // handle bulk change in live tiles
   function bulk_change(e: BulkChange): void {
-    const new_groups = structuredClone(groups_sync.current);
+    const new_groups = structuredClone(groups);
     for (const m of e.movedTiles) {
       const g = new_groups.find(g => g.tiles.has(m.id));
       if (g) {
@@ -235,7 +235,7 @@ function App() {
       old_group.tiles.delete(tile_id);
       new_group.tiles.set(tile_id, t);
     }
-    set_groups(groups_sync.current = new_groups);
+    set_groups(new_groups);
   }
 
   // re-order groups
@@ -247,7 +247,7 @@ function App() {
       group_reorder_timeout.current = -1;
     }
     group_reorder_timeout.current = window.setTimeout(() => {
-      let new_groups = structuredClone(groups_sync.current);
+      let new_groups = structuredClone(groups);
       let seq_1 = Array.from(e.entries());
       seq_1.sort(([a], [b]) => a - b);
       let seq_2: string[] = [];
@@ -255,18 +255,18 @@ function App() {
         seq_2.push(group_id);
       }
       new_groups = seq_2.map(group_id => new_groups.find(g => g.id == group_id)!);
-      set_groups(groups_sync.current = new_groups);
+      set_groups(new_groups);
     }, 3);
   }
 
   //
   function rename_group(e: { id: string, label: string }): void {
-    let new_groups = structuredClone(groups_sync.current);
+    let new_groups = structuredClone(groups);
     const group = new_groups.find(g => g.id == e.id);
     if (group) {
       group!.label = e.label;
     }
-    set_groups(groups_sync.current = new_groups);
+    set_groups(new_groups);
   }
 
   //

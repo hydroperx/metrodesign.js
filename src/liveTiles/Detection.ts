@@ -254,7 +254,7 @@ export class Detection {
 
     // dragging? cancel drag-n-drop then.
     if (this.$._dnd.dragging && this.$._dnd.tileId == id) {
-      this.$._dnd.cancel();
+      // this.$._dnd.cancel();
     }
 
     if (group!.tiles.size == 0 && !!group.dom) {

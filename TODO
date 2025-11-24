@@ -21,7 +21,6 @@
 # Live tiles
 
 - [x] Done
-  - [ ] Fix: group transfer
-    - [ ] drag move/end doesn't trigger and drag-n-drop is almost ?destroyed except dnd-mode keeps on?
+  - [ ] Fix: checking a tile may sometimes drag it together.
   - [ ] Fix: switching layouts seems to mess tile positioning a bit.
   - [ ] Fix: sometimes shifting messes positions.
