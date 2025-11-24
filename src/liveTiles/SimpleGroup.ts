@@ -168,6 +168,7 @@ export class SimpleGroup {
     }
     tile!.x = x;
     tile!.y = y;
+    this.fit(tile, id);
 
     if (this.resolveConflicts(id)) {
       this.reduceHoles();
@@ -193,6 +194,7 @@ export class SimpleGroup {
     }
     tile!.width = width;
     tile!.height = height;
+    this.fit(tile!, id);
     if (this.resolveConflicts(id)) {
       this.reduceHoles();
       return true;
@@ -236,9 +238,10 @@ export class SimpleGroup {
     let testTile = new SimpleTile(0, 0, width, height);
     if (this.isHorizontal) {
       const layout_height = this.maxHeight!;
+      const limit_y = layout_height - height;
       for (let x = 0;; x++) {
         testTile.x = x;
-        for (let y = 0; y < layout_height; y++) {
+        for (let y = 0; y <= limit_y; y++) {
           testTile.y = y;
           if (this.getIntersectingTiles(testTile, "").length === 0) {
             return [x, y];
@@ -247,9 +250,10 @@ export class SimpleGroup {
       }
     } else {
       const layout_width = this.maxWidth!;
+      const limit_x = layout_width - width;
       for (let y = 0;; y++) {
         testTile.y = y;
-        for (let x = 0; x < layout_width; x++) {
+        for (let x = 0; x <= limit_x; x++) {
           testTile.x = x;
           if (this.getIntersectingTiles(testTile, "").length === 0) {
             return [x, y];
@@ -584,7 +588,7 @@ export class SimpleGroup {
           // (here, jump the height delta)
           const delta = target_tile.intersection(conflicting_tile)!.height;
           conflicting_tile.y += delta;
-          if (conflicting_tile.y >= this.maxHeight!) {
+          if (conflicting_tile.y + conflicting_tile.height > this.maxHeight!) {
             conflicting_tile.x += Math.max(target_tile.width, conflicting_tile.width);
             conflicting_tile.y = 0;
           }
@@ -639,7 +643,7 @@ export class SimpleGroup {
           // (here, jump the width delta)
           const delta = target_tile.intersection(conflicting_tile)!.width;
           conflicting_tile.x += delta;
-          if (conflicting_tile.x >= this.maxWidth!) {
+          if (conflicting_tile.x + conflicting_tile.width > this.maxWidth!) {
             conflicting_tile.x = 0;
             conflicting_tile.y += Math.max(target_tile.height, conflicting_tile.height);
           }
