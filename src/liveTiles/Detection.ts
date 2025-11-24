@@ -129,7 +129,7 @@ export class Detection {
       // attach pointer handlers (if not already attached)
       //
       // `CoreTile.attachedHandlers` (compare element)
-      if (tile ? tile.attachedHandlers !== node : true) {
+      if (!tile || tile!.attachedHandlers !== node) {
         new TilePointerHandlers(this.$, node).attach();
       }
 

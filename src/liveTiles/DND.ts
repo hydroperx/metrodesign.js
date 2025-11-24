@@ -68,7 +68,7 @@ export class DND {
     const dnd_dom_list = this.$._container.getElementsByClassName(this.$._class_names.tileDND);
     this.tileDNDDOM = dnd_dom_list.length == 0 ? null : dnd_dom_list[0] as HTMLElement;
     if (this.tileDNDDOM) {
-      this.tileDNDDOM!.style.visibility = "visible";
+      this.tileDNDDOM!.style.display = "";
       this.tileDNDDOM!.style.pointerEvents = "none";
       this.tileDNDDraggable = new Draggable(this.tileDNDDOM!, {
         threshold: "0.7rem",
@@ -112,7 +112,7 @@ export class DND {
       this.tileDNDDOM!.removeEventListener("click", this._tile_dnd_click_handler! as any);
     }
     if (this.dragging && this.tileButton) {
-      this.tileButton!.style.visibility = "visible";
+      this.tileButton!.style.display = "";
     }
 
     //
@@ -151,7 +151,7 @@ export class DND {
 
     this.dragging = false;
     if (this.tileDNDDOM) {
-      this.tileDNDDOM.style.visibility = "hidden";
+      this.tileDNDDOM!.style.display = "none";
     }
     this.tileDNDDOM = null;
   }
@@ -184,7 +184,7 @@ export class DND {
     }
 
     // style settings
-    this.tileDNDDOM!.style.visibility = "visible";
+    this.tileDNDDOM!.style.display = "";
     this.tileButton!.style.display = "none";
     document.documentElement.style.touchAction =
     document.documentElement.style.overscrollBehavior =
@@ -287,7 +287,14 @@ export class DND {
               detail: bulkChange,
             }));
           } else {
-            // group transfer
+            //
+            const tile = this.$._groups.values().find(g => g.tiles.has(this.tileId))
+              ?.tiles.get(this.tileId);
+            if (tile) {
+              tile.lastRearrange_positioned = false;
+            }
+
+              // group transfer
             const bulkChange: BulkChange = {
               movedTiles: [],
               groupTransfers: [{ group: new_group_id, id: this.tileId, x: this._snap!.x, y: this._snap!.y }],
@@ -367,7 +374,7 @@ export class DND {
     document.documentElement.style.overscrollBehavior =
     document.body.style.touchAction =
     document.body.style.overscrollBehavior = "";
-    this.tileDNDDOM!.style.visibility = "hidden";
+    this.tileDNDDOM!.style.display = "none";
 
     //
     if (this.tileDNDDOM?.children.length !== 0) {
